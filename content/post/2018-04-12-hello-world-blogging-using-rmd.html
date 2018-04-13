@@ -1,0 +1,67 @@
+---
+title: 'Hello World: Blogging using Rmd'
+author: Thean Lim
+date: '2018-04-12'
+slug: hello-world-blogging-using-rmd
+categories:
+  - R
+tags:
+  - R Markdown
+summary: This summary is important to collapse the view on post
+header:
+  caption: ''
+  image: ''
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#header-1">Header 1</a><ul>
+<li><a href="#header-2">Header 2</a><ul>
+<li><a href="#header-3">Header 3</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#new-header-1">New Header 1</a></li>
+</ul>
+</div>
+
+<p>This is the Hello World blog post using Rmd…</p>
+<div id="header-1" class="section level1">
+<h1>Header 1</h1>
+<div id="header-2" class="section level2">
+<h2>Header 2</h2>
+<div id="header-3" class="section level3">
+<h3>Header 3</h3>
+<p>Let’s try some math:</p>
+<p><span class="math display">\[\beta = \alpha\]</span></p>
+<p>How about inline math such as <span class="math inline">\(b + \alpha\)</span></p>
+<p>How about some R code?</p>
+<pre class="r"><code>plot(1:10, 41:50, col = &quot;blue&quot;)</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-1"></span>
+<img src="/post/2018-04-12-hello-world-blogging-using-rmd_files/figure-html/unnamed-chunk-1-1.png" alt="This is a simple plot" width="672" />
+<p class="caption">
+Figure 1: This is a simple plot
+</p>
+</div>
+<p>Let’s try mentioning r function.</p>
+<p><code>plot()</code></p>
+<p>How about using the alert note?</p>
+<p>{{% alert note %}} This is an alert. R function within the alert: <code>sum()</code> {{% /alert %}}</p>
+<p>Let’s try alert warning:</p>
+<p>{{% alert warning %}} Do <em>not</em> get serious with <code>arrange()</code> {{% /alert %}}</p>
+</div>
+</div>
+</div>
+<div id="new-header-1" class="section level1">
+<h1>New Header 1</h1>
+<p>Just pure chunk of code (not evaluating)</p>
+<pre><code>blogdown::install_hugo()
+# or
+library(blogdown)
+install_hugo()</code></pre>
+</div>

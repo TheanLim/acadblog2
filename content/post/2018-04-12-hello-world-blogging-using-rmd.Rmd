@@ -1,0 +1,66 @@
+---
+title: 'Hello World: Blogging using Rmd'
+author: Thean Lim
+date: '2018-04-12'
+slug: hello-world-blogging-using-rmd
+categories:
+  - R
+tags:
+  - R Markdown
+summary: This summary is important to collapse the view on post
+header:
+  caption: ''
+  image: ''
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+---
+
+This is the Hello World blog post using Rmd...
+
+# Header 1
+
+## Header 2
+
+### Header 3
+
+Let's try some math:
+
+$$\beta = \alpha$$
+
+How about inline math such as $b + \alpha$
+
+How about some R code?
+
+```{r, fig.cap= "This is a simple plot"}
+plot(1:10, 41:50, col = "blue")
+```
+
+Let's try mentioning r function.  
+
+`plot()`
+
+How about using the alert note?
+
+{{% alert note %}}
+This is an alert. R function within the alert: `sum()`
+{{% /alert %}}
+
+Let's try alert warning:
+
+
+{{% alert warning %}}
+Do *not* get serious with `arrange()`
+{{% /alert %}}
+
+# New Header 1
+Just pure chunk of code (not evaluating)
+
+```
+blogdown::install_hugo()
+# or
+library(blogdown)
+install_hugo()
+```
