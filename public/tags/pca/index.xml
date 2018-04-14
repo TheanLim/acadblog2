@@ -23,16 +23,5 @@ This first image is an image with tourists ( I call it as tour) while the second
 This is another new image that is different from the above two.</description>
     </item>
     
-    <item>
-      <title>Image Compression with Principal Component Analysis</title>
-      <link>/project/image-compression-with-principal-component-analysis/</link>
-      <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/project/image-compression-with-principal-component-analysis/</guid>
-      <description>Loading pictures and standardizing the sizesThe tour Image.PCAScree Plot and Cumulative Variation PlotImage ReconstructionImage Size CompressionThe no_tour ImageThe new Image.SummaryThe following images are taken from DesignCrowd.
-This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
-This is another new image that is different from the above two.</description>
-    </item>
-    
   </channel>
 </rss>
