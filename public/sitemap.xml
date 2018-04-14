@@ -5,7 +5,7 @@
     
     <url>
     
-      <loc>/project/test-compress-2/</loc>
+      <loc>/post/testing-image/</loc>
       <lastmod>2018-04-14T00:00:00+00:00</lastmod>
     </url>
     
@@ -14,8 +14,8 @@
     
     <url>
     
-      <loc>/post/testing-image/</loc>
-      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+      <loc>/project/image-compression-with-principal-component-analysis/</loc>
+      <lastmod>2018-04-13T00:00:00+00:00</lastmod>
     </url>
     
   
@@ -228,7 +228,7 @@
     <url>
     
       <loc>/project/</loc>
-      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+      <lastmod>2018-04-13T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
