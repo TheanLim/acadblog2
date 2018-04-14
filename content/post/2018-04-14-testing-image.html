@@ -1,0 +1,94 @@
+---
+title: Testing Image
+author: ''
+date: '2018-04-14'
+slug: testing-image
+categories: []
+tags: []
+header:
+  caption: ''
+  image: ''
+---
+
+
+
+<p>The following images are taken from <a href="https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people">DesignCrowd</a>.</p>
+<p><img src="/img/imagecompression/paris_tourist.jpg" alt="Image with tourist aka tour" /> <img src="/img/paris_no_tourist.jpg" alt="Image with NO tourist aka no_tour" /></p>
+<p>This first image is an image with tourists ( I call it as <code>tour</code>) while the second one has no tourist – <code>no_tour</code>.</p>
+<p><img src="/img/rome.jpg" alt="Rome" /> This is another <code>new</code> image that is different from the above two.</p>
+<p>The goals are:</p>
+<ul>
+<li>Use PCA to compress the <code>tour</code> image</li>
+<li>Test the generalizability of the PC loadings obtained from <code>tour</code> image to other similar image (i.e., the <code>no_tour</code> image) and a very different image (i.e. <code>new</code> image).</li>
+</ul>
+<div id="loading-pictures-and-standardizing-the-sizes" class="section level1">
+<h1>Loading pictures and standardizing the sizes</h1>
+<p>First, let’s load the pictures and look at the dimensions.</p>
+<pre class="r"><code>library(jpeg)
+path = &quot;C:/Users/mirac/Desktop/Work/acadblog2/static/img/imagecompression&quot;
+tour = readJPEG(paste(path,&quot;paris_tourist.jpg&quot;, sep = &quot;/&quot;))
+no_tour = readJPEG(paste(path,&quot;paris_no_tourist.jpg&quot;, sep = &quot;/&quot;))
+new = readJPEG(paste(path,&quot;rome.jpg&quot;, sep = &quot;/&quot;))</code></pre>
+<pre class="r"><code>dim(tour); dim(no_tour); dim(new)</code></pre>
+<pre><code>## [1] 459 715   3</code></pre>
+<pre><code>## [1] 458 715   3</code></pre>
+<pre><code>## [1] 500 750   3</code></pre>
+<p>The three pistures do not have the same dimensions so let’s resize them to <code>458, 715, 3.</code> The <code>3</code> represents <code>R</code>, <code>G</code>, and <code>B</code>, the three color schemes from the images.</p>
+<pre class="r"><code>library(&quot;EBImage&quot;)
+# scale to a specific width and height
+tour &lt;- resize(tour, w = 458, h = 715)
+new &lt;- resize(new, w = 458, h = 715)
+
+# extract the pixel array
+tour &lt;- as.array(tour)
+new &lt;- as.array(new)</code></pre>
+</div>
+<div id="the-tour-image." class="section level1">
+<h1>The <code>tour</code> Image.</h1>
+<div id="pca" class="section level2">
+<h2>PCA</h2>
+<p>Break down each color scheme into three dataframe and perform PCA.</p>
+<pre class="r"><code>rtour = tour[, ,1]
+gtour = tour[, ,2]
+btour = tour[, ,3]</code></pre>
+<pre class="r"><code>prtour = prcomp(rtour, center = FALSE)
+pgtour = prcomp(gtour, center = FALSE)
+pbtour = prcomp(btour, center = FALSE)
+
+tour.pca = list(prtour, pgtour, pbtour)</code></pre>
+</div>
+<div id="scree-plot-and-cumulative-variation-plot" class="section level2">
+<h2>Scree Plot and Cumulative Variation Plot</h2>
+<p>Take a look at the Scree plot of the PCA.</p>
+<pre class="r"><code>library(dplyr)
+# Create a dataframe for easier plotting
+df = data.frame(scheme = rep(c(&quot;R&quot;, &quot;G&quot;, &quot;B&quot;),each =458), 
+                index = rep(1:458,  3),
+                var = c(prtour$sdev^2,
+                        pgtour$sdev^2, 
+                        pbtour$sdev^2))
+
+df %&lt;&gt;% group_by(scheme) %&gt;%
+  mutate(propvar =100*var/sum(var)) %&gt;%
+  mutate(cumsum = cumsum(propvar)) %&gt;%
+  ungroup()
+
+#plot
+library(ggplot2)
+#relevel to make it look nicer
+df$scheme = factor(df$scheme,levels(df$scheme)[c(3,2,1)])
+
+df %&gt;% ggplot(aes( x = index, y = propvar, fill = scheme)) + 
+    geom_bar(stat=&quot;identity&quot;) + 
+    labs(title=&quot;Screeplot of Principal Component&quot;, x =&quot;Principal Component&quot;, 
+         y=&quot;% of Variance&quot;) + geom_line()  + 
+    scale_x_continuous(limits = c(0,30)) +
+    facet_wrap(~scheme)</code></pre>
+<div class="figure"><span id="fig:screeplot"></span>
+<img src="/post/2018-04-14-testing-image_files/figure-html/screeplot-1.png" alt="The **elbow** of the screeplot is between the fourth and the fifth PC" width="672" />
+<p class="caption">
+Figure 1: The <strong>elbow</strong> of the screeplot is between the fourth and the fifth PC
+</p>
+</div>
+</div>
+</div>

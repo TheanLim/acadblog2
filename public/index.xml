@@ -11,6 +11,111 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Test Compress 2</title>
+      <link>/project/test-compress-2/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/project/test-compress-2/</guid>
+      <description>&lt;p&gt;The following images are taken from &lt;a href=&#34;https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people&#34;&gt;DesignCrowd&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/imagecompression/paris_tourist.jpg&#34; alt=&#34;Image with tourist aka tour&#34; /&gt; &lt;img src=&#34;/img/paris_no_tourist.jpg&#34; alt=&#34;Image with NO tourist aka no_tour&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This first image is an image with tourists ( I call it as &lt;code&gt;tour&lt;/code&gt;) while the second one has no tourist – &lt;code&gt;no_tour&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/rome.jpg&#34; alt=&#34;Rome&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;Rome&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Testing Image</title>
+      <link>/post/testing-image/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/testing-image/</guid>
+      <description>&lt;p&gt;The following images are taken from &lt;a href=&#34;https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people&#34;&gt;DesignCrowd&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/imagecompression/paris_tourist.jpg&#34; alt=&#34;Image with tourist aka tour&#34; /&gt; &lt;img src=&#34;/img/paris_no_tourist.jpg&#34; alt=&#34;Image with NO tourist aka no_tour&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This first image is an image with tourists ( I call it as &lt;code&gt;tour&lt;/code&gt;) while the second one has no tourist – &lt;code&gt;no_tour&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/rome.jpg&#34; alt=&#34;Rome&#34; /&gt; This is another &lt;code&gt;new&lt;/code&gt; image that is different from the above two.&lt;/p&gt;
+&lt;p&gt;The goals are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use PCA to compress the &lt;code&gt;tour&lt;/code&gt; image&lt;/li&gt;
+&lt;li&gt;Test the generalizability of the PC loadings obtained from &lt;code&gt;tour&lt;/code&gt; image to other similar image (i.e., the &lt;code&gt;no_tour&lt;/code&gt; image) and a very different image (i.e. &lt;code&gt;new&lt;/code&gt; image).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;loading-pictures-and-standardizing-the-sizes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Loading pictures and standardizing the sizes&lt;/h1&gt;
+&lt;p&gt;First, let’s load the pictures and look at the dimensions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(jpeg)
+path = &amp;quot;C:/Users/mirac/Desktop/Work/acadblog2/static/img/imagecompression&amp;quot;
+tour = readJPEG(paste(path,&amp;quot;paris_tourist.jpg&amp;quot;, sep = &amp;quot;/&amp;quot;))
+no_tour = readJPEG(paste(path,&amp;quot;paris_no_tourist.jpg&amp;quot;, sep = &amp;quot;/&amp;quot;))
+new = readJPEG(paste(path,&amp;quot;rome.jpg&amp;quot;, sep = &amp;quot;/&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(tour); dim(no_tour); dim(new)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 459 715   3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 458 715   3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 500 750   3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The three pistures do not have the same dimensions so let’s resize them to &lt;code&gt;458, 715, 3.&lt;/code&gt; The &lt;code&gt;3&lt;/code&gt; represents &lt;code&gt;R&lt;/code&gt;, &lt;code&gt;G&lt;/code&gt;, and &lt;code&gt;B&lt;/code&gt;, the three color schemes from the images.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;EBImage&amp;quot;)
+# scale to a specific width and height
+tour &amp;lt;- resize(tour, w = 458, h = 715)
+new &amp;lt;- resize(new, w = 458, h = 715)
+
+# extract the pixel array
+tour &amp;lt;- as.array(tour)
+new &amp;lt;- as.array(new)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-tour-image.&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The &lt;code&gt;tour&lt;/code&gt; Image.&lt;/h1&gt;
+&lt;div id=&#34;pca&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;PCA&lt;/h2&gt;
+&lt;p&gt;Break down each color scheme into three dataframe and perform PCA.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rtour = tour[, ,1]
+gtour = tour[, ,2]
+btour = tour[, ,3]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prtour = prcomp(rtour, center = FALSE)
+pgtour = prcomp(gtour, center = FALSE)
+pbtour = prcomp(btour, center = FALSE)
+
+tour.pca = list(prtour, pgtour, pbtour)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scree-plot-and-cumulative-variation-plot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Scree Plot and Cumulative Variation Plot&lt;/h2&gt;
+&lt;p&gt;Take a look at the Scree plot of the PCA.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
+# Create a dataframe for easier plotting
+df = data.frame(scheme = rep(c(&amp;quot;R&amp;quot;, &amp;quot;G&amp;quot;, &amp;quot;B&amp;quot;),each =458), 
+                index = rep(1:458,  3),
+                var = c(prtour$sdev^2,
+                        pgtour$sdev^2, 
+                        pbtour$sdev^2))
+
+df %&amp;lt;&amp;gt;% group_by(scheme) %&amp;gt;%
+  mutate(propvar =100*var/sum(var)) %&amp;gt;%
+  mutate(cumsum = cumsum(propvar)) %&amp;gt;%
+  ungroup()
+
+#plot
+library(ggplot2)
+#relevel to make it look nicer
+df$scheme = factor(df$scheme,levels(df$scheme)[c(3,2,1)])
+
+df %&amp;gt;% ggplot(aes( x = index, y = propvar, fill = scheme)) + 
+    geom_bar(stat=&amp;quot;identity&amp;quot;) + 
+    labs(title=&amp;quot;Screeplot of Principal Component&amp;quot;, x =&amp;quot;Principal Component&amp;quot;, 
+         y=&amp;quot;% of Variance&amp;quot;) + geom_line()  + 
+    scale_x_continuous(limits = c(0,30)) +
+    facet_wrap(~scheme)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:screeplot&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/post/2018-04-14-testing-image_files/figure-html/screeplot-1.png&#34; alt=&#34;The **elbow** of the screeplot is between the fourth and the fifth PC&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: The &lt;strong&gt;elbow&lt;/strong&gt; of the screeplot is between the fourth and the fifth PC
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Image Compression with Principal Component Analysis</title>
       <link>/project/image-compression-with-principal-component-analysis/</link>
       <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>

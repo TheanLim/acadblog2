@@ -7,10 +7,22 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Fri, 13 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 14 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Test Compress 2</title>
+      <link>/project/test-compress-2/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/project/test-compress-2/</guid>
+      <description>The following images are taken from DesignCrowd.
+This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
+Rome
+</description>
+    </item>
     
     <item>
       <title>Image Compression with Principal Component Analysis</title>

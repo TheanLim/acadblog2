@@ -1,0 +1,28 @@
+---
+title: Test Compress 2
+author: ''
+date: '2018-04-14'
+slug: test-compress-2
+categories: []
+tags: []
+header:
+  caption: ''
+  image: ''
+---
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE, warning = FALSE)
+options(width = 100, dplyr.width = 100)
+library(methods)
+library(ggplot2)
+theme_set(theme_light())
+```
+
+The following images are taken from [DesignCrowd](https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people). 
+
+
+![Image with tourist aka `tour`](/img/imagecompression/paris_tourist.jpg) ![Image with NO tourist aka `no_tour`](/img/paris_no_tourist.jpg)
+
+This first image is an image with tourists ( I call it as `tour`) while the second one has no tourist -- `no_tour`.
+
+![Rome](/img/rome.jpg)

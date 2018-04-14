@@ -13,6 +13,19 @@
     
     
     <item>
+      <title>Testing Image</title>
+      <link>/post/testing-image/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/testing-image/</guid>
+      <description>The following images are taken from DesignCrowd.
+This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
+This is another new image that is different from the above two.
+The goals are:
+Use PCA to compress the tour imageTest the generalizability of the PC loadings obtained from tour image to other similar image (i.e., the no_tour image) and a very different image (i.</description>
+    </item>
+    
+    <item>
       <title>Hello World: Blogging using Rmd</title>
       <link>/post/hello-world-blogging-using-rmd/</link>
       <pubDate>Thu, 12 Apr 2018 00:00:00 +0000</pubDate>
