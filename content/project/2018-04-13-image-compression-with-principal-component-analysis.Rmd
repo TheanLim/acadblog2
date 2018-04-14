@@ -9,7 +9,7 @@ tags: ["machine-learning"]
 header:
   caption: ''
   image: ''
-draft: true
+draft: false
 image_preview : "imagecompression/compress.jpg"
 output:
   blogdown::html_page:
