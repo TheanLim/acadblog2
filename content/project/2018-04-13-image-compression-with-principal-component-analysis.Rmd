@@ -1,0 +1,264 @@
+---
+title: Image Compression with Principal Component Analysis
+author: ''
+date: '2018-04-13'
+slug: image-compression-with-principal-component-analysis
+categories:
+  - R
+tags:
+  - PCA
+  - machine-learning
+header:
+  caption: ''
+  image: ''
+draft: true
+image_preview : "imagecompression/compress.jpg"
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE, warning = FALSE)
+options(width = 100, dplyr.width = 100)
+library(methods)
+library(ggplot2)
+theme_set(theme_light())
+```
+
+The following images are taken from [DesignCrowd](https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people). 
+
+
+![Image with tourist aka `tour`](/img/imagecompression/paris_tourist.jpg) ![Image with NO tourist aka `no_tour`](/img/paris_no_tourist.jpg)
+
+This first image is an image with tourists ( I call it as `tour`) while the second one has no tourist -- `no_tour`.
+
+![Rome](/img/rome.jpg)
+This is another `new` image that is different from the above two.
+
+The goals are:
+
+* Use PCA to compress the `tour` image
+* Test the generalizability of the PC loadings obtained from `tour` image to other similar image (i.e., the `no_tour` image) and a very different image (i.e. `new` image).
+
+# Loading pictures and standardizing the sizes
+
+First, let's load the pictures and look at the dimensions.  
+```{r readingJPEG}
+library(jpeg)
+path = "C:/Users/mirac/Desktop/Work/acadblog2/static/img/imagecompression"
+tour = readJPEG(paste(path,"paris_tourist.jpg", sep = "/"))
+no_tour = readJPEG(paste(path,"paris_no_tourist.jpg", sep = "/"))
+new = readJPEG(paste(path,"rome.jpg", sep = "/"))
+```
+```{r dim}
+dim(tour); dim(no_tour); dim(new)
+```
+
+The three pistures do not have the same dimensions so let's resize them to `458, 715, 3.` The `3` represents `R`, `G`, and `B`, the three color schemes from the images.  
+
+```{r standard}
+library("EBImage")
+# scale to a specific width and height
+tour <- resize(tour, w = 458, h = 715)
+new <- resize(new, w = 458, h = 715)
+
+# extract the pixel array
+tour <- as.array(tour)
+new <- as.array(new)
+```
+
+# The `tour` Image.
+
+## PCA
+
+Break down each color scheme into three dataframe and perform PCA. 
+
+```{r breakRGB}
+rtour = tour[, ,1]
+gtour = tour[, ,2]
+btour = tour[, ,3]
+```
+
+
+```{r PCA}
+prtour = prcomp(rtour, center = FALSE)
+pgtour = prcomp(gtour, center = FALSE)
+pbtour = prcomp(btour, center = FALSE)
+
+tour.pca = list(prtour, pgtour, pbtour)
+```
+
+## Scree Plot and Cumulative Variation Plot
+
+Take a look at the Scree plot of the PCA.
+
+```{r screeplot, fig.cap = "The **elbow** of the screeplot is between the fourth and the fifth PC"}
+library(dplyr)
+# Create a dataframe for easier plotting
+df = data.frame(scheme = rep(c("R", "G", "B"),each =458), 
+                index = rep(1:458,  3),
+                var = c(prtour$sdev^2,
+                        pgtour$sdev^2, 
+                        pbtour$sdev^2))
+
+df %<>% group_by(scheme) %>%
+  mutate(propvar =100*var/sum(var)) %>%
+  mutate(cumsum = cumsum(propvar)) %>%
+  ungroup()
+
+#plot
+library(ggplot2)
+#relevel to make it look nicer
+df$scheme = factor(df$scheme,levels(df$scheme)[c(3,2,1)])
+
+df %>% ggplot(aes( x = index, y = propvar, fill = scheme)) + 
+    geom_bar(stat="identity") + 
+    labs(title="Screeplot of Principal Component", x ="Principal Component", 
+         y="% of Variance") + geom_line()  + 
+    scale_x_continuous(limits = c(0,30)) +
+    facet_wrap(~scheme)
+```
+
+```{r cumprop, fig.cap="Thirty PCs appear to be good enough to explain most of the variations"}
+df %>% ggplot(aes( x = index, y = cumsum, fill = scheme)) + 
+    geom_bar(stat="identity") + 
+    labs(title="Cumulative Proportion of Variance Explained Principal Component", x="Principal Component", 
+         y="Cumulative % of Variance") + geom_line() + 
+    scale_x_continuous(limits = c(0,30)) +
+    facet_wrap(~scheme)
+
+```
+It seems like the first 30 PCs have enough proportion of variance covered because the proportion of variance explained is close to 100%.  
+
+## Image Reconstruction
+
+Let's reconstruct the first image. I choose to look at the images constructed from 2, 30, 200, and 300 Prinicipal Components.    
+
+```{r reconstruct}
+# This is the number of desired PCs
+pcnum = c(2,30,200, 300)
+
+for(i in pcnum){
+    pca.img <- sapply(tour.pca, function(j) {
+      compressed.img <- j$x[,1:i] %*% t(j$rotation[,1:i])
+    }, simplify = 'array')
+  writeJPEG(pca.img, paste(path,"/tour/tour_compressed_", round(i,0), '_components.jpg', sep = ''))
+}
+```
+
+```{r, echo=FALSE, out.width="50%", fig.show = 'hold'}
+knitr::include_graphics('/img/imagecompression/tour/tour_compressed_2_components.jpg')
+knitr::include_graphics('/img/imagecompression/tour/tour_compressed_30_components.jpg')
+knitr::include_graphics('/img/imagecompression/tour/tour_compressed_200_components.jpg')
+```
+
+```{r, echo=FALSE, out.width="50%", fig.show = 'hold', fig.cap = "Compress images using 2, 30, 200 and 300 PCs respectively."}
+knitr::include_graphics('/img/imagecompression/tour/tour_compressed_300_components.jpg')
+```
+It appears that using 200 PCs is enough to compress the image while maintaining a good quality.
+
+## Image Size Compression
+
+But how about the sizes of these images?
+```{r}
+original <- file.info(paste(path,"paris_tourist.jpg", sep ="/"))$size / 1000
+
+for(i in pcnum){
+  filename = paste("tour_compressed_",i,'_components.jpg', sep = '')
+  full.path = paste(path,"tour",filename,sep = "/")
+  size = file.info(full.path)$size/1000
+  cat(filename, 'size:',size,"\n",
+      "Reduction from the original image: ",(original-size)/original*100,"% \n\n" )
+}
+```
+
+Surprisingly, the compressed image that uses 30 PCs has the lowest reduction of image size.  
+
+# The `no_tour` Image  
+
+Now, let's use a similar image (`no_tour`) and use the Principal Loadings obtained from the previous step to execute image compression.  
+
+The `compress ()` function is meant for compressing a new image (i.e., image not used in the previous step to obtain Principal Loadings).  
+
+```{r}
+rno_tour = no_tour[, ,1]
+gno_tour = no_tour[, ,2]
+bno_tour = no_tour[, ,3]
+
+no_tour_rgb = list(rno_tour,gno_tour,bno_tour)
+
+compress <- function(trained_rgb_pca, newrgb, pcnum, dims){
+   r_rotate = trained_rgb_pca[[1]]$rotation
+   g_rotate = trained_rgb_pca[[2]]$rotation
+   b_rotate = trained_rgb_pca[[3]]$rotation
+   
+   r = newrgb[[1]]
+   g = newrgb[[2]]
+   b = newrgb[[3]]
+   
+  pred_r = (r %*% r_rotate)[,1:pcnum] %*% t(r_rotate[,1:pcnum])
+  pred_g = (g %*% g_rotate)[,1:pcnum] %*% t(g_rotate[,1:pcnum])
+  pred_b = (b %*% b_rotate)[,1:pcnum] %*% t(b_rotate[,1:pcnum])
+  
+  pred.pca = list(pred_r, pred_g, pred_b)
+  pred.array = array(as.numeric(unlist(pred.pca)),dim = dims)
+  return(pred.array)
+}
+
+for(i in pcnum){
+    pca.img = compress(tour.pca, no_tour_rgb, pcnum = i, dims = c( 458, 715,3))
+    writeJPEG(pca.img, paste(path,"/no_tour","/no_tour_compressed_", round(i,0), '_components.jpg', sep = ''))
+}
+```
+```{r, echo=FALSE, out.width="50%", fig.show = 'hold'}
+knitr::include_graphics('/img/imagecompression/no_tour/no_tour_compressed_2_components.jpg')
+knitr::include_graphics('/img/imagecompression/no_tour/no_tour_compressed_30_components.jpg')
+knitr::include_graphics('/img/imagecompression/no_tour/no_tour_compressed_200_components.jpg')
+```
+
+```{r, echo=FALSE, out.width="50%", fig.show = 'hold', fig.cap="Compress simialr images to test the generalizability of PCs"}
+knitr::include_graphics('/img/imagecompression/no_tour/no_tour_compressed_300_components.jpg')
+```
+
+One can observe that the last image's quality is the best out of four (since it uses the most PCs) but it is not even close to a high quality image.  
+
+# The `new` Image.
+
+We now know that the performance of PCA in image compression is highly useful to its original image but not for a similar image. It's natural to ask whether it will be worst if a totally unrelated image (such as `new` image) was used instead. Let's check it out.  
+
+```{r echo = TRUE, out.width="50%"}
+rnew = new[, ,1]
+gnew = new[, ,2]
+bnew = new[, ,3]
+
+new_rgb = list(rnew,gnew,bnew)
+
+for (i in pcnum){
+    pca.img = compress(tour.pca, new_rgb, pcnum = i, dims = c(458,715, 3))
+    writeJPEG(pca.img, paste(path,"/new","/new_compressed_", round(i,0), '_components.jpg', sep = ''))
+}
+```
+
+
+```{r, echo=FALSE, out.width="50%"}
+knitr::include_graphics('/img/imagecompression/new/new_compressed_2_components.jpg')
+knitr::include_graphics('/img/imagecompression/new/new_compressed_30_components.jpg')
+knitr::include_graphics('/img/imagecompression/new/new_compressed_200_components.jpg')
+```
+
+```{r, echo=FALSE, out.width="50%", fig.cap="Compressing a non-related image using previously extracted PC loadings"}
+knitr::include_graphics('/img/imagecompression/new/new_compressed_300_components.jpg')
+```
+
+While the image output does not look exactly like the original image, the main features of the image is clearly shown on it. This is pretty impressive because the machine learns the rules of extracting important information based on only one image `tour`. One can experiment increase the number of PCs to get a higher resolution image too.
+
+# Summary
+
+Principal Component Analysis is a great tool for dimension reduction (thus, sinze reduction in this case), extracting important insights, and uncover underlying message of a dataset.  
+
+
+

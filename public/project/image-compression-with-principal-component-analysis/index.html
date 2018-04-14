@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Loading pictures and standardizing the sizesThe tour Image.PCAScree Plot and Cumulative Variation PlotImage ReconstructionImage Size CompressionThe no_tour ImageThe new Image.SummaryThe following images are taken from DesignCrowd.
+This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
+This is another new image that is different from the above two.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/project/image-compression-with-principal-component-analysis/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/project/image-compression-with-principal-component-analysis/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/project/image-compression-with-principal-component-analysis/">
+  <meta property="og:title" content="Image Compression with Principal Component Analysis | Thean C. Lim">
+  <meta property="og:description" content="Loading pictures and standardizing the sizesThe tour Image.PCAScree Plot and Cumulative Variation PlotImage ReconstructionImage Size CompressionThe no_tour ImageThe new Image.SummaryThe following images are taken from DesignCrowd.
+This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
+This is another new image that is different from the above two.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-04-13T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-04-13T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>Image Compression with Principal Component Analysis | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article article-project" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+
+    <div class="pub-title">
+      <h1 itemprop="name">Image Compression with Principal Component Analysis</h1>
+      <span class="pub-authors" itemprop="author">&nbsp;</span>
+      <span class="pull-right">
+        
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Image%20Compression%20with%20Principal%20Component%20Analysis&amp;url=%2fproject%2fimage-compression-with-principal-component-analysis%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fproject%2fimage-compression-with-principal-component-analysis%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fproject%2fimage-compression-with-principal-component-analysis%2f&amp;title=Image%20Compression%20with%20Principal%20Component%20Analysis"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fproject%2fimage-compression-with-principal-component-analysis%2f&amp;title=Image%20Compression%20with%20Principal%20Component%20Analysis"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Image%20Compression%20with%20Principal%20Component%20Analysis&amp;body=%2fproject%2fimage-compression-with-principal-component-analysis%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+      </span>
+    </div>
+
+    
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#loading-pictures-and-standardizing-the-sizes">Loading pictures and standardizing the sizes</a></li>
+<li><a href="#the-tour-image.">The <code>tour</code> Image.</a><ul>
+<li><a href="#pca">PCA</a></li>
+<li><a href="#scree-plot-and-cumulative-variation-plot">Scree Plot and Cumulative Variation Plot</a></li>
+<li><a href="#image-reconstruction">Image Reconstruction</a></li>
+<li><a href="#image-size-compression">Image Size Compression</a></li>
+</ul></li>
+<li><a href="#the-no_tour-image">The <code>no_tour</code> Image</a></li>
+<li><a href="#the-new-image.">The <code>new</code> Image.</a></li>
+<li><a href="#summary">Summary</a></li>
+</ul>
+</div>
+
+<p>The following images are taken from <a href="https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people">DesignCrowd</a>.</p>
+<p><img src="/img/imagecompression/paris_tourist.jpg" alt="Image with tourist aka tour" /> <img src="/img/paris_no_tourist.jpg" alt="Image with NO tourist aka no_tour" /></p>
+<p>This first image is an image with tourists ( I call it as <code>tour</code>) while the second one has no tourist – <code>no_tour</code>.</p>
+<p><img src="/img/rome.jpg" alt="Rome" /> This is another <code>new</code> image that is different from the above two.</p>
+<p>The goals are:</p>
+<ul>
+<li>Use PCA to compress the <code>tour</code> image</li>
+<li>Test the generalizability of the PC loadings obtained from <code>tour</code> image to other similar image (i.e., the <code>no_tour</code> image) and a very different image (i.e. <code>new</code> image).</li>
+</ul>
+<div id="loading-pictures-and-standardizing-the-sizes" class="section level1">
+<h1>Loading pictures and standardizing the sizes</h1>
+<p>First, let’s load the pictures and look at the dimensions.</p>
+<pre class="r"><code>library(jpeg)
+path = &quot;C:/Users/mirac/Desktop/Work/acadblog2/static/img/imagecompression&quot;
+tour = readJPEG(paste(path,&quot;paris_tourist.jpg&quot;, sep = &quot;/&quot;))
+no_tour = readJPEG(paste(path,&quot;paris_no_tourist.jpg&quot;, sep = &quot;/&quot;))
+new = readJPEG(paste(path,&quot;rome.jpg&quot;, sep = &quot;/&quot;))</code></pre>
+<pre class="r"><code>dim(tour); dim(no_tour); dim(new)</code></pre>
+<pre><code>## [1] 459 715   3</code></pre>
+<pre><code>## [1] 458 715   3</code></pre>
+<pre><code>## [1] 500 750   3</code></pre>
+<p>The three pistures do not have the same dimensions so let’s resize them to <code>458, 715, 3.</code> The <code>3</code> represents <code>R</code>, <code>G</code>, and <code>B</code>, the three color schemes from the images.</p>
+<pre class="r"><code>library(&quot;EBImage&quot;)
+# scale to a specific width and height
+tour &lt;- resize(tour, w = 458, h = 715)
+new &lt;- resize(new, w = 458, h = 715)
+
+# extract the pixel array
+tour &lt;- as.array(tour)
+new &lt;- as.array(new)</code></pre>
+</div>
+<div id="the-tour-image." class="section level1">
+<h1>The <code>tour</code> Image.</h1>
+<div id="pca" class="section level2">
+<h2>PCA</h2>
+<p>Break down each color scheme into three dataframe and perform PCA.</p>
+<pre class="r"><code>rtour = tour[, ,1]
+gtour = tour[, ,2]
+btour = tour[, ,3]</code></pre>
+<pre class="r"><code>prtour = prcomp(rtour, center = FALSE)
+pgtour = prcomp(gtour, center = FALSE)
+pbtour = prcomp(btour, center = FALSE)
+
+tour.pca = list(prtour, pgtour, pbtour)</code></pre>
+</div>
+<div id="scree-plot-and-cumulative-variation-plot" class="section level2">
+<h2>Scree Plot and Cumulative Variation Plot</h2>
+<p>Take a look at the Scree plot of the PCA.</p>
+<pre class="r"><code>library(dplyr)
+# Create a dataframe for easier plotting
+df = data.frame(scheme = rep(c(&quot;R&quot;, &quot;G&quot;, &quot;B&quot;),each =458), 
+                index = rep(1:458,  3),
+                var = c(prtour$sdev^2,
+                        pgtour$sdev^2, 
+                        pbtour$sdev^2))
+
+df %&lt;&gt;% group_by(scheme) %&gt;%
+  mutate(propvar =100*var/sum(var)) %&gt;%
+  mutate(cumsum = cumsum(propvar)) %&gt;%
+  ungroup()
+
+#plot
+library(ggplot2)
+#relevel to make it look nicer
+df$scheme = factor(df$scheme,levels(df$scheme)[c(3,2,1)])
+
+df %&gt;% ggplot(aes( x = index, y = propvar, fill = scheme)) + 
+    geom_bar(stat=&quot;identity&quot;) + 
+    labs(title=&quot;Screeplot of Principal Component&quot;, x =&quot;Principal Component&quot;, 
+         y=&quot;% of Variance&quot;) + geom_line()  + 
+    scale_x_continuous(limits = c(0,30)) +
+    facet_wrap(~scheme)</code></pre>
+<div class="figure"><span id="fig:screeplot"></span>
+<img src="/project/2018-04-13-image-compression-with-principal-component-analysis_files/figure-html/screeplot-1.png" alt="The **elbow** of the screeplot is between the fourth and the fifth PC" width="672" />
+<p class="caption">
+Figure 1: The <strong>elbow</strong> of the screeplot is between the fourth and the fifth PC
+</p>
+</div>
+<pre class="r"><code>df %&gt;% ggplot(aes( x = index, y = cumsum, fill = scheme)) + 
+    geom_bar(stat=&quot;identity&quot;) + 
+    labs(title=&quot;Cumulative Proportion of Variance Explained Principal Component&quot;, x=&quot;Principal Component&quot;, 
+         y=&quot;Cumulative % of Variance&quot;) + geom_line() + 
+    scale_x_continuous(limits = c(0,30)) +
+    facet_wrap(~scheme)</code></pre>
+<div class="figure"><span id="fig:cumprop"></span>
+<img src="/project/2018-04-13-image-compression-with-principal-component-analysis_files/figure-html/cumprop-1.png" alt="Thirty PCs appear to be good enough to explain most of the variations" width="672" />
+<p class="caption">
+Figure 2: Thirty PCs appear to be good enough to explain most of the variations
+</p>
+</div>
+<p>It seems like the first 30 PCs have enough proportion of variance covered because the proportion of variance explained is close to 100%.</p>
+</div>
+<div id="image-reconstruction" class="section level2">
+<h2>Image Reconstruction</h2>
+<p>Let’s reconstruct the first image. I choose to look at the images constructed from 2, 30, 200, and 300 Prinicipal Components.</p>
+<pre class="r"><code># This is the number of desired PCs
+pcnum = c(2,30,200, 300)
+
+for(i in pcnum){
+    pca.img &lt;- sapply(tour.pca, function(j) {
+      compressed.img &lt;- j$x[,1:i] %*% t(j$rotation[,1:i])
+    }, simplify = &#39;array&#39;)
+  writeJPEG(pca.img, paste(path,&quot;/tour/tour_compressed_&quot;, round(i,0), &#39;_components.jpg&#39;, sep = &#39;&#39;))
+}</code></pre>
+<p><img src="/img/imagecompression/tour/tour_compressed_2_components.jpg" width="50%" /><img src="/img/imagecompression/tour/tour_compressed_30_components.jpg" width="50%" /><img src="/img/imagecompression/tour/tour_compressed_200_components.jpg" width="50%" /></p>
+<div class="figure"><span id="fig:unnamed-chunk-2"></span>
+<img src="/img/imagecompression/tour/tour_compressed_300_components.jpg" alt="Compress images using 2, 30, 200 and 300 PCs respectively." width="50%" />
+<p class="caption">
+Figure 3: Compress images using 2, 30, 200 and 300 PCs respectively.
+</p>
+</div>
+<p>It appears that using 200 PCs is enough to compress the image while maintaining a good quality.</p>
+</div>
+<div id="image-size-compression" class="section level2">
+<h2>Image Size Compression</h2>
+<p>But how about the sizes of these images?</p>
+<pre class="r"><code>original &lt;- file.info(paste(path,&quot;paris_tourist.jpg&quot;, sep =&quot;/&quot;))$size / 1000
+
+for(i in pcnum){
+  filename = paste(&quot;tour_compressed_&quot;,i,&#39;_components.jpg&#39;, sep = &#39;&#39;)
+  full.path = paste(path,&quot;tour&quot;,filename,sep = &quot;/&quot;)
+  size = file.info(full.path)$size/1000
+  cat(filename, &#39;size:&#39;,size,&quot;\n&quot;,
+      &quot;Reduction from the original image: &quot;,(original-size)/original*100,&quot;% \n\n&quot; )
+}</code></pre>
+<pre><code>## tour_compressed_2_components.jpg size: 30.258 
+##  Reduction from the original image:  53.07237 % 
+## 
+## tour_compressed_30_components.jpg size: 55.743 
+##  Reduction from the original image:  13.54726 % 
+## 
+## tour_compressed_200_components.jpg size: 43.244 
+##  Reduction from the original image:  32.93216 % 
+## 
+## tour_compressed_300_components.jpg size: 39.435 
+##  Reduction from the original image:  38.8396 %</code></pre>
+<p>Surprisingly, the compressed image that uses 30 PCs has the lowest reduction of image size.</p>
+</div>
+</div>
+<div id="the-no_tour-image" class="section level1">
+<h1>The <code>no_tour</code> Image</h1>
+<p>Now, let’s use a similar image (<code>no_tour</code>) and use the Principal Loadings obtained from the previous step to execute image compression.</p>
+<p>The <code>compress ()</code> function is meant for compressing a new image (i.e., image not used in the previous step to obtain Principal Loadings).</p>
+<pre class="r"><code>rno_tour = no_tour[, ,1]
+gno_tour = no_tour[, ,2]
+bno_tour = no_tour[, ,3]
+
+no_tour_rgb = list(rno_tour,gno_tour,bno_tour)
+
+compress &lt;- function(trained_rgb_pca, newrgb, pcnum, dims){
+   r_rotate = trained_rgb_pca[[1]]$rotation
+   g_rotate = trained_rgb_pca[[2]]$rotation
+   b_rotate = trained_rgb_pca[[3]]$rotation
+   
+   r = newrgb[[1]]
+   g = newrgb[[2]]
+   b = newrgb[[3]]
+   
+  pred_r = (r %*% r_rotate)[,1:pcnum] %*% t(r_rotate[,1:pcnum])
+  pred_g = (g %*% g_rotate)[,1:pcnum] %*% t(g_rotate[,1:pcnum])
+  pred_b = (b %*% b_rotate)[,1:pcnum] %*% t(b_rotate[,1:pcnum])
+  
+  pred.pca = list(pred_r, pred_g, pred_b)
+  pred.array = array(as.numeric(unlist(pred.pca)),dim = dims)
+  return(pred.array)
+}
+
+for(i in pcnum){
+    pca.img = compress(tour.pca, no_tour_rgb, pcnum = i, dims = c( 458, 715,3))
+    writeJPEG(pca.img, paste(path,&quot;/no_tour&quot;,&quot;/no_tour_compressed_&quot;, round(i,0), &#39;_components.jpg&#39;, sep = &#39;&#39;))
+}</code></pre>
+<p><img src="/img/imagecompression/no_tour/no_tour_compressed_2_components.jpg" width="50%" /><img src="/img/imagecompression/no_tour/no_tour_compressed_30_components.jpg" width="50%" /><img src="/img/imagecompression/no_tour/no_tour_compressed_200_components.jpg" width="50%" /></p>
+<div class="figure"><span id="fig:unnamed-chunk-6"></span>
+<img src="/img/imagecompression/no_tour/no_tour_compressed_300_components.jpg" alt="Compress simialr images to test the generalizability of PCs" width="50%" />
+<p class="caption">
+Figure 4: Compress simialr images to test the generalizability of PCs
+</p>
+</div>
+<p>One can observe that the last image’s quality is the best out of four (since it uses the most PCs) but it is not even close to a high quality image.</p>
+</div>
+<div id="the-new-image." class="section level1">
+<h1>The <code>new</code> Image.</h1>
+<p>We now know that the performance of PCA in image compression is highly useful to its original image but not for a similar image. It’s natural to ask whether it will be worst if a totally unrelated image (such as <code>new</code> image) was used instead. Let’s check it out.</p>
+<pre class="r"><code>rnew = new[, ,1]
+gnew = new[, ,2]
+bnew = new[, ,3]
+
+new_rgb = list(rnew,gnew,bnew)
+
+for (i in pcnum){
+    pca.img = compress(tour.pca, new_rgb, pcnum = i, dims = c(458,715, 3))
+    writeJPEG(pca.img, paste(path,&quot;/new&quot;,&quot;/new_compressed_&quot;, round(i,0), &#39;_components.jpg&#39;, sep = &#39;&#39;))
+}</code></pre>
+<p><img src="/img/imagecompression/new/new_compressed_2_components.jpg" width="50%" /><img src="/img/imagecompression/new/new_compressed_30_components.jpg" width="50%" /><img src="/img/imagecompression/new/new_compressed_200_components.jpg" width="50%" /></p>
+<div class="figure"><span id="fig:unnamed-chunk-9"></span>
+<img src="/img/imagecompression/new/new_compressed_300_components.jpg" alt="Compressing a non-related image using previously extracted PC loadings" width="50%" />
+<p class="caption">
+Figure 5: Compressing a non-related image using previously extracted PC loadings
+</p>
+</div>
+<p>While the image output does not look exactly like the original image, the main features of the image is clearly shown on it. This is pretty impressive because the machine learns the rules of extracting important information based on only one image <code>tour</code>. One can experiment increase the number of PCs to get a higher resolution image too.</p>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>Principal Component Analysis is a great tool for dimension reduction (thus, sinze reduction in this case), extracting important insights, and uncover underlying message of a dataset.</p>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/pca">PCA</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/machine-learning">machine-learning</a>
+  
+</div>
+
+
+
+
+    
+    
+    
+
+    
+      
+      
+      
+      
+
+      
+      
+      
+      
+    
+
+  </div>
+</article>
+
+
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
