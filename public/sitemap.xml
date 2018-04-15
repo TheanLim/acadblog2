@@ -14,6 +14,15 @@
     
     <url>
     
+      <loc>/project/term-deposit-subscription-prediction/</loc>
+      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/project/image-compression-with-principal-component-analysis/</loc>
       <lastmod>2018-04-13T00:00:00+00:00</lastmod>
     </url>
@@ -24,15 +33,6 @@
     <url>
     
       <loc>/post/hello-world-blogging-using-rmd/</loc>
-      <lastmod>2018-04-12T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/project/second-project-post-rmd/</loc>
       <lastmod>2018-04-12T00:00:00+00:00</lastmod>
     </url>
     
@@ -86,44 +86,8 @@
     
     <url>
     
-      <loc>/project/deep-learning/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/readings/deep-learning/</loc>
       <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/project/example-external-project/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/project/2018-04-12-first-project-post/</loc>
-      <lastmod>2016-04-27T00:00:00+00:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/post/getting-started/</loc>
-      <lastmod>2018-01-13T00:00:00-06:00</lastmod>
     </url>
     
   
@@ -169,6 +133,16 @@
     
     <url>
     
+      <loc>/tags/business/</loc>
+      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/categories/</loc>
       <priority>0</priority>
     </url>
@@ -178,8 +152,8 @@
     
     <url>
     
-      <loc>/tags/deep-learning/</loc>
-      <lastmod>2018-04-12T00:00:00+00:00</lastmod>
+      <loc>/tags/classification/</loc>
+      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -188,7 +162,7 @@
     
     <url>
     
-      <loc>/tags/demo/</loc>
+      <loc>/tags/deep-learning/</loc>
       <lastmod>2016-04-27T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
@@ -209,7 +183,7 @@
     <url>
     
       <loc>/tags/machine-learning/</loc>
-      <lastmod>2018-04-13T00:00:00+00:00</lastmod>
+      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -229,7 +203,7 @@
     <url>
     
       <loc>/project/</loc>
-      <lastmod>2018-04-13T00:00:00+00:00</lastmod>
+      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     

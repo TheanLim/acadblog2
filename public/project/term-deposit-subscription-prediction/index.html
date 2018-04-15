@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="IntroductionData Manipulation and Descriptive AnalysisMissing data, NAsImbalance ClassificationCorrelationDistributionsModel FittingTraining and Testing DataDecision Tree fittingCross-validation, Tree-pruning and Training ErrorsTesting Error and Prediction AccuracyInterpretationBusiness StrategyNextIntroductionThe dataset used in this project is obtained fromm the UCI Machine Learning Repository. This dataset is related to direct telemarketing campaigns of a Portuguese banking institution, collected from 2008 to 2013.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/project/term-deposit-subscription-prediction/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/project/term-deposit-subscription-prediction/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/project/term-deposit-subscription-prediction/">
+  <meta property="og:title" content="Term Deposit Subscription Prediction | Thean C. Lim">
+  <meta property="og:description" content="IntroductionData Manipulation and Descriptive AnalysisMissing data, NAsImbalance ClassificationCorrelationDistributionsModel FittingTraining and Testing DataDecision Tree fittingCross-validation, Tree-pruning and Training ErrorsTesting Error and Prediction AccuracyInterpretationBusiness StrategyNextIntroductionThe dataset used in this project is obtained fromm the UCI Machine Learning Repository. This dataset is related to direct telemarketing campaigns of a Portuguese banking institution, collected from 2008 to 2013.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-04-14T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-04-14T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>Term Deposit Subscription Prediction | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article article-project" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+
+    <div class="pub-title">
+      <h1 itemprop="name">Term Deposit Subscription Prediction</h1>
+      <span class="pub-authors" itemprop="author">&nbsp;</span>
+      <span class="pull-right">
+        
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Term%20Deposit%20Subscription%20Prediction&amp;url=%2fproject%2fterm-deposit-subscription-prediction%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fproject%2fterm-deposit-subscription-prediction%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fproject%2fterm-deposit-subscription-prediction%2f&amp;title=Term%20Deposit%20Subscription%20Prediction"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fproject%2fterm-deposit-subscription-prediction%2f&amp;title=Term%20Deposit%20Subscription%20Prediction"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Term%20Deposit%20Subscription%20Prediction&amp;body=%2fproject%2fterm-deposit-subscription-prediction%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+      </span>
+    </div>
+
+    
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#data-manipulation-and-descriptive-analysis">Data Manipulation and Descriptive Analysis</a><ul>
+<li><a href="#missing-data-nas">Missing data, NAs</a></li>
+<li><a href="#imbalance-classification">Imbalance Classification</a></li>
+<li><a href="#correlation">Correlation</a></li>
+<li><a href="#distributions">Distributions</a></li>
+</ul></li>
+<li><a href="#model-fitting">Model Fitting</a><ul>
+<li><a href="#training-and-testing-data">Training and Testing Data</a></li>
+<li><a href="#decision-tree-fitting">Decision Tree fitting</a></li>
+<li><a href="#cross-validation-tree-pruning-and-training-errors">Cross-validation, Tree-pruning and Training Errors</a></li>
+<li><a href="#testing-error-and-prediction-accuracy">Testing Error and Prediction Accuracy</a></li>
+<li><a href="#interpretation">Interpretation</a></li>
+</ul></li>
+<li><a href="#business-strategy">Business Strategy</a></li>
+<li><a href="#next">Next</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The dataset used in this project is obtained fromm the <a href="https://archive.ics.uci.edu/ml/datasets/bank+marketing">UCI Machine Learning Repository</a>. This dataset is related to direct telemarketing campaigns of a Portuguese banking institution, collected from 2008 to 2013. The aim is to assess if the product (bank term deposit) would be (or not) subscribed based on the predictors. There are 16 predictors (9 categorical and 7 numeric) and 1 response (Has the client subscribed a term deposit?). Some of the predictors are:</p>
+<ol style="list-style-type: decimal">
+<li>Month: last contact month of year</li>
+<li>Duration: last contact duration, in seconds</li>
+<li>Day: last contact day of the month</li>
+</ol>
+<p>These variables exist because it is normal to contact the prospective customer several times before they would subscribe the bank term deposit.</p>
+<p>First, data was loaded to study the number of observations.</p>
+<pre class="r"><code># Loading data
+library(readr)
+myfile = &quot;../../static/data/bank-full.csv&quot;
+full_dat &lt;- read_delim(myfile, &quot;;&quot;, escape_double = FALSE, trim_ws = TRUE)
+# Changing into Factors
+cols = c(2:5, 7:9, 11, 16,17)
+full_dat[,cols] = data.frame(apply(full_dat[,cols] ,2,as.factor))
+
+nrow(full_dat)</code></pre>
+<pre><code>## [1] 45211</code></pre>
+</div>
+<div id="data-manipulation-and-descriptive-analysis" class="section level1">
+<h1>Data Manipulation and Descriptive Analysis</h1>
+<p>Descriptive analyses were ran to look at the proportion of yes and no in the dataset in general, check the proportion of missing data and to examine the proportion of responses when a particular variable is in interest.</p>
+<div id="missing-data-nas" class="section level2">
+<h2>Missing data, NAs</h2>
+<pre class="r"><code># Explore the NAs
+#Make a copy of dataset for that
+dat_NA = full_dat
+# Substitute unknowns in the dataset with NA
+dat_NA[dat_NA == &quot;unknown&quot;] &lt;- NA</code></pre>
+<pre class="r"><code>library(VIM)
+aggr_plot &lt;- aggr(dat_NA, col = c(&#39;cornflowerblue&#39;,&#39;firebrick1&#39;), numbers = TRUE, sortVars = TRUE, labels = names(full_dat), cex.axis = .7, gap = 3, ylab = c(&quot;Proportion of missing data&quot;,&quot;Maps&quot;))</code></pre>
+<div class="figure"><span id="fig:NAplot"></span>
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/NAplot-1.png" alt="Distribution of NA in the dataset." width="672" />
+<p class="caption">
+Figure 1: Distribution of NA in the dataset.
+</p>
+</div>
+<pre><code>## 
+##  Variables sorted by number of missings: 
+##   Variable       Count
+##   poutcome 0.817478047
+##    contact 0.287983013
+##  education 0.041074075
+##        job 0.006370131
+##        age 0.000000000
+##    marital 0.000000000
+##    default 0.000000000
+##    balance 0.000000000
+##    housing 0.000000000
+##       loan 0.000000000
+##        day 0.000000000
+##      month 0.000000000
+##   duration 0.000000000
+##   campaign 0.000000000
+##      pdays 0.000000000
+##   previous 0.000000000
+##          y 0.000000000</code></pre>
+<p>About 80% of the predictor <code>poutcome</code>, 50% of predictor <code>contact</code>, 5% of predictor <code>education</code> and 1% of predictor <code>job</code> have missing data (see Figure <a href="#fig:NAplot">1</a>). There will be 0 rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including <code>poutcome</code>, <code>contact</code>, <code>education</code> and <code>job</code>. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.</p>
+<p>This leads to another possibility: <strong>Imputation</strong>. One of the easiest way is to use the KNN Imputation. This algorithm identifies <em>k</em> closest observations to the to-be-imputed observation and take the weighted average based on the distance. Yet, imputing ~ 80% of the data for <code>poutcome</code> variable is not sensible at all.</p>
+<p>Since all of the missing data exist at categorical data, the strategy used was to treat the “unknown” as a category itself (pg 332 <a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL II</a>).</p>
+</div>
+<div id="imbalance-classification" class="section level2">
+<h2>Imbalance Classification</h2>
+<pre class="r"><code>counts &lt;- table(full_dat$y)
+barplot(counts,col = c(&quot;darkblue&quot;,&quot;red&quot;),legend = rownames(counts), main = &quot;Term Deposit&quot;)</code></pre>
+<div class="figure">
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/resp_prop-1.png" alt="Proportion of responses: Yes or No" width="672" />
+<p class="caption">
+(#fig:resp_prop)Proportion of responses: Yes or No
+</p>
+</div>
+<p>Due to the highly imbalance of the proportion of responses (as shown in Figure @ref(fig:res_prop), and due to large sample size of 45211, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random.</p>
+<pre class="r"><code>N = 2130
+# Subset the data to &quot;Yes&quot; responses and &quot;No&quot; responses
+yes_dat &lt;- full_dat[full_dat$y == &quot;yes&quot;,]
+no_dat &lt;- full_dat[full_dat$y == &quot;no&quot;,]
+
+# sampling for the index that will be used to pick the observations
+set.seed(1001)
+yes_index = sample(1:nrow(yes_dat), N/2)
+no_index = sample(1:nrow(no_dat), N/2)
+
+# Extracting the data
+dat &lt;- rbind(yes_dat[yes_index,], no_dat[no_index,])</code></pre>
+<p>The previous process is very important to be done or a simply “prediction” of <strong>NO</strong> to subscription would yield 0.88 % of accuracy in this dataset. This undersampled data set is referred as “dataset” from now on.</p>
+</div>
+<div id="correlation" class="section level2">
+<h2>Correlation</h2>
+<p>The correlation between the numeric features were looked into too.</p>
+<pre class="r"><code>#Numeric data columns
+nume_col = c(1,6,10, 12:15)
+pearson = cor(dat[,nume_col])
+library(corrplot)
+corrplot(pearson, type = &quot;upper&quot;)</code></pre>
+<div class="figure"><span id="fig:corrplot"></span>
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/corrplot-1.png" alt="Correlation between numerical predictors." width="672" />
+<p class="caption">
+Figure 2: Correlation between numerical predictors.
+</p>
+</div>
+<p>Through visual inspection of Figure <a href="#fig:corrplot">2</a>, it was found that the Pearson’s correlation between predictors are low except the one for features <code>previous</code> and <code>pdays</code>. The Pearson’s correlation is 0.48. Why is that so?</p>
+<p>It was described at [Moro et al., 2011] that:</p>
+<ul>
+<li>pdays: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)</li>
+<li>previous: number of contacts performed before this campaign and for this client</li>
+</ul>
+<p>This explains the high correlation between the two variables.</p>
+</div>
+<div id="distributions" class="section level2">
+<h2>Distributions</h2>
+<p>The predictors <code>balance</code>, <code>duration</code>, and <code>pdays</code> have large standard deviations,as shown at the following.</p>
+<pre class="r"><code>apply(dat[,nume_col],2,sd)</code></pre>
+<pre><code>##         age     balance         day    duration    campaign       pdays    previous 
+##   12.005758 3300.296919    8.476752  349.509259    2.588204  102.240956    2.745466</code></pre>
+<p>The distributions of each features and response is shown in Figure <a href="#fig:dist">3</a>. It can be seen that the distributions of predictors <code>balance</code>, <code>duration</code>, <code>campaign</code>, <code>pdays</code>, and <code>previous</code> are highly skewed.</p>
+<div class="figure"><span id="fig:dist"></span>
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/dist-1.png" alt="Histograms and Kernel density esimates of Numerical predictors" width="672" />
+<p class="caption">
+Figure 3: Histograms and Kernel density esimates of Numerical predictors
+</p>
+</div>
+</div>
+</div>
+<div id="model-fitting" class="section level1">
+<h1>Model Fitting</h1>
+<div id="training-and-testing-data" class="section level2">
+<h2>Training and Testing Data</h2>
+<p>The dataset was then split half into training and testing dataset.</p>
+<pre class="r"><code># Splitting test and train data
+set.seed(1001)
+train = sample(1:nrow(dat), N/2)
+test = -train
+x.test = dat[test,-17]; y.test = dat[test,]$y</code></pre>
+</div>
+<div id="decision-tree-fitting" class="section level2">
+<h2>Decision Tree fitting</h2>
+<p>Decision Tree (DT) was used to fit the data.</p>
+<pre class="r"><code>library(tree)
+# Fitting tree
+treemod = tree(y ~., subset = train, data = dat)
+sum_tree = summary(treemod)
+err_tree = sum_tree$misclass[1]/sum_tree$misclass[2]</code></pre>
+<p>The error of misclassification was 0.1802817. However, this is the traning error rate and it could be biased. Cross-validation was used to choose the best number of terminal nodes and the decision was pruned.</p>
+</div>
+<div id="cross-validation-tree-pruning-and-training-errors" class="section level2">
+<h2>Cross-validation, Tree-pruning and Training Errors</h2>
+<pre class="r"><code>set.seed(1001)
+cvtree = cv.tree(treemod ,FUN = prune.misclass )
+choose_nodes = cbind(cvtree$size, cvtree$dev)
+colnames(choose_nodes) = c(&quot;Number of terminal nodes&quot;, &quot;CV error&quot;)
+choose_nodes</code></pre>
+<pre><code>##      Number of terminal nodes CV error
+## [1,]                       12      248
+## [2,]                       10      248
+## [3,]                        8      244
+## [4,]                        7      247
+## [5,]                        4      273
+## [6,]                        2      312
+## [7,]                        1      818</code></pre>
+<pre class="r"><code>plot(cvtree$size ,cvtree$dev ,type = &quot;b&quot;, xlab = &quot;Number of terminal nodes&quot;, ylab = &quot;cross-validation error&quot;, col = &quot;purple4&quot;)</code></pre>
+<div class="figure"><span id="fig:nodes"></span>
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/nodes-1.png" alt="The cross-validation error rate across the number of terminal nodes" width="672" />
+<p class="caption">
+Figure 4: The cross-validation error rate across the number of terminal nodes
+</p>
+</div>
+<p>As shown in Figure <a href="#fig:nodes">4</a>, the best number of terminal nodes was 8 because it gives the lowest CV errors. The tree was pruned accordingly.</p>
+<pre class="r"><code>prunetree = prune.misclass(treemod ,best = 8)
+sum_prune= summary(prunetree)
+err_prune = sum_prune$misclass[1]/sum_prune$misclass[2]
+cbind(err_tree, err_prune)</code></pre>
+<pre><code>##       err_tree err_prune
+## [1,] 0.1802817 0.1849765</code></pre>
+<p>The misclassification error of pruned tree is higher in this case. However, note that this is just a training error.</p>
+</div>
+<div id="testing-error-and-prediction-accuracy" class="section level2">
+<h2>Testing Error and Prediction Accuracy</h2>
+<p>The testing error was inspected too.</p>
+<pre class="r"><code># Test Performance
+tree.pred = predict (prunetree , x.test ,type=&quot;class&quot;)
+table(tree.pred, y.test)</code></pre>
+<pre><code>##          y.test
+## tree.pred  no yes
+##       no  414  85
+##       yes 130 436</code></pre>
+<p>The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was 0.202. In other words, the prediction accuracy was <code>r 1- round(mean(tree.pred != y.test),3)</code>.</p>
+</div>
+<div id="interpretation" class="section level2">
+<h2>Interpretation</h2>
+<p>The visualization of decision tree is shown below.</p>
+<pre class="r"><code>plot(prunetree)
+text(prunetree ,pretty = 0)</code></pre>
+<div class="figure"><span id="fig:treefig"></span>
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/treefig-1.png" alt="Visualization of decision tree." width="672" />
+<p class="caption">
+Figure 5: Visualization of decision tree.
+</p>
+</div>
+<p>The key variables shown in Figure <a href="#fig:treefig">5</a> are:</p>
+<ul>
+<li>duration: last contact duration, in seconds</li>
+<li>contact: contact communication type (“unknown”, “telephone”, “cellular”)</li>
+<li>poutcome: outcome of the previous marketing campaign (“unknown”,“other”,“failure”,“success”)</li>
+<li>month: last contact month of year</li>
+<li>housing: has housing loan? (yes or no)</li>
+</ul>
+<p>The decision tree predicts that when the representative contacted the client for more or equal to 692 (174.5+517.5) seconds on last phone call, the client would subscribe for the term deposit. If the last contact duration is less than 174.5 seconds, the client would reject the offer.</p>
+<p>If the previous contact duration is between 174.5 and 517.5 seconds, and the contact communication type is unknown, the model predicts a <strong>NO</strong> to the subscription. One can interpret this as the reluctants of the bank representatives to record the communication type since they were rejected.</p>
+<p>If the communication type was known, and the previous marketing outcomes were “failure” or “unknown”, it is predicted that the client would subscribe to the term deposit. This make sense because it is less likely for a person to subscribe twice.</p>
+<p>Interestingly, if the the previous marketing outcomes were “success” or “other”, it’s likely that the client would subscribe if the phone call was made at the end of last quarter (i.e., March, June, September and December).</p>
+<p>The model further predicts that the marketing campaign would success if the client had no housing loan. Yet, it is possible to persuade the client to subscribe to the term deposit if the last contact duration was longer than 370 seconds.</p>
+</div>
+</div>
+<div id="business-strategy" class="section level1">
+<h1>Business Strategy</h1>
+<p>The decision tree provides three general business strategies:</p>
+<ul>
+<li>Attract the attention of the customer, engage them and keep them hold of the phone as long as possible. Make sure that the duration is at least 174.5 seconds.</li>
+<li>Contact the prospective “subscribers” at the end of year quarters.</li>
+<li>Aim for customers that have no housing loans.</li>
+</ul>
+</div>
+<div id="next" class="section level1">
+<h1>Next</h1>
+<p>Bagging and Random Forest were used to fit the data as well. Would the performance increase substantially? However, these two models would not provide the same interpretability of the data anymore.</p>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/machine-learning">machine-learning</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/classification">classification</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/business">business</a>
+  
+</div>
+
+
+
+
+    
+    
+    
+
+    
+      
+      
+      
+      
+
+      
+      
+      
+      
+    
+
+  </div>
+</article>
+
+
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

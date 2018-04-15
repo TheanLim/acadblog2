@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Fri, 13 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 14 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Term Deposit Subscription Prediction</title>
+      <link>/project/term-deposit-subscription-prediction/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/project/term-deposit-subscription-prediction/</guid>
+      <description>IntroductionData Manipulation and Descriptive AnalysisMissing data, NAsImbalance ClassificationCorrelationDistributionsModel FittingTraining and Testing DataDecision Tree fittingCross-validation, Tree-pruning and Training ErrorsTesting Error and Prediction AccuracyInterpretationBusiness StrategyNextIntroductionThe dataset used in this project is obtained fromm the UCI Machine Learning Repository. This dataset is related to direct telemarketing campaigns of a Portuguese banking institution, collected from 2008 to 2013.</description>
+    </item>
     
     <item>
       <title>Image Compression with Principal Component Analysis</title>
@@ -21,48 +30,6 @@
       <description>Loading pictures and standardizing the sizesThe tour Image.PCAScree Plot and Cumulative Variation PlotImage ReconstructionImage Size CompressionThe no_tour ImageThe new Image.SummaryThe following images are taken from DesignCrowd.
 This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
 This is another new image that is different from the above two.</description>
-    </item>
-    
-    <item>
-      <title>Second project post- rmd</title>
-      <link>/project/second-project-post-rmd/</link>
-      <pubDate>Thu, 12 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/project/second-project-post-rmd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Deep Learning</title>
-      <link>/project/deep-learning/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/project/deep-learning/</guid>
-      <description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus.</description>
-    </item>
-    
-    <item>
-      <title>External Project</title>
-      <link>/project/example-external-project/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/project/example-external-project/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>First Project Post using md</title>
-      <link>/project/2018-04-12-first-project-post/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/project/2018-04-12-first-project-post/</guid>
-      <description>Just a bunch of words, qwertyuiodjlhuslhulc luhidh
-can I add R code in md file? Yes, but it is not executable
-plot(1:10, 41:50)  Does Math expression work?
-$$\beta = \alpha$$
-How about some alert?
-Do not get serious with arrange()
-</description>
     </item>
     
   </channel>

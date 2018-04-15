@@ -211,6 +211,264 @@ Figure 2: Fitted plane on the data cloud.
     </item>
     
     <item>
+      <title>Term Deposit Subscription Prediction</title>
+      <link>/project/term-deposit-subscription-prediction/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/project/term-deposit-subscription-prediction/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#data-manipulation-and-descriptive-analysis&#34;&gt;Data Manipulation and Descriptive Analysis&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#missing-data-nas&#34;&gt;Missing data, NAs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#imbalance-classification&#34;&gt;Imbalance Classification&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#correlation&#34;&gt;Correlation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#distributions&#34;&gt;Distributions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#model-fitting&#34;&gt;Model Fitting&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#training-and-testing-data&#34;&gt;Training and Testing Data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#decision-tree-fitting&#34;&gt;Decision Tree fitting&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cross-validation-tree-pruning-and-training-errors&#34;&gt;Cross-validation, Tree-pruning and Training Errors&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#testing-error-and-prediction-accuracy&#34;&gt;Testing Error and Prediction Accuracy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#interpretation&#34;&gt;Interpretation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#business-strategy&#34;&gt;Business Strategy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#next&#34;&gt;Next&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The dataset used in this project is obtained fromm the &lt;a href=&#34;https://archive.ics.uci.edu/ml/datasets/bank+marketing&#34;&gt;UCI Machine Learning Repository&lt;/a&gt;. This dataset is related to direct telemarketing campaigns of a Portuguese banking institution, collected from 2008 to 2013. The aim is to assess if the product (bank term deposit) would be (or not) subscribed based on the predictors. There are 16 predictors (9 categorical and 7 numeric) and 1 response (Has the client subscribed a term deposit?). Some of the predictors are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Month: last contact month of year&lt;/li&gt;
+&lt;li&gt;Duration: last contact duration, in seconds&lt;/li&gt;
+&lt;li&gt;Day: last contact day of the month&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;These variables exist because it is normal to contact the prospective customer several times before they would subscribe the bank term deposit.&lt;/p&gt;
+&lt;p&gt;First, data was loaded to study the number of observations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Loading data
+library(readr)
+myfile = &amp;quot;../../static/data/bank-full.csv&amp;quot;
+full_dat &amp;lt;- read_delim(myfile, &amp;quot;;&amp;quot;, escape_double = FALSE, trim_ws = TRUE)
+# Changing into Factors
+cols = c(2:5, 7:9, 11, 16,17)
+full_dat[,cols] = data.frame(apply(full_dat[,cols] ,2,as.factor))
+
+nrow(full_dat)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 45211&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-manipulation-and-descriptive-analysis&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Data Manipulation and Descriptive Analysis&lt;/h1&gt;
+&lt;p&gt;Descriptive analyses were ran to look at the proportion of yes and no in the dataset in general, check the proportion of missing data and to examine the proportion of responses when a particular variable is in interest.&lt;/p&gt;
+&lt;div id=&#34;missing-data-nas&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Missing data, NAs&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Explore the NAs
+#Make a copy of dataset for that
+dat_NA = full_dat
+# Substitute unknowns in the dataset with NA
+dat_NA[dat_NA == &amp;quot;unknown&amp;quot;] &amp;lt;- NA&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(VIM)
+aggr_plot &amp;lt;- aggr(dat_NA, col = c(&amp;#39;cornflowerblue&amp;#39;,&amp;#39;firebrick1&amp;#39;), numbers = TRUE, sortVars = TRUE, labels = names(full_dat), cex.axis = .7, gap = 3, ylab = c(&amp;quot;Proportion of missing data&amp;quot;,&amp;quot;Maps&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:NAplot&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/NAplot-1.png&#34; alt=&#34;Distribution of NA in the dataset.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: Distribution of NA in the dataset.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## 
+##  Variables sorted by number of missings: 
+##   Variable       Count
+##   poutcome 0.817478047
+##    contact 0.287983013
+##  education 0.041074075
+##        job 0.006370131
+##        age 0.000000000
+##    marital 0.000000000
+##    default 0.000000000
+##    balance 0.000000000
+##    housing 0.000000000
+##       loan 0.000000000
+##        day 0.000000000
+##      month 0.000000000
+##   duration 0.000000000
+##   campaign 0.000000000
+##      pdays 0.000000000
+##   previous 0.000000000
+##          y 0.000000000&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;About 80% of the predictor &lt;code&gt;poutcome&lt;/code&gt;, 50% of predictor &lt;code&gt;contact&lt;/code&gt;, 5% of predictor &lt;code&gt;education&lt;/code&gt; and 1% of predictor &lt;code&gt;job&lt;/code&gt; have missing data (see Figure &lt;a href=&#34;#fig:NAplot&#34;&gt;1&lt;/a&gt;). There will be 0 rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including &lt;code&gt;poutcome&lt;/code&gt;, &lt;code&gt;contact&lt;/code&gt;, &lt;code&gt;education&lt;/code&gt; and &lt;code&gt;job&lt;/code&gt;. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.&lt;/p&gt;
+&lt;p&gt;This leads to another possibility: &lt;strong&gt;Imputation&lt;/strong&gt;. One of the easiest way is to use the KNN Imputation. This algorithm identifies &lt;em&gt;k&lt;/em&gt; closest observations to the to-be-imputed observation and take the weighted average based on the distance. Yet, imputing ~ 80% of the data for &lt;code&gt;poutcome&lt;/code&gt; variable is not sensible at all.&lt;/p&gt;
+&lt;p&gt;Since all of the missing data exist at categorical data, the strategy used was to treat the “unknown” as a category itself (pg 332 &lt;a href=&#34;https://web.stanford.edu/~hastie/ElemStatLearn/&#34;&gt;ESL II&lt;/a&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;imbalance-classification&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Imbalance Classification&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;counts &amp;lt;- table(full_dat$y)
+barplot(counts,col = c(&amp;quot;darkblue&amp;quot;,&amp;quot;red&amp;quot;),legend = rownames(counts), main = &amp;quot;Term Deposit&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/resp_prop-1.png&#34; alt=&#34;Proportion of responses: Yes or No&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+(#fig:resp_prop)Proportion of responses: Yes or No
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Due to the highly imbalance of the proportion of responses (as shown in Figure @ref(fig:res_prop), and due to large sample size of 45211, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;N = 2130
+# Subset the data to &amp;quot;Yes&amp;quot; responses and &amp;quot;No&amp;quot; responses
+yes_dat &amp;lt;- full_dat[full_dat$y == &amp;quot;yes&amp;quot;,]
+no_dat &amp;lt;- full_dat[full_dat$y == &amp;quot;no&amp;quot;,]
+
+# sampling for the index that will be used to pick the observations
+set.seed(1001)
+yes_index = sample(1:nrow(yes_dat), N/2)
+no_index = sample(1:nrow(no_dat), N/2)
+
+# Extracting the data
+dat &amp;lt;- rbind(yes_dat[yes_index,], no_dat[no_index,])&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The previous process is very important to be done or a simply “prediction” of &lt;strong&gt;NO&lt;/strong&gt; to subscription would yield 0.88 % of accuracy in this dataset. This undersampled data set is referred as “dataset” from now on.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;correlation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Correlation&lt;/h2&gt;
+&lt;p&gt;The correlation between the numeric features were looked into too.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#Numeric data columns
+nume_col = c(1,6,10, 12:15)
+pearson = cor(dat[,nume_col])
+library(corrplot)
+corrplot(pearson, type = &amp;quot;upper&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:corrplot&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/corrplot-1.png&#34; alt=&#34;Correlation between numerical predictors.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 2: Correlation between numerical predictors.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Through visual inspection of Figure &lt;a href=&#34;#fig:corrplot&#34;&gt;2&lt;/a&gt;, it was found that the Pearson’s correlation between predictors are low except the one for features &lt;code&gt;previous&lt;/code&gt; and &lt;code&gt;pdays&lt;/code&gt;. The Pearson’s correlation is 0.48. Why is that so?&lt;/p&gt;
+&lt;p&gt;It was described at [Moro et al., 2011] that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;pdays: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)&lt;/li&gt;
+&lt;li&gt;previous: number of contacts performed before this campaign and for this client&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This explains the high correlation between the two variables.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;distributions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Distributions&lt;/h2&gt;
+&lt;p&gt;The predictors &lt;code&gt;balance&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt;, and &lt;code&gt;pdays&lt;/code&gt; have large standard deviations,as shown at the following.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;apply(dat[,nume_col],2,sd)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##         age     balance         day    duration    campaign       pdays    previous 
+##   12.005758 3300.296919    8.476752  349.509259    2.588204  102.240956    2.745466&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The distributions of each features and response is shown in Figure &lt;a href=&#34;#fig:dist&#34;&gt;3&lt;/a&gt;. It can be seen that the distributions of predictors &lt;code&gt;balance&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt;, &lt;code&gt;campaign&lt;/code&gt;, &lt;code&gt;pdays&lt;/code&gt;, and &lt;code&gt;previous&lt;/code&gt; are highly skewed.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:dist&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/dist-1.png&#34; alt=&#34;Histograms and Kernel density esimates of Numerical predictors&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 3: Histograms and Kernel density esimates of Numerical predictors
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;model-fitting&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Model Fitting&lt;/h1&gt;
+&lt;div id=&#34;training-and-testing-data&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Training and Testing Data&lt;/h2&gt;
+&lt;p&gt;The dataset was then split half into training and testing dataset.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Splitting test and train data
+set.seed(1001)
+train = sample(1:nrow(dat), N/2)
+test = -train
+x.test = dat[test,-17]; y.test = dat[test,]$y&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;decision-tree-fitting&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Decision Tree fitting&lt;/h2&gt;
+&lt;p&gt;Decision Tree (DT) was used to fit the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tree)
+# Fitting tree
+treemod = tree(y ~., subset = train, data = dat)
+sum_tree = summary(treemod)
+err_tree = sum_tree$misclass[1]/sum_tree$misclass[2]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The error of misclassification was 0.1802817. However, this is the traning error rate and it could be biased. Cross-validation was used to choose the best number of terminal nodes and the decision was pruned.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cross-validation-tree-pruning-and-training-errors&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Cross-validation, Tree-pruning and Training Errors&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1001)
+cvtree = cv.tree(treemod ,FUN = prune.misclass )
+choose_nodes = cbind(cvtree$size, cvtree$dev)
+colnames(choose_nodes) = c(&amp;quot;Number of terminal nodes&amp;quot;, &amp;quot;CV error&amp;quot;)
+choose_nodes&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      Number of terminal nodes CV error
+## [1,]                       12      248
+## [2,]                       10      248
+## [3,]                        8      244
+## [4,]                        7      247
+## [5,]                        4      273
+## [6,]                        2      312
+## [7,]                        1      818&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(cvtree$size ,cvtree$dev ,type = &amp;quot;b&amp;quot;, xlab = &amp;quot;Number of terminal nodes&amp;quot;, ylab = &amp;quot;cross-validation error&amp;quot;, col = &amp;quot;purple4&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:nodes&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/nodes-1.png&#34; alt=&#34;The cross-validation error rate across the number of terminal nodes&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4: The cross-validation error rate across the number of terminal nodes
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;As shown in Figure &lt;a href=&#34;#fig:nodes&#34;&gt;4&lt;/a&gt;, the best number of terminal nodes was 8 because it gives the lowest CV errors. The tree was pruned accordingly.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prunetree = prune.misclass(treemod ,best = 8)
+sum_prune= summary(prunetree)
+err_prune = sum_prune$misclass[1]/sum_prune$misclass[2]
+cbind(err_tree, err_prune)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##       err_tree err_prune
+## [1,] 0.1802817 0.1849765&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The misclassification error of pruned tree is higher in this case. However, note that this is just a training error.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;testing-error-and-prediction-accuracy&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Testing Error and Prediction Accuracy&lt;/h2&gt;
+&lt;p&gt;The testing error was inspected too.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Test Performance
+tree.pred = predict (prunetree , x.test ,type=&amp;quot;class&amp;quot;)
+table(tree.pred, y.test)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##          y.test
+## tree.pred  no yes
+##       no  414  85
+##       yes 130 436&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was 0.202. In other words, the prediction accuracy was &lt;code&gt;r 1- round(mean(tree.pred != y.test),3)&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interpretation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Interpretation&lt;/h2&gt;
+&lt;p&gt;The visualization of decision tree is shown below.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(prunetree)
+text(prunetree ,pretty = 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:treefig&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/treefig-1.png&#34; alt=&#34;Visualization of decision tree.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 5: Visualization of decision tree.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The key variables shown in Figure &lt;a href=&#34;#fig:treefig&#34;&gt;5&lt;/a&gt; are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;duration: last contact duration, in seconds&lt;/li&gt;
+&lt;li&gt;contact: contact communication type (“unknown”, “telephone”, “cellular”)&lt;/li&gt;
+&lt;li&gt;poutcome: outcome of the previous marketing campaign (“unknown”,“other”,“failure”,“success”)&lt;/li&gt;
+&lt;li&gt;month: last contact month of year&lt;/li&gt;
+&lt;li&gt;housing: has housing loan? (yes or no)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The decision tree predicts that when the representative contacted the client for more or equal to 692 (174.5+517.5) seconds on last phone call, the client would subscribe for the term deposit. If the last contact duration is less than 174.5 seconds, the client would reject the offer.&lt;/p&gt;
+&lt;p&gt;If the previous contact duration is between 174.5 and 517.5 seconds, and the contact communication type is unknown, the model predicts a &lt;strong&gt;NO&lt;/strong&gt; to the subscription. One can interpret this as the reluctants of the bank representatives to record the communication type since they were rejected.&lt;/p&gt;
+&lt;p&gt;If the communication type was known, and the previous marketing outcomes were “failure” or “unknown”, it is predicted that the client would subscribe to the term deposit. This make sense because it is less likely for a person to subscribe twice.&lt;/p&gt;
+&lt;p&gt;Interestingly, if the the previous marketing outcomes were “success” or “other”, it’s likely that the client would subscribe if the phone call was made at the end of last quarter (i.e., March, June, September and December).&lt;/p&gt;
+&lt;p&gt;The model further predicts that the marketing campaign would success if the client had no housing loan. Yet, it is possible to persuade the client to subscribe to the term deposit if the last contact duration was longer than 370 seconds.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;business-strategy&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Business Strategy&lt;/h1&gt;
+&lt;p&gt;The decision tree provides three general business strategies:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Attract the attention of the customer, engage them and keep them hold of the phone as long as possible. Make sure that the duration is at least 174.5 seconds.&lt;/li&gt;
+&lt;li&gt;Contact the prospective “subscribers” at the end of year quarters.&lt;/li&gt;
+&lt;li&gt;Aim for customers that have no housing loans.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;next&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Next&lt;/h1&gt;
+&lt;p&gt;Bagging and Random Forest were used to fit the data as well. Would the performance increase substantially? However, these two models would not provide the same interpretability of the data anymore.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Image Compression with Principal Component Analysis</title>
       <link>/project/image-compression-with-principal-component-analysis/</link>
       <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>
@@ -504,50 +762,12 @@ install_hugo()&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
-      <title>Second project post- rmd</title>
-      <link>/project/second-project-post-rmd/</link>
-      <pubDate>Thu, 12 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/project/second-project-post-rmd/</guid>
-      <description>&lt;p&gt;can I add R code in md file? Yes&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(1:10, 41:50)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/project/2018-04-12-second-project-post-rmd_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;Does Math expression work?&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\beta = \alpha\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;How about some alert?&lt;/p&gt;
-&lt;div class=&#34;alert alert-warning&#34;&gt;
-  &lt;p&gt;Do &lt;em&gt;not&lt;/em&gt; get serious with &lt;code&gt;arrange()&lt;/code&gt;&lt;/p&gt;
-
-&lt;/div&gt;
-
-</description>
-    </item>
-    
-    <item>
       <title>Example Talk</title>
       <link>/talk/example-talk/</link>
       <pubDate>Sun, 01 Jan 2017 00:00:00 -0600</pubDate>
       
       <guid>/talk/example-talk/</guid>
       <description>&lt;p&gt;Embed your slides or video here using &lt;a href=&#34;https://sourcethemes.com/academic/post/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;. Further details can easily be added using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Deep Learning</title>
-      <link>/project/deep-learning/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/project/deep-learning/</guid>
-      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
-
-&lt;p&gt;Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p&gt;
-
-&lt;p&gt;Cras aliquam rhoncus ipsum, in hendrerit nunc mattis vitae. Duis vitae efficitur metus, ac tempus leo. Cras nec fringilla lacus. Quisque sit amet risus at ipsum pharetra commodo. Sed aliquam mauris at consequat eleifend. Praesent porta, augue sed viverra bibendum, neque ante euismod ante, in vehicula justo lorem ac eros. Suspendisse augue libero, venenatis eget tincidunt ut, malesuada at lorem. Donec vitae bibendum arcu. Aenean maximus nulla non pretium iaculis. Quisque imperdiet, nulla in pulvinar aliquet, velit quam ultrices quam, sit amet fringilla leo sem vel nunc. Mauris in lacinia lacus.&lt;/p&gt;
-
-&lt;p&gt;Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p&gt;
-
-&lt;p&gt;Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p&gt;
 </description>
     </item>
     
@@ -566,230 +786,6 @@ install_hugo()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p&gt;
 
 &lt;p&gt;Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>External Project</title>
-      <link>/project/example-external-project/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/project/example-external-project/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>First Project Post using md</title>
-      <link>/project/2018-04-12-first-project-post/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/project/2018-04-12-first-project-post/</guid>
-      <description>&lt;p&gt;Just a bunch of words, qwertyuiodjlhuslhulc luhidh&lt;/p&gt;
-
-&lt;p&gt;can I add R code in md file? Yes, but it is not executable&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(1:10, 41:50)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Does Math expression work?&lt;/p&gt;
-
-&lt;p&gt;$$\beta = \alpha$$&lt;/p&gt;
-
-&lt;p&gt;How about some alert?&lt;/p&gt;
-
-&lt;div class=&#34;alert alert-warning&#34;&gt;
-  &lt;p&gt;Do &lt;em&gt;not&lt;/em&gt; get serious with &lt;code&gt;arrange()&lt;/code&gt;&lt;/p&gt;
-
-&lt;/div&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Academic: the website designer for Hugo</title>
-      <link>/post/getting-started/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 -0500</pubDate>
-      
-      <guid>/post/getting-started/</guid>
-      <description>
-
-&lt;p&gt;&lt;strong&gt;Academic&lt;/strong&gt; is a framework to help you create a beautiful website quickly. Perfect for personal sites, blogs, or business/project sites. &lt;a href=&#34;https://themes.gohugo.io/theme/academic/&#34; target=&#34;_blank&#34;&gt;Check out the latest demo&lt;/a&gt; of what you&amp;rsquo;ll get in less than 10 minutes. Then head on over to the &lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Quick Start guide&lt;/a&gt; or take a look at the &lt;a href=&#34;https://sourcethemes.com/academic/updates/&#34; target=&#34;_blank&#34;&gt;Release Notes&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/gcushen/hugo-academic/&#34; target=&#34;_blank&#34;&gt;&lt;img src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/academic.png&#34; alt=&#34;Screenshot&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Key features:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Easily manage various content including homepage, blog posts, publications, talks, and projects&lt;/li&gt;
-&lt;li&gt;Extensible via &lt;strong&gt;color themes&lt;/strong&gt; and &lt;strong&gt;widgets/plugins&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;Write in &lt;a href=&#34;https://sourcethemes.com/academic/docs/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;Markdown&lt;/a&gt; for easy formatting and code highlighting, with &lt;a href=&#34;https://en.wikibooks.org/wiki/LaTeX/Mathematics&#34; target=&#34;_blank&#34;&gt;LaTeX&lt;/a&gt; for mathematical expressions&lt;/li&gt;
-&lt;li&gt;Social/academic network linking, &lt;a href=&#34;https://analytics.google.com&#34; target=&#34;_blank&#34;&gt;Google Analytics&lt;/a&gt;, and &lt;a href=&#34;https://disqus.com&#34; target=&#34;_blank&#34;&gt;Disqus&lt;/a&gt; comments&lt;/li&gt;
-&lt;li&gt;Responsive and mobile friendly&lt;/li&gt;
-&lt;li&gt;Simple and refreshing one page design&lt;/li&gt;
-&lt;li&gt;Multilingual and easy to customize&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;color-themes&#34;&gt;Color Themes&lt;/h2&gt;
-
-&lt;p&gt;Academic is available in different color themes and font themes.&lt;/p&gt;
-
-
-
-&lt;div class=&#34;gallery&#34;&gt;
-  
-  
-  
-  
-    
-  
-  &lt;a data-fancybox=&#34;gallery-1&#34; data-caption=&#34;Default&#34; href=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-default.png&#34;&gt;
-    &lt;img alt=&#34;&#34; src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-default.png&#34;&gt;
-  &lt;/a&gt;
-  
-  
-  
-  
-    
-  
-  &lt;a data-fancybox=&#34;gallery-1&#34; data-caption=&#34;Ocean&#34; href=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-ocean.png&#34;&gt;
-    &lt;img alt=&#34;&#34; src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-ocean.png&#34;&gt;
-  &lt;/a&gt;
-  
-  
-  
-  
-    
-  
-  &lt;a data-fancybox=&#34;gallery-1&#34; data-caption=&#34;Dark&#34; href=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-dark.png&#34;&gt;
-    &lt;img alt=&#34;&#34; src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-dark.png&#34;&gt;
-  &lt;/a&gt;
-  
-  
-  
-  
-    
-  
-  &lt;a data-fancybox=&#34;gallery-1&#34; data-caption=&#34;Default&#34; href=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-forest.png&#34;&gt;
-    &lt;img alt=&#34;&#34; src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-forest.png&#34;&gt;
-  &lt;/a&gt;
-  
-  
-  
-  
-    
-  
-  &lt;a data-fancybox=&#34;gallery-1&#34; data-caption=&#34;Coffee theme with Playfair font&#34; href=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-coffee-playfair.png&#34;&gt;
-    &lt;img alt=&#34;&#34; src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-coffee-playfair.png&#34;&gt;
-  &lt;/a&gt;
-  
-  
-  
-  
-    
-  
-  &lt;a data-fancybox=&#34;gallery-1&#34; data-caption=&#34;1950s&#34; href=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-1950s.png&#34;&gt;
-    &lt;img alt=&#34;&#34; src=&#34;https://raw.githubusercontent.com/gcushen/hugo-academic/master/images/theme-1950s.png&#34;&gt;
-  &lt;/a&gt;
-  
-&lt;/div&gt;
-
-&lt;h2 id=&#34;install&#34;&gt;Install&lt;/h2&gt;
-
-&lt;p&gt;You can choose from one of the following four methods to install:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;one-click install using your web browser (recommended)&lt;/li&gt;
-&lt;li&gt;install on your computer using Git with the Command Prompt/Terminal app&lt;/li&gt;
-&lt;li&gt;install on your computer by downloading the ZIP files&lt;/li&gt;
-&lt;li&gt;install on your computer with RStudio&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;quick-install-using-your-web-browser&#34;&gt;Quick install using your web browser&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://app.netlify.com/start/deploy?repository=https://github.com/sourcethemes/academic-kickstart&#34; target=&#34;_blank&#34;&gt;Install Academic with Netlify&lt;/a&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Netlify will provide you with a customizable URL to access your new site&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;On GitHub, go to your newly created &lt;code&gt;academic-kickstart&lt;/code&gt; repository and edit &lt;code&gt;config.toml&lt;/code&gt; to personalize your site. Shortly after saving the file, your site will automatically update&lt;/li&gt;
-&lt;li&gt;Read the &lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Quick Start Guide&lt;/a&gt; to learn how to add Markdown content. For inspiration, refer to the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/tree/master/exampleSite&#34; target=&#34;_blank&#34;&gt;Markdown content&lt;/a&gt; which powers the &lt;a href=&#34;https://themes.gohugo.io/theme/academic/&#34; target=&#34;_blank&#34;&gt;Demo&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;install-with-git&#34;&gt;Install with Git&lt;/h3&gt;
-
-&lt;p&gt;Prerequisites:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://git-scm.com/downloads&#34; target=&#34;_blank&#34;&gt;Download and install Git&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://gohugo.io/getting-started/installing/#quick-install&#34; target=&#34;_blank&#34;&gt;Download and install Hugo&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/sourcethemes/academic-kickstart#fork-destination-box&#34; target=&#34;_blank&#34;&gt;Fork&lt;/a&gt; the &lt;em&gt;Academic Kickstart&lt;/em&gt; repository and clone your fork with Git:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;git clone https://github.com/sourcethemes/academic-kickstart.git My_Website
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;em&gt;Note that if you forked Academic Kickstart, the above command should be edited to clone your fork, i.e. replace &lt;code&gt;sourcethemes&lt;/code&gt; with your GitHub username.&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Initialize the theme:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd My_Website
-git submodule update --init --recursive
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;install-with-zip&#34;&gt;Install with ZIP&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/sourcethemes/academic-kickstart/archive/master.zip&#34; target=&#34;_blank&#34;&gt;Download&lt;/a&gt; and extract &lt;em&gt;Academic Kickstart&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/gcushen/hugo-academic/archive/master.zip&#34; target=&#34;_blank&#34;&gt;Download&lt;/a&gt; and extract the &lt;em&gt;Academic theme&lt;/em&gt; to the &lt;code&gt;themes/academic/&lt;/code&gt; folder from the above step&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;install-with-rstudio&#34;&gt;Install with RStudio&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/install/#install-with-rstudio&#34; target=&#34;_blank&#34;&gt;View the guide to installing Academic with RStudio&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;quick-start&#34;&gt;Quick start&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;If you installed on your computer, view your new website by running the following command:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;hugo server
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now visit &lt;a href=&#34;http://localhost:1313&#34; target=&#34;_blank&#34;&gt;localhost:1313&lt;/a&gt; and your new Academic powered website will appear. Otherwise, if using Netlify, they will provide you with your URL.&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Read the &lt;a href=&#34;https://sourcethemes.com/academic/docs/&#34; target=&#34;_blank&#34;&gt;Quick Start Guide&lt;/a&gt; to learn how to add Markdown content, customize your site, and deploy it. For inspiration, refer to the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/tree/master/exampleSite&#34; target=&#34;_blank&#34;&gt;Markdown content&lt;/a&gt; which powers the &lt;a href=&#34;https://themes.gohugo.io/theme/academic/&#34; target=&#34;_blank&#34;&gt;Demo&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Build your site by running the &lt;code&gt;hugo&lt;/code&gt; command. Then &lt;a href=&#34;https://georgecushen.com/create-your-website-with-hugo/&#34; target=&#34;_blank&#34;&gt;host it for free using Github Pages&lt;/a&gt; or Netlify (refer to the first installation method). Alternatively, copy the generated &lt;code&gt;public/&lt;/code&gt; directory (by FTP, Rsync, etc.) to your production web server (such as a university&amp;rsquo;s hosting service).&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;updating&#34;&gt;Updating&lt;/h2&gt;
-
-&lt;p&gt;Feel free to &lt;em&gt;star&lt;/em&gt; the project on &lt;a href=&#34;https://github.com/gcushen/hugo-academic/&#34; target=&#34;_blank&#34;&gt;Github&lt;/a&gt; to help keep track of updates and check out the &lt;a href=&#34;https://sourcethemes.com/academic/updates&#34; target=&#34;_blank&#34;&gt;release notes&lt;/a&gt; prior to updating your site.&lt;/p&gt;
-
-&lt;p&gt;Before updating the framework, it is recommended to make a backup of your entire website directory (or at least your &lt;code&gt;themes/academic&lt;/code&gt; directory) and record your current version number.&lt;/p&gt;
-
-&lt;p&gt;By default, Academic is installed as a Git submodule which can be updated by running the following command:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git submodule update --remote --merge
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://sourcethemes.com/academic/docs/update/&#34; target=&#34;_blank&#34;&gt;Check out the update guide&lt;/a&gt; for full instructions and alternative methods.&lt;/p&gt;
-
-&lt;h2 id=&#34;feedback-contributing&#34;&gt;Feedback &amp;amp; Contributing&lt;/h2&gt;
-
-&lt;p&gt;Please use the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/issues&#34; target=&#34;_blank&#34;&gt;issue tracker&lt;/a&gt; to let me know about any bugs or feature requests, or alternatively make a pull request.&lt;/p&gt;
-
-&lt;p&gt;For support, head over to the &lt;a href=&#34;http://discuss.gohugo.io&#34; target=&#34;_blank&#34;&gt;Hugo discussion forum&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;license&#34;&gt;License&lt;/h2&gt;
-
-&lt;p&gt;Copyright 2016-present &lt;a href=&#34;https://georgecushen.com&#34; target=&#34;_blank&#34;&gt;George Cushen&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Released under the &lt;a href=&#34;https://github.com/gcushen/hugo-academic/blob/master/LICENSE.md&#34; target=&#34;_blank&#34;&gt;MIT&lt;/a&gt; license.&lt;/p&gt;
 </description>
     </item>
     
