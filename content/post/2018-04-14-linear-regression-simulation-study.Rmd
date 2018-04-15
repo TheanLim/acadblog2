@@ -1,0 +1,192 @@
+---
+title: Linear Regression Simulation Study
+author: Thean Lim
+date: '2018-04-14'
+slug: linear-regression-simulation-study
+categories:
+  - R
+tags: 
+  - simulation
+  - linear-regression
+summary: Basic theories, simulation and visualizations of Multiple Linear Regression.
+header:
+  caption: ''
+  image: ''
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE, warning = FALSE)
+options(width = 100, dplyr.width = 100)
+library(methods)
+library(tidyr)
+library(ggplot2)
+theme_set(theme_light())
+```
+
+In general, linear regression is a linear approach of modelling the relationship of a numerical response (dependent) variable and one or more explanatory (independent) variables.  
+
+# Theories
+## Model Assumptions
+Let:
+
+- $y_i \in \mathbb{R}^n$ as the measured response for the $i$th subject.  
+- $x_i = (1, x_{i1}, ..., x_{ip}) \in \mathbb{R}^{p+1}$, $i = 1, 2, ..., n$, be the values of the explanatory values for the $i$th subject. The first entry is used for the intercept term. 
+
+Using *'* as transpose operator, the linear regression model assumes that:
+
+$$\begin{align*}
+Y_{i} &= x_i'\beta + \epsilon_i,\ i = 1, ..., n\\
+Y &= X \beta + \epsilon
+\end{align*}$$
+
+where:
+
+* $\beta = (\beta_0, \beta_1, ..., \beta_p)' \in \mathbb{R}^{p+1}$ is the **unknown** regression coefficient vector.
+* Design matrix $X \in \mathbb{R}^{n\times {p+1}}$ have $x_i'$ at the $i$th row.  
+* $Y = (Y_1, ..., Y_n)'$ is a random vector.
+* $\epsilon = (\epsilon_1, \epsilon_2, ..., \epsilon_n)' \stackrel{i.i.d.}{\sim} (0, \sigma^2)$, are i.i.d error terms from unknown random distribution with mean 0 and unknown fixed variance $\sigma^2$.
+    + $cov(\epsilon_i, \epsilon_i) = var (\epsilon_i) = \sigma^2$
+    + Due to i.i.d. assumption, $cov(\epsilon_i,\ \epsilon_j) = 0,\ i \neq j$
+    + Thus, the diagonal elements of $var(\epsilon)$ are equal to $\sigma^2$ and the off-diagonal elements are zero. 
+$$var(\epsilon) = 
+ \begin{bmatrix}
+  \sigma^2 & 0 & \cdots & 0 \\
+  0 & \sigma^2 & \cdots & 0 \\
+  \vdots  & \vdots  & \ddots & \vdots  \\
+  0 & 0 & \cdots & \sigma^2 
+ \end{bmatrix}$$
+    + We can write $var(\epsilon) = \sigma^2 I_n$, where $I_n$ is a $n \times n$ identity matrix, with ones on its diagonal and zero everywhere else.  
+
+\bigskip
+
+Note that no assumptions are imposed onto the design matrix X: the values can be chosen by experimenter or they could be randomly realised from any distributions.
+
+## Ordinary Least Square Estimator (OLS) of $\beta$
+
+Assuming that $(X'X)^{-1}$ exists, that is $(X'X)$ is invertible, the ordinary least square estimator of $\beta$ is define by minimizing the error terms, the $\epsilon = Y - XB$. Specifically, we are to minimizing the squared error terms.  
+
+$$\hat\beta = \underset{b\ \in\ \mathbb{R}^p}{\mathrm{argmin}}\ min(Y-Xb)'\ (Y- Xb)$$
+
+It can be shown that the solution is 
+$$\hat \beta = (X'X)^{-1} X'Y$$  given that the $(X'X)^{-1}$ exists.  
+  
+## Estimator of $\sigma^2$
+
+An unbiased estimator of $\sigma^2$ is 
+$$\begin{align*}
+\hat\sigma^2_{\epsilon} &= \frac{1}{n-p} \sum\limits_{i=1}^n \epsilon^2\\
+&=\frac{1}{n-p} (Y-X\hat\beta)'\ (Y- X\hat\beta)
+\end{align*}$$
+
+# Simulation
+
+Let's simulate the following linear model:
+$$y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \epsilon_i$$
+where $i = 1,2,...,100$, $\epsilon \sim N(0, \sigma^2)$, and $\sigma^2 = 4$  
+
+ 
+First, create the vector of Y. The parameters are set as $\beta =(10, 2, 0.5)'$; $n = 1000$; $\sigma = 2$
+```{r}
+set.seed(001)
+n = 1000; p = 2; sigma = 4;
+
+# Betas
+b0 = 10
+b1 = 2
+b2 = 0.5
+beta = c(b0, b1,b2)
+
+# Xs
+x1 = runif(n, 0, 10)
+x2 = rnorm(n, mean = 4, sd = 10)
+xmat = cbind(rep(1,n), x1, x2)
+
+# errors
+eps = rnorm(n,0,sigma)
+
+# calculate Y using linear model
+y = xmat %*% beta + eps
+
+#bind data
+df_lm = as.data.frame(cbind(y,xmat))
+colnames(df_lm) = c("y", "intercept", "x1", "x2")
+head(df_lm)
+```
+
+## Visualize data points
+
+Let's visualize the data.  
+```{r, fig.cap= "Data points generated from an underlying linear model."}
+library(plotly)
+pcolor = rep("purple", length(x1))
+plot_ly(df_lm,
+        x = ~x1,
+        y = ~x2,
+        z = ~y,
+        type = "scatter3d", 
+        mode = "markers",
+        marker = list(color = pcolor, 
+                      opacity = 0.4))
+```
+
+## Estimating $\beta$ and $\epsilon$
+
+The $\beta$s can be calculated through two ways: using formulas and using R function.  
+```{r}
+# Using formula
+beta_form = qr.solve(crossprod(xmat)) %*% crossprod(xmat,y)
+# USing r function
+beta_r = lm.fit(x = xmat, y = y)$coefficients
+compare = cbind(beta_form, beta_r, beta)
+colnames(compare)= c("formula", "r_function", "actual")
+compare
+```
+
+The calculated (estimated) value for the $\beta$s are similar to the one that was used to generate the model, that is `10, 2, and 0.5` for $\beta_0$, $\beta_1$ and $\beta_2$ respectively.  
+
+The realization of $\hat\sigma^2_{\epsilon}$ is:
+```{r}
+eps_hat = 1/(n - p)*sum((y - xmat %*% beta_form)^2)
+eps_hat
+```
+The original $\sigma^2$ is `r sigma^2` and the realized value is `r eps_hat`.
+
+## Visualize fitted plane
+
+So what's is the fitted plane on the data points? Let's visualize it.  
+
+```{r, fig.cap="Fitted plane on the data cloud."}
+library(reshape2)
+# predict over sensible grid of values
+x1s <- seq(min(x1), max(x1), length.out = 100)
+x2s <- seq(min(x2), max(x2), length.out = 100)
+surface <- expand.grid(x1 = x1s,x2 = x2s,KEEP.OUT.ATTRS = F)
+
+# Making prediction
+surface$y <- apply(surface[,c("x1", "x2")], 1, function(x) cbind(1,x[1], x[2]) %*% beta_form)
+surface <- acast(surface, x2 ~ x1, value.var = "y")
+
+pcolor = rep("purple", length(x1))
+plot_ly(df_lm,
+        x = ~x1,
+        y = ~x2,
+        z = ~y,
+        type = "scatter3d", 
+        mode = "markers",
+        marker = list(color = pcolor, 
+                      opacity = 0.7)) %>%
+  add_trace(z = surface,
+            x = x1s,
+            y = x2s,
+            type = "surface",
+            opacity = 0.6)
+  
+```
+
+We can see that the plane fitted from $\hat\beta$ follows the data points pretty closely. However, note that Linear models are very rigid (i.e., a plane). 

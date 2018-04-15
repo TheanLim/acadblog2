@@ -13,16 +13,14 @@
     
     
     <item>
-      <title>Testing Image</title>
-      <link>/post/testing-image/</link>
+      <title>Linear Regression Simulation Study</title>
+      <link>/post/linear-regression-simulation-study/</link>
       <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/testing-image/</guid>
-      <description>The following images are taken from DesignCrowd.
-This first image is an image with tourists ( I call it as tour) while the second one has no tourist – no_tour.
-This is another new image that is different from the above two.
-The goals are:
-Use PCA to compress the tour imageTest the generalizability of the PC loadings obtained from tour image to other similar image (i.e., the no_tour image) and a very different image (i.</description>
+      <guid>/post/linear-regression-simulation-study/</guid>
+      <description>TheoriesModel AssumptionsOrdinary Least Square Estimator (OLS) of \(\beta\)Estimator of \(\sigma^2\)SimulationVisualize data pointsEstimating \(\beta\) and \(\epsilon\)Visualize fitted planeIn general, linear regression is a linear approach of modelling the relationship of a numerical response (dependent) variable and one or more explanatory (independent) variables.
+TheoriesModel AssumptionsLet:
+\(y_i \in \mathbb{R}^n\) as the measured response for the \(i\)th subject.</description>
     </item>
     
     <item>
