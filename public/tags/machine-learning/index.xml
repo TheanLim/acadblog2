@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Sat, 14 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/machine-learning/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K Nearest Neighbour Classsifier (self-written function)</title>
+      <link>/post/k-nearest-neighbour-classifier-self-written-function/</link>
+      <pubDate>Sun, 15 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/k-nearest-neighbour-classifier-self-written-function/</guid>
+      <description>IntroductionSelf-defined KNN ClassifierSimulation, errors and KNN BoundarySimulate dataTraining and Testing ErrorsDecision boundariesNext stepsIntroductionThe K-nearest neighbors (KNN) classifier works by indentifying \(K\) (a positive integer) training data points that are closest (defined by Euclidean distance) to a test observation \(x_0\) and calculate the conditional probability of \(x_0\) belongs to class \(j\). The conditional probability equals to the fraction of the \(K\) training data points that belongs to class \(j\).</description>
+    </item>
     
     <item>
       <title>Term Deposit Subscription Prediction</title>

@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/post/k-nearest-neighbour-classifier-self-written-function/</loc>
+      <lastmod>2018-04-15T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/linear-regression-simulation-study/</loc>
       <lastmod>2018-04-14T00:00:00+00:00</lastmod>
     </url>
@@ -153,7 +162,7 @@
     <url>
     
       <loc>/tags/classification/</loc>
-      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+      <lastmod>2018-04-15T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -164,6 +173,16 @@
     
       <loc>/tags/deep-learning/</loc>
       <lastmod>2016-04-27T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/function/</loc>
+      <lastmod>2018-04-15T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -183,7 +202,7 @@
     <url>
     
       <loc>/tags/machine-learning/</loc>
-      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+      <lastmod>2018-04-15T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -223,7 +242,7 @@
     <url>
     
       <loc>/categories/r/</loc>
-      <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+      <lastmod>2018-04-15T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     

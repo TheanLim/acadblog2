@@ -1,0 +1,166 @@
+---
+title: K Nearest Neighbour Classsifier (self-written function)
+author: Thean Lim
+date: '2018-04-15'
+slug: k-nearest-neighbour-classifier-self-written-function
+categories:
+  - R
+tags:
+  - machine-learning
+  - classification
+  - function
+header:
+  caption: ''
+  image: ''
+summary: Create a KNN classifier using R from scratch.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#self-defined-knn-classifier">Self-defined KNN Classifier</a></li>
+<li><a href="#simulation-errors-and-knn-boundary">Simulation, errors and KNN Boundary</a><ul>
+<li><a href="#simulate-data">Simulate data</a></li>
+<li><a href="#training-and-testing-errors">Training and Testing Errors</a></li>
+<li><a href="#decision-boundaries">Decision boundaries</a></li>
+</ul></li>
+<li><a href="#next-steps">Next steps</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The K-nearest neighbors (KNN) classifier works by indentifying <span class="math inline">\(K\)</span> (a positive integer) training data points that are closest (defined by Euclidean distance) to a test observation <span class="math inline">\(x_0\)</span> and calculate the conditional probability of <span class="math inline">\(x_0\)</span> belongs to class <span class="math inline">\(j\)</span>. The conditional probability equals to the fraction of the <span class="math inline">\(K\)</span> training data points that belongs to class <span class="math inline">\(j\)</span>.</p>
+</div>
+<div id="self-defined-knn-classifier" class="section level1">
+<h1>Self-defined KNN Classifier</h1>
+<p>The <code>fields</code> library is used here mainly for <code>rdist()</code>. It calculates pairwise distance between the training data points and the testing observation.</p>
+<p>The following are the steps to create KNN classifier:</p>
+<ol style="list-style-type: decimal">
+<li>Create inputs for <span class="math inline">\(K\)</span>, testing data, training data, and its corresponding classes.</li>
+<li>Calculate the distance between each training data with each testing observation. Save that in a matrix or data frame.</li>
+<li>For each test observation, choose the top <span class="math inline">\(k\)</span> closest training data points to it. Set the most occuring/ common classes among the <span class="math inline">\(k\)</span> data points as the predicted class.</li>
+</ol>
+<p>It’s pretty simple, isn’t it?</p>
+<p>Let’s work on it now.</p>
+<pre class="r"><code>myknn &lt;- function(train, test, trainclass, k)
+{
+  # Loading library
+  require(fields)
+  # create an empty placeholder for predicted values
+  pred = c()
+  
+  # calculate distance
+  # The output of the &quot;dist&quot; dataframe is such that the columns are the 
+  #     training data points, while the columns are the testing observations.
+  #     The cells for each row-column pair are the Euclidean distance from
+  #     training data to the corresponsing testing data
+  dist = rdist(train, test)
+  
+  # Create a loop for each testing observation
+  for (i in 1:nrow(test))
+  {
+  nb = data.frame(dist = dist[,i], class = trainclass)
+  
+  # Ranking the rows in the dataframe by the distance from the testing
+  #   observation. nb stands Neighbourhood
+  nb = nb[order(nb$dist),]
+  
+  # Choose the K closest Neighbour
+  topnb = nb[1:k,]
+  
+  #Deciding the Class by picking the highest occurence name.
+  ans = names(sort(summary(topnb$class), decreasing=T)[1])
+  
+  # concatenate the latest prediction to the previous one
+  pred = c(pred, ans)
+  }
+  return(pred)
+}</code></pre>
+</div>
+<div id="simulation-errors-and-knn-boundary" class="section level1">
+<h1>Simulation, errors and KNN Boundary</h1>
+<div id="simulate-data" class="section level2">
+<h2>Simulate data</h2>
+<p>Lets generate some data in two dimensions, and make them a little separated.</p>
+<pre class="r"><code>set.seed(101); n = 500
+x = matrix(rnorm(n, sd = 5),n/2,2)
+class = rep(c(1,2),each = n/4)
+x[class == 1,] = x[class == 1,] + 7
+plot(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20, xlab = &quot;x1&quot;, ylab = &quot;x2&quot;)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="training-and-testing-errors" class="section level2">
+<h2>Training and Testing Errors</h2>
+<p>First, let’s split the dataset into training and testing data.</p>
+<pre class="r"><code>set.seed(101)
+train = sample(1:n/2, n/4); test = -train
+x.train = x[train,]; x.test = x[test,]
+class.train = class[train]; class.test = class[test]</code></pre>
+<p>Perform KNN using K = 3 and 5. The choice of <span class="math inline">\(k\)</span> is usually determine by using cross-validation but they were chosen arbitarily here.</p>
+<pre class="r"><code>kchoice = c(3,5)
+# To store the error rate
+err = matrix(NA, 2,2)
+colnames(err) = c(&quot;train&quot;, &quot;test&quot;)
+rownames(err) = c(&quot;k = 3&quot;, &quot;k = 5&quot;)
+
+# initializa column value
+j = 1
+
+for(i in kchoice)
+{
+  # For training error
+  pred = myknn(x.train, x.train, as.factor(class.train),k = i)
+  err[j,1] = mean(pred!=as.factor(class.train))
+  # For testing error
+  pred = myknn(x.train, x.test, as.factor(class.train),k = i)
+  err[j,2] = mean(pred!=as.factor(class.test))
+  #Update
+  j = j + 1
+}</code></pre>
+<p>Let’s look at the errors.</p>
+<pre class="r"><code>err</code></pre>
+<pre><code>##       train      test
+## k = 3 0.104 0.1726619
+## k = 5 0.128 0.2086331</code></pre>
+<p>The testing error rate is always larger than that or training error rate. In addition, using a small <span class="math inline">\(k\)</span>, such as 1, will have lower training error. In fact, using <span class="math inline">\(k =1\)</span> will give 0 training error. We also observe that using <span class="math inline">\(k = 3\)</span> perform better than <span class="math inline">\(k = 5\)</span> in the test data.</p>
+</div>
+<div id="decision-boundaries" class="section level2">
+<h2>Decision boundaries</h2>
+<p>Let’s define another function named as <code>make.grid()</code>. It is meant to expand the grid for all the x1 and x2.</p>
+<pre class="r"><code>make.grid=function(x,n=200){
+  grange=apply(x,2,range)
+  x1=seq(from=grange[1,1],to=grange[2,1],length=n)
+  x2=seq(from=grange[1,2],to=grange[2,2],length=n)
+  expand.grid(X1=x1,X2=x2)
+}</code></pre>
+<p>Then, draw the decision boundary. The <code>xgrid</code> are the “test data” in this case but they are meant to show the decision boundary here.</p>
+<p>First, look at KNN = 3.</p>
+<pre class="r"><code>xgrid = make.grid(x, n = 150)
+ygrid = myknn(x,xgrid, as.factor(class), k = 3)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = &quot;KNN = 3&quot;)
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Those data points that fall outside of their boundaries (defined by colors in the plot) are classfied as errors.</p>
+<p>The following uses KNN = 5.</p>
+<pre class="r"><code>ygrid = myknn(x,xgrid, as.factor(class), k = 5)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = &quot;KNN = 5&quot;)
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>How about using KNN = 10? What would the decision boundary look like?</p>
+<pre class="r"><code>ygrid = myknn(x,xgrid, as.factor(class), k = 10)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = &quot;KNN = 10&quot;)
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-9-1.png" width="672" /> It appears that the boundary is getting more linear and less flexible now.</p>
+</div>
+</div>
+<div id="next-steps" class="section level1">
+<h1>Next steps</h1>
+<p>The next steps after creating a KNN classifier is to generalize it to predict numerical values in addition to classes. Incorporate cross-validation options into it is also very useful.</p>
+</div>

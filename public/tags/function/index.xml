@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Classification on Thean C. Lim</title>
-    <link>/tags/classification/</link>
-    <description>Recent content in Classification on Thean C. Lim</description>
+    <title>Function on Thean C. Lim</title>
+    <link>/tags/function/</link>
+    <description>Recent content in Function on Thean C. Lim</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
     <lastBuildDate>Sun, 15 Apr 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/classification/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/function/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       
       <guid>/post/k-nearest-neighbour-classifier-self-written-function/</guid>
       <description>IntroductionSelf-defined KNN ClassifierSimulation, errors and KNN BoundarySimulate dataTraining and Testing ErrorsDecision boundariesNext stepsIntroductionThe K-nearest neighbors (KNN) classifier works by indentifying \(K\) (a positive integer) training data points that are closest (defined by Euclidean distance) to a test observation \(x_0\) and calculate the conditional probability of \(x_0\) belongs to class \(j\). The conditional probability equals to the fraction of the \(K\) training data points that belongs to class \(j\).</description>
-    </item>
-    
-    <item>
-      <title>Term Deposit Subscription Prediction</title>
-      <link>/project/term-deposit-subscription-prediction/</link>
-      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/project/term-deposit-subscription-prediction/</guid>
-      <description>IntroductionData Manipulation and Descriptive AnalysisMissing data, NAsImbalance ClassificationCorrelationDistributionsModel FittingTraining and Testing DataDecision Tree fittingCross-validation, Tree-pruning and Training ErrorsTesting Error and Prediction AccuracyInterpretationBusiness StrategyNextIntroductionThe dataset used in this project is obtained fromm the UCI Machine Learning Repository. This dataset is related to direct telemarketing campaigns of a Portuguese banking institution, collected from 2008 to 2013.</description>
     </item>
     
   </channel>

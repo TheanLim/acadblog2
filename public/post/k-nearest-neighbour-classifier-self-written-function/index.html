@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="IntroductionSelf-defined KNN ClassifierSimulation, errors and KNN BoundarySimulate dataTraining and Testing ErrorsDecision boundariesNext stepsIntroductionThe K-nearest neighbors (KNN) classifier works by indentifying \(K\) (a positive integer) training data points that are closest (defined by Euclidean distance) to a test observation \(x_0\) and calculate the conditional probability of \(x_0\) belongs to class \(j\). The conditional probability equals to the fraction of the \(K\) training data points that belongs to class \(j\).">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/k-nearest-neighbour-classifier-self-written-function/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/k-nearest-neighbour-classifier-self-written-function/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/post/k-nearest-neighbour-classifier-self-written-function/">
+  <meta property="og:title" content="K Nearest Neighbour Classsifier (self-written function) | Thean C. Lim">
+  <meta property="og:description" content="IntroductionSelf-defined KNN ClassifierSimulation, errors and KNN BoundarySimulate dataTraining and Testing ErrorsDecision boundariesNext stepsIntroductionThe K-nearest neighbors (KNN) classifier works by indentifying \(K\) (a positive integer) training data points that are closest (defined by Euclidean distance) to a test observation \(x_0\) and calculate the conditional probability of \(x_0\) belongs to class \(j\). The conditional probability equals to the fraction of the \(K\) training data points that belongs to class \(j\).">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-04-15T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-04-15T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>K Nearest Neighbour Classsifier (self-written function) | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">K Nearest Neighbour Classsifier (self-written function)</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-04-15 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Sun, Apr 15, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Thean Lim">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    4 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=K%20Nearest%20Neighbour%20Classsifier%20%28self-written%20function%29&amp;url=%2fpost%2fk-nearest-neighbour-classifier-self-written-function%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2fk-nearest-neighbour-classifier-self-written-function%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2fk-nearest-neighbour-classifier-self-written-function%2f&amp;title=K%20Nearest%20Neighbour%20Classsifier%20%28self-written%20function%29"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2fk-nearest-neighbour-classifier-self-written-function%2f&amp;title=K%20Nearest%20Neighbour%20Classsifier%20%28self-written%20function%29"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=K%20Nearest%20Neighbour%20Classsifier%20%28self-written%20function%29&amp;body=%2fpost%2fk-nearest-neighbour-classifier-self-written-function%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#self-defined-knn-classifier">Self-defined KNN Classifier</a></li>
+<li><a href="#simulation-errors-and-knn-boundary">Simulation, errors and KNN Boundary</a><ul>
+<li><a href="#simulate-data">Simulate data</a></li>
+<li><a href="#training-and-testing-errors">Training and Testing Errors</a></li>
+<li><a href="#decision-boundaries">Decision boundaries</a></li>
+</ul></li>
+<li><a href="#next-steps">Next steps</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The K-nearest neighbors (KNN) classifier works by indentifying <span class="math inline">\(K\)</span> (a positive integer) training data points that are closest (defined by Euclidean distance) to a test observation <span class="math inline">\(x_0\)</span> and calculate the conditional probability of <span class="math inline">\(x_0\)</span> belongs to class <span class="math inline">\(j\)</span>. The conditional probability equals to the fraction of the <span class="math inline">\(K\)</span> training data points that belongs to class <span class="math inline">\(j\)</span>.</p>
+</div>
+<div id="self-defined-knn-classifier" class="section level1">
+<h1>Self-defined KNN Classifier</h1>
+<p>The <code>fields</code> library is used here mainly for <code>rdist()</code>. It calculates pairwise distance between the training data points and the testing observation.</p>
+<p>The following are the steps to create KNN classifier:</p>
+<ol style="list-style-type: decimal">
+<li>Create inputs for <span class="math inline">\(K\)</span>, testing data, training data, and its corresponding classes.</li>
+<li>Calculate the distance between each training data with each testing observation. Save that in a matrix or data frame.</li>
+<li>For each test observation, choose the top <span class="math inline">\(k\)</span> closest training data points to it. Set the most occuring/ common classes among the <span class="math inline">\(k\)</span> data points as the predicted class.</li>
+</ol>
+<p>It’s pretty simple, isn’t it?</p>
+<p>Let’s work on it now.</p>
+<pre class="r"><code>myknn &lt;- function(train, test, trainclass, k)
+{
+  # Loading library
+  require(fields)
+  # create an empty placeholder for predicted values
+  pred = c()
+  
+  # calculate distance
+  # The output of the &quot;dist&quot; dataframe is such that the columns are the 
+  #     training data points, while the columns are the testing observations.
+  #     The cells for each row-column pair are the Euclidean distance from
+  #     training data to the corresponsing testing data
+  dist = rdist(train, test)
+  
+  # Create a loop for each testing observation
+  for (i in 1:nrow(test))
+  {
+  nb = data.frame(dist = dist[,i], class = trainclass)
+  
+  # Ranking the rows in the dataframe by the distance from the testing
+  #   observation. nb stands Neighbourhood
+  nb = nb[order(nb$dist),]
+  
+  # Choose the K closest Neighbour
+  topnb = nb[1:k,]
+  
+  #Deciding the Class by picking the highest occurence name.
+  ans = names(sort(summary(topnb$class), decreasing=T)[1])
+  
+  # concatenate the latest prediction to the previous one
+  pred = c(pred, ans)
+  }
+  return(pred)
+}</code></pre>
+</div>
+<div id="simulation-errors-and-knn-boundary" class="section level1">
+<h1>Simulation, errors and KNN Boundary</h1>
+<div id="simulate-data" class="section level2">
+<h2>Simulate data</h2>
+<p>Lets generate some data in two dimensions, and make them a little separated.</p>
+<pre class="r"><code>set.seed(101); n = 500
+x = matrix(rnorm(n, sd = 5),n/2,2)
+class = rep(c(1,2),each = n/4)
+x[class == 1,] = x[class == 1,] + 7
+plot(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20, xlab = &quot;x1&quot;, ylab = &quot;x2&quot;)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="training-and-testing-errors" class="section level2">
+<h2>Training and Testing Errors</h2>
+<p>First, let’s split the dataset into training and testing data.</p>
+<pre class="r"><code>set.seed(101)
+train = sample(1:n/2, n/4); test = -train
+x.train = x[train,]; x.test = x[test,]
+class.train = class[train]; class.test = class[test]</code></pre>
+<p>Perform KNN using K = 3 and 5. The choice of <span class="math inline">\(k\)</span> is usually determine by using cross-validation but they were chosen arbitarily here.</p>
+<pre class="r"><code>kchoice = c(3,5)
+# To store the error rate
+err = matrix(NA, 2,2)
+colnames(err) = c(&quot;train&quot;, &quot;test&quot;)
+rownames(err) = c(&quot;k = 3&quot;, &quot;k = 5&quot;)
+
+# initializa column value
+j = 1
+
+for(i in kchoice)
+{
+  # For training error
+  pred = myknn(x.train, x.train, as.factor(class.train),k = i)
+  err[j,1] = mean(pred!=as.factor(class.train))
+  # For testing error
+  pred = myknn(x.train, x.test, as.factor(class.train),k = i)
+  err[j,2] = mean(pred!=as.factor(class.test))
+  #Update
+  j = j + 1
+}</code></pre>
+<p>Let’s look at the errors.</p>
+<pre class="r"><code>err</code></pre>
+<pre><code>##       train      test
+## k = 3 0.104 0.1726619
+## k = 5 0.128 0.2086331</code></pre>
+<p>The testing error rate is always larger than that or training error rate. In addition, using a small <span class="math inline">\(k\)</span>, such as 1, will have lower training error. In fact, using <span class="math inline">\(k =1\)</span> will give 0 training error. We also observe that using <span class="math inline">\(k = 3\)</span> perform better than <span class="math inline">\(k = 5\)</span> in the test data.</p>
+</div>
+<div id="decision-boundaries" class="section level2">
+<h2>Decision boundaries</h2>
+<p>Let’s define another function named as <code>make.grid()</code>. It is meant to expand the grid for all the x1 and x2.</p>
+<pre class="r"><code>make.grid=function(x,n=200){
+  grange=apply(x,2,range)
+  x1=seq(from=grange[1,1],to=grange[2,1],length=n)
+  x2=seq(from=grange[1,2],to=grange[2,2],length=n)
+  expand.grid(X1=x1,X2=x2)
+}</code></pre>
+<p>Then, draw the decision boundary. The <code>xgrid</code> are the “test data” in this case but they are meant to show the decision boundary here.</p>
+<p>First, look at KNN = 3.</p>
+<pre class="r"><code>xgrid = make.grid(x, n = 150)
+ygrid = myknn(x,xgrid, as.factor(class), k = 3)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = &quot;KNN = 3&quot;)
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Those data points that fall outside of their boundaries (defined by colors in the plot) are classfied as errors.</p>
+<p>The following uses KNN = 5.</p>
+<pre class="r"><code>ygrid = myknn(x,xgrid, as.factor(class), k = 5)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = &quot;KNN = 5&quot;)
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>How about using KNN = 10? What would the decision boundary look like?</p>
+<pre class="r"><code>ygrid = myknn(x,xgrid, as.factor(class), k = 10)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = &quot;KNN = 10&quot;)
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-15-k-nearest-neighbour-function-self-written_files/figure-html/unnamed-chunk-9-1.png" width="672" /> It appears that the boundary is getting more linear and less flexible now.</p>
+</div>
+</div>
+<div id="next-steps" class="section level1">
+<h1>Next steps</h1>
+<p>The next steps after creating a KNN classifier is to generalize it to predict numerical values in addition to classes. Incorporate cross-validation options into it is also very useful.</p>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/machine-learning">machine-learning</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/classification">classification</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/function">function</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>Related</h3>
+      <ul>
+        
+        <li><a href="/project/term-deposit-subscription-prediction/">Term Deposit Subscription Prediction</a></li>
+        
+        <li><a href="/project/image-compression-with-principal-component-analysis/">Image Compression with Principal Component Analysis</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
