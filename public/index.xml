@@ -296,7 +296,7 @@ Figure 1: Distribution of NA in the dataset.
 ##      pdays 0.000000000
 ##   previous 0.000000000
 ##          y 0.000000000&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;About 80% of the predictor &lt;code&gt;poutcome&lt;/code&gt;, 30% of predictor &lt;code&gt;contact&lt;/code&gt;, 4% of predictor &lt;code&gt;education&lt;/code&gt; and 0.6% of predictor &lt;code&gt;job&lt;/code&gt; have missing data (see Figure &lt;a href=&#34;#fig:NAplot&#34;&gt;1&lt;/a&gt;). There will be 0 rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including &lt;code&gt;poutcome&lt;/code&gt;, &lt;code&gt;contact&lt;/code&gt;, &lt;code&gt;education&lt;/code&gt; and &lt;code&gt;job&lt;/code&gt;. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.&lt;/p&gt;
+&lt;p&gt;About 80% of the predictor &lt;code&gt;poutcome&lt;/code&gt;, 30% of predictor &lt;code&gt;contact&lt;/code&gt;, 4% of predictor &lt;code&gt;education&lt;/code&gt; and 0.6% of predictor &lt;code&gt;job&lt;/code&gt; have missing data (see Figure &lt;a href=&#34;#fig:NAplot&#34;&gt;1&lt;/a&gt;). There will be 37369 rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including &lt;code&gt;poutcome&lt;/code&gt;, &lt;code&gt;contact&lt;/code&gt;, &lt;code&gt;education&lt;/code&gt; and &lt;code&gt;job&lt;/code&gt;. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.&lt;/p&gt;
 &lt;p&gt;This leads to another possibility: &lt;strong&gt;Imputation&lt;/strong&gt;. One of the easiest way is to use the KNN Imputation. This algorithm identifies &lt;em&gt;k&lt;/em&gt; closest observations to the to-be-imputed observation and take the weighted average based on the distance. Yet, imputing ~ 80% of the data for &lt;code&gt;poutcome&lt;/code&gt; variable is not sensible at all.&lt;/p&gt;
 &lt;p&gt;Since all of the missing data exist at categorical data, the strategy used was to treat the “unknown” as a category itself (pg 332 &lt;a href=&#34;https://web.stanford.edu/~hastie/ElemStatLearn/&#34;&gt;ESL II&lt;/a&gt;).&lt;/p&gt;
 &lt;/div&gt;
@@ -342,14 +342,14 @@ Figure 2: Correlation between numerical predictors.
 &lt;p&gt;Through visual inspection of Figure &lt;a href=&#34;#fig:corrplot&#34;&gt;2&lt;/a&gt;, it was found that the Pearson’s correlation between predictors are low except the one for features &lt;code&gt;previous&lt;/code&gt; and &lt;code&gt;pdays&lt;/code&gt;. The Pearson’s correlation is 0.48. Why is that so?&lt;/p&gt;
 &lt;p&gt;It was described at [Moro et al., 2011] that:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;pdays: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)&lt;/li&gt;
-&lt;li&gt;previous: number of contacts performed before this campaign and for this client&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;pdays&lt;/strong&gt;: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;previous&lt;/strong&gt;: number of contacts performed before this campaign and for this client&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;This explains the high correlation between the two variables.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;distributions&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Distributions&lt;/h2&gt;
-&lt;p&gt;The predictors &lt;code&gt;balance&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt;, and &lt;code&gt;pdays&lt;/code&gt; have large standard deviations,as shown at the following.&lt;/p&gt;
+&lt;p&gt;The predictors &lt;code&gt;balance&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt;, and &lt;code&gt;pdays&lt;/code&gt; have large standard deviations, as shown at the following.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;apply(dat[,nume_col],2,sd)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         age     balance         day    duration    campaign       pdays    previous 
 ##   12.005758 3300.296919    8.476752  349.509259    2.588204  102.240956    2.745466&lt;/code&gt;&lt;/pre&gt;
@@ -375,16 +375,17 @@ x.test = dat[test,-17]; y.test = dat[test,]$y&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;div id=&#34;decision-tree-fitting&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Decision Tree fitting&lt;/h2&gt;
-&lt;p&gt;Decision Tree (DT) was used to fit the data.&lt;/p&gt;
+&lt;p&gt;Decision Tree (DT) was used to fit the data. Decision Tree breaks the space of the data into partitions and predict the value by taking the average of each partitions. The rule of dividing the model space is specified by minimizing the classification error rate and while controlling the size of the tree (i.e., number of terminal nodes). The following image is obtained from &lt;a href=&#34;http://www-bcf.usc.edu/~gareth/ISL/&#34;&gt;ISL&lt;/a&gt;. &lt;img src=&#34;/img/termsubscription/dt_space.jpg&#34; alt=&#34;dt_space&#34; /&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tree)
 # Fitting tree
 treemod = tree(y ~., subset = train, data = dat)
 sum_tree = summary(treemod)
 err_tree = sum_tree$misclass[1]/sum_tree$misclass[2]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The error of misclassification was 0.1802817. However, this is the traning error rate and it could be biased. Cross-validation was used to choose the best number of terminal nodes and the decision was pruned.&lt;/p&gt;
+&lt;p&gt;The error of misclassification was 0.1802817. However, this is the traning error rate and it could be biased.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;cross-validation-tree-pruning-and-training-errors&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Cross-validation, Tree-pruning and Training Errors&lt;/h2&gt;
+&lt;p&gt;Cross-validation was used to choose the best number of terminal nodes and the decision tree was pruned.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1001)
 cvtree = cv.tree(treemod ,FUN = prune.misclass )
 choose_nodes = cbind(cvtree$size, cvtree$dev)
@@ -424,7 +425,7 @@ table(tree.pred, y.test)&lt;/code&gt;&lt;/pre&gt;
 ## tree.pred  no yes
 ##       no  414  85
 ##       yes 130 436&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was 0.202. In other words, the prediction accuracy was &lt;code&gt;r 1- round(mean(tree.pred != y.test),3)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was 0.202. In other words, the prediction accuracy was 0.798.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;interpretation&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Interpretation&lt;/h2&gt;
@@ -439,11 +440,11 @@ Figure 5: Visualization of decision tree.
 &lt;/div&gt;
 &lt;p&gt;The key variables shown in Figure &lt;a href=&#34;#fig:treefig&#34;&gt;5&lt;/a&gt; are:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;duration: last contact duration, in seconds&lt;/li&gt;
-&lt;li&gt;contact: contact communication type (“unknown”, “telephone”, “cellular”)&lt;/li&gt;
-&lt;li&gt;poutcome: outcome of the previous marketing campaign (“unknown”,“other”,“failure”,“success”)&lt;/li&gt;
-&lt;li&gt;month: last contact month of year&lt;/li&gt;
-&lt;li&gt;housing: has housing loan? (yes or no)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;duration&lt;/strong&gt;: last contact duration, in seconds&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;contact&lt;/strong&gt;: contact communication type (“unknown”, “telephone”, “cellular”)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;poutcome&lt;/strong&gt;: outcome of the previous marketing campaign (“unknown”,“other”,“failure”,“success”)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;month&lt;/strong&gt;: last contact month of year&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;housing&lt;/strong&gt;: has housing loan? (yes or no)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The decision tree predicts that when the representative contacted the client for more or equal to 692 (174.5+517.5) seconds on last phone call, the client would subscribe for the term deposit. If the last contact duration is less than 174.5 seconds, the client would reject the offer.&lt;/p&gt;
 &lt;p&gt;If the previous contact duration is between 174.5 and 517.5 seconds, and the contact communication type is unknown, the model predicts a &lt;strong&gt;NO&lt;/strong&gt; to the subscription. One can interpret this as the reluctants of the bank representatives to record the communication type since they were rejected.&lt;/p&gt;
@@ -457,7 +458,7 @@ Figure 5: Visualization of decision tree.
 &lt;p&gt;The decision tree provides three general business strategies:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Attract the attention of the customer, engage them and keep them hold of the phone as long as possible. Make sure that the duration is at least 174.5 seconds.&lt;/li&gt;
-&lt;li&gt;Contact the prospective “subscribers” at the end of year quarters.&lt;/li&gt;
+&lt;li&gt;Contact the prospective “subscribers” at the end of each quarter.&lt;/li&gt;
 &lt;li&gt;Aim for customers that have no housing loans.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;

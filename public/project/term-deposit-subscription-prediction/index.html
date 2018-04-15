@@ -358,7 +358,7 @@ Figure 1: Distribution of NA in the dataset.
 ##      pdays 0.000000000
 ##   previous 0.000000000
 ##          y 0.000000000</code></pre>
-<p>About 80% of the predictor <code>poutcome</code>, 30% of predictor <code>contact</code>, 4% of predictor <code>education</code> and 0.6% of predictor <code>job</code> have missing data (see Figure <a href="#fig:NAplot">1</a>). There will be 0 rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including <code>poutcome</code>, <code>contact</code>, <code>education</code> and <code>job</code>. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.</p>
+<p>About 80% of the predictor <code>poutcome</code>, 30% of predictor <code>contact</code>, 4% of predictor <code>education</code> and 0.6% of predictor <code>job</code> have missing data (see Figure <a href="#fig:NAplot">1</a>). There will be 37369 rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including <code>poutcome</code>, <code>contact</code>, <code>education</code> and <code>job</code>. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.</p>
 <p>This leads to another possibility: <strong>Imputation</strong>. One of the easiest way is to use the KNN Imputation. This algorithm identifies <em>k</em> closest observations to the to-be-imputed observation and take the weighted average based on the distance. Yet, imputing ~ 80% of the data for <code>poutcome</code> variable is not sensible at all.</p>
 <p>Since all of the missing data exist at categorical data, the strategy used was to treat the “unknown” as a category itself (pg 332 <a href="https://web.stanford.edu/~hastie/ElemStatLearn/">ESL II</a>).</p>
 </div>
@@ -404,14 +404,14 @@ Figure 2: Correlation between numerical predictors.
 <p>Through visual inspection of Figure <a href="#fig:corrplot">2</a>, it was found that the Pearson’s correlation between predictors are low except the one for features <code>previous</code> and <code>pdays</code>. The Pearson’s correlation is 0.48. Why is that so?</p>
 <p>It was described at [Moro et al., 2011] that:</p>
 <ul>
-<li>pdays: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)</li>
-<li>previous: number of contacts performed before this campaign and for this client</li>
+<li><strong>pdays</strong>: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)</li>
+<li><strong>previous</strong>: number of contacts performed before this campaign and for this client</li>
 </ul>
 <p>This explains the high correlation between the two variables.</p>
 </div>
 <div id="distributions" class="section level2">
 <h2>Distributions</h2>
-<p>The predictors <code>balance</code>, <code>duration</code>, and <code>pdays</code> have large standard deviations,as shown at the following.</p>
+<p>The predictors <code>balance</code>, <code>duration</code>, and <code>pdays</code> have large standard deviations, as shown at the following.</p>
 <pre class="r"><code>apply(dat[,nume_col],2,sd)</code></pre>
 <pre><code>##         age     balance         day    duration    campaign       pdays    previous 
 ##   12.005758 3300.296919    8.476752  349.509259    2.588204  102.240956    2.745466</code></pre>
@@ -437,16 +437,17 @@ x.test = dat[test,-17]; y.test = dat[test,]$y</code></pre>
 </div>
 <div id="decision-tree-fitting" class="section level2">
 <h2>Decision Tree fitting</h2>
-<p>Decision Tree (DT) was used to fit the data.</p>
+<p>Decision Tree (DT) was used to fit the data. Decision Tree breaks the space of the data into partitions and predict the value by taking the average of each partitions. The rule of dividing the model space is specified by minimizing the classification error rate and while controlling the size of the tree (i.e., number of terminal nodes). The following image is obtained from <a href="http://www-bcf.usc.edu/~gareth/ISL/">ISL</a>. <img src="/img/termsubscription/dt_space.jpg" alt="dt_space" /></p>
 <pre class="r"><code>library(tree)
 # Fitting tree
 treemod = tree(y ~., subset = train, data = dat)
 sum_tree = summary(treemod)
 err_tree = sum_tree$misclass[1]/sum_tree$misclass[2]</code></pre>
-<p>The error of misclassification was 0.1802817. However, this is the traning error rate and it could be biased. Cross-validation was used to choose the best number of terminal nodes and the decision was pruned.</p>
+<p>The error of misclassification was 0.1802817. However, this is the traning error rate and it could be biased.</p>
 </div>
 <div id="cross-validation-tree-pruning-and-training-errors" class="section level2">
 <h2>Cross-validation, Tree-pruning and Training Errors</h2>
+<p>Cross-validation was used to choose the best number of terminal nodes and the decision tree was pruned.</p>
 <pre class="r"><code>set.seed(1001)
 cvtree = cv.tree(treemod ,FUN = prune.misclass )
 choose_nodes = cbind(cvtree$size, cvtree$dev)
@@ -486,7 +487,7 @@ table(tree.pred, y.test)</code></pre>
 ## tree.pred  no yes
 ##       no  414  85
 ##       yes 130 436</code></pre>
-<p>The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was 0.202. In other words, the prediction accuracy was <code>r 1- round(mean(tree.pred != y.test),3)</code>.</p>
+<p>The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was 0.202. In other words, the prediction accuracy was 0.798.</p>
 </div>
 <div id="interpretation" class="section level2">
 <h2>Interpretation</h2>
@@ -501,11 +502,11 @@ Figure 5: Visualization of decision tree.
 </div>
 <p>The key variables shown in Figure <a href="#fig:treefig">5</a> are:</p>
 <ul>
-<li>duration: last contact duration, in seconds</li>
-<li>contact: contact communication type (“unknown”, “telephone”, “cellular”)</li>
-<li>poutcome: outcome of the previous marketing campaign (“unknown”,“other”,“failure”,“success”)</li>
-<li>month: last contact month of year</li>
-<li>housing: has housing loan? (yes or no)</li>
+<li><strong>duration</strong>: last contact duration, in seconds</li>
+<li><strong>contact</strong>: contact communication type (“unknown”, “telephone”, “cellular”)</li>
+<li><strong>poutcome</strong>: outcome of the previous marketing campaign (“unknown”,“other”,“failure”,“success”)</li>
+<li><strong>month</strong>: last contact month of year</li>
+<li><strong>housing</strong>: has housing loan? (yes or no)</li>
 </ul>
 <p>The decision tree predicts that when the representative contacted the client for more or equal to 692 (174.5+517.5) seconds on last phone call, the client would subscribe for the term deposit. If the last contact duration is less than 174.5 seconds, the client would reject the offer.</p>
 <p>If the previous contact duration is between 174.5 and 517.5 seconds, and the contact communication type is unknown, the model predicts a <strong>NO</strong> to the subscription. One can interpret this as the reluctants of the bank representatives to record the communication type since they were rejected.</p>
@@ -519,7 +520,7 @@ Figure 5: Visualization of decision tree.
 <p>The decision tree provides three general business strategies:</p>
 <ul>
 <li>Attract the attention of the customer, engage them and keep them hold of the phone as long as possible. Make sure that the duration is at least 174.5 seconds.</li>
-<li>Contact the prospective “subscribers” at the end of year quarters.</li>
+<li>Contact the prospective “subscribers” at the end of each quarter.</li>
 <li>Aim for customers that have no housing loans.</li>
 </ul>
 </div>

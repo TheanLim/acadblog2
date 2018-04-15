@@ -12,7 +12,7 @@ tags:
 header:
   caption: ''
   image: ''
-image_preview : "\termsubscription\bankterm.jpg"
+image_preview : "termsubscription/bankterm.jpg"
 summary: Use machine learning technique to find business strategies in telemarketing campaigns.
 output:
   blogdown::html_page:
@@ -196,7 +196,7 @@ x.test = dat[test,-17]; y.test = dat[test,]$y
 
 ## Decision Tree fitting
 Decision Tree (DT) was used to fit the data. Decision Tree breaks the space of the data into partitions and predict the value by taking the average of each partitions. The rule of dividing the model space is specified by minimizing the classification error rate and while controlling the size of the tree (i.e., number of terminal nodes). The following image is obtained from [ISL](http://www-bcf.usc.edu/~gareth/ISL/).
-![dt_space](\termsubscription\dt_space.jpg)
+![dt_space](/img/termsubscription/dt_space.jpg)
 
 ```{r}
 library(tree)
