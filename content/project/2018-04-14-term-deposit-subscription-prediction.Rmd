@@ -12,7 +12,7 @@ tags:
 header:
   caption: ''
   image: ''
-image_preview : "bankterm.jpg"
+image_preview : "\termsubscription\bankterm.jpg"
 summary: Use machine learning technique to find business strategies in telemarketing campaigns.
 output:
   blogdown::html_page:
@@ -71,13 +71,14 @@ dat_NA[dat_NA == "unknown"] <- NA
 library(VIM)
 aggr_plot <- aggr(dat_NA, col = c('cornflowerblue','firebrick1'), numbers = TRUE, sortVars = TRUE, labels = names(full_dat), cex.axis = .7, gap = 3, ylab = c("Proportion of missing data","Maps"))
 ```
-About 80% of the predictor `poutcome`, 50% of predictor `contact`, 5% of predictor `education` and 1% of predictor `job` have missing data (see Figure \@ref(fig:NAplot)). There will be `r length(unique (unlist (lapply (full_dat, function (x) which (is.na (x))))))` rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including `poutcome`, `contact`, `education` and `job`. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.
+About 80% of the predictor `poutcome`, 30% of predictor `contact`, 4% of predictor `education` and 0.6% of predictor `job` have missing data (see Figure \@ref(fig:NAplot)). There will be `r length(unique (unlist (lapply (dat_NA, function (x) which (is.na (x))))))` rows that had to be deleted if rowwise NA deletion was executed. The other way is to remove entirely those variables that contains NA including `poutcome`, `contact`, `education` and `job`. However, this is not desirable because we dont know whether those variables are important or not. In short, deletion is not an ideal way.
 
 This leads to another possibility: **Imputation**. One of the easiest way is to use the KNN Imputation. This algorithm identifies *k* closest observations to the to-be-imputed observation and take the weighted average based on the distance. Yet, imputing ~ 80% of the data for `poutcome` variable is not sensible at all.  
 
 Since all of the missing data exist at categorical data, the strategy used was to treat the "unknown" as a category itself (pg 332 [ESL II](https://web.stanford.edu/~hastie/ElemStatLearn/)).  
 
 ## Imbalance Classification
+
 ```{r resp_prop, fig.cap="Proportion of responses: Yes or No"}
 counts <- table(full_dat$y)
 barplot(counts,col = c("darkblue","red"),legend = rownames(counts), main = "Term Deposit")
@@ -105,6 +106,7 @@ The previous process is very important to be done or a simply "prediction" of **
 ## Correlation
 
 The correlation between the numeric features were looked into too. 
+
 ```{r corrplot, fig.cap ="Correlation between numerical predictors."}
 #Numeric data columns
 nume_col = c(1,6,10, 12:15)
@@ -117,14 +119,14 @@ Through visual inspection of Figure \@ref(fig:corrplot), it was found that the P
 
 It was described at [Moro et al., 2011] that: 
 
-- pdays: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)
-- previous: number of contacts performed before this campaign and for this client
+- **pdays**: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)
+- **previous**: number of contacts performed before this campaign and for this client
 
 This explains the high correlation between the two variables.
 
 ## Distributions
 
-The predictors `balance`, `duration`, and `pdays` have large standard deviations,as shown at the following. 
+The predictors `balance`, `duration`, and `pdays` have large standard deviations, as shown at the following. 
 ```{r}
 apply(dat[,nume_col],2,sd)
 ```
@@ -193,7 +195,8 @@ x.test = dat[test,-17]; y.test = dat[test,]$y
 ```
 
 ## Decision Tree fitting
-Decision Tree (DT) was used to fit the data.
+Decision Tree (DT) was used to fit the data. Decision Tree breaks the space of the data into partitions and predict the value by taking the average of each partitions. The rule of dividing the model space is specified by minimizing the classification error rate and while controlling the size of the tree (i.e., number of terminal nodes). The following image is obtained from [ISL](http://www-bcf.usc.edu/~gareth/ISL/).
+![dt_space](\termsubscription\dt_space.jpg)
 
 ```{r}
 library(tree)
@@ -202,9 +205,11 @@ treemod = tree(y ~., subset = train, data = dat)
 sum_tree = summary(treemod)
 err_tree = sum_tree$misclass[1]/sum_tree$misclass[2]
 ```
-The error of misclassification was `r err_tree`. However, this is the traning error rate and it could be biased. Cross-validation was used to choose the best number of terminal nodes and the decision was pruned.  
+The error of misclassification was `r err_tree`. However, this is the traning error rate and it could be biased. 
 
 ## Cross-validation, Tree-pruning and Training Errors
+
+Cross-validation was used to choose the best number of terminal nodes and the decision tree was pruned.  
 
 ```{r}
 set.seed(1001)
@@ -238,7 +243,7 @@ tree.pred = predict (prunetree , x.test ,type="class")
 table(tree.pred, y.test)
 ```
 
-The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was `r round(mean(tree.pred != y.test),3)`. In other words, the prediction accuracy was ` r 1- round(mean(tree.pred != y.test),3)`.
+The confusion error above shows that the fitted tree tends to predict a Yes response to term subscriptiion. The testing error rate was `r round(mean(tree.pred != y.test),3)`. In other words, the prediction accuracy was `r 1- round(mean(tree.pred != y.test),3)`.
 
 ## Interpretation
 
@@ -251,11 +256,11 @@ text(prunetree ,pretty = 0)
 
 The key variables shown in Figure \@ref(fig:treefig) are:
 
-- duration: last contact duration, in seconds
-- contact: contact communication type ("unknown", "telephone", "cellular")
-- poutcome: outcome of the previous marketing campaign ("unknown","other","failure","success")
-- month: last contact month of year
-- housing: has housing loan? (yes or no)
+- **duration**: last contact duration, in seconds
+- **contact**: contact communication type ("unknown", "telephone", "cellular")
+- **poutcome**: outcome of the previous marketing campaign ("unknown","other","failure","success")
+- **month**: last contact month of year
+- **housing**: has housing loan? (yes or no)
 
 The decision tree predicts that when the representative contacted the client for more or equal to `r 174.5+517.5` (174.5+517.5) seconds on last phone call, the client would subscribe for the term deposit. If the last contact duration is less than 174.5 seconds, the client would reject the offer.  
 
@@ -272,7 +277,7 @@ The model further predicts that the marketing campaign would success if the clie
 The decision tree provides three general business strategies:
 
 - Attract the attention of the customer, engage them and keep them hold of the phone as long as possible. Make sure that the duration is at least 174.5 seconds.
-- Contact the prospective "subscribers" at the end of year quarters.
+- Contact the prospective "subscribers" at the end of each quarter.
 - Aim for customers that have no housing loans.
 
 # Next
