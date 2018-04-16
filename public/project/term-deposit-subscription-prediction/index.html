@@ -366,13 +366,13 @@ Figure 1: Distribution of NA in the dataset.
 <h2>Imbalance Classification</h2>
 <pre class="r"><code>counts &lt;- table(full_dat$y)
 barplot(counts,col = c(&quot;darkblue&quot;,&quot;red&quot;),legend = rownames(counts), main = &quot;Term Deposit&quot;)</code></pre>
-<div class="figure">
-<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/resp_prop-1.png" alt="Proportion of responses: Yes or No" width="672" />
+<div class="figure"><span id="fig:resprop"></span>
+<img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/resprop-1.png" alt="Proportion of responses: Yes or No" width="672" />
 <p class="caption">
-(#fig:resp_prop)Proportion of responses: Yes or No
+Figure 2: Proportion of responses: Yes or No
 </p>
 </div>
-<p>Due to the highly imbalance of the proportion of responses (as shown in Figure @ref(fig:res_prop), and due to large sample size of 45211, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random.</p>
+<p>Due to the highly imbalance of the proportion of responses (as shown in Figure <a href="#fig:resprop">2</a>, and due to large sample size of 45211, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random.</p>
 <pre class="r"><code>N = 2130
 # Subset the data to &quot;Yes&quot; responses and &quot;No&quot; responses
 yes_dat &lt;- full_dat[full_dat$y == &quot;yes&quot;,]
@@ -398,10 +398,10 @@ corrplot(pearson, type = &quot;upper&quot;)</code></pre>
 <div class="figure"><span id="fig:corrplot"></span>
 <img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/corrplot-1.png" alt="Correlation between numerical predictors." width="672" />
 <p class="caption">
-Figure 2: Correlation between numerical predictors.
+Figure 3: Correlation between numerical predictors.
 </p>
 </div>
-<p>Through visual inspection of Figure <a href="#fig:corrplot">2</a>, it was found that the Pearson’s correlation between predictors are low except the one for features <code>previous</code> and <code>pdays</code>. The Pearson’s correlation is 0.48. Why is that so?</p>
+<p>Through visual inspection of Figure <a href="#fig:corrplot">3</a>, it was found that the Pearson’s correlation between predictors are low except the one for features <code>previous</code> and <code>pdays</code>. The Pearson’s correlation is 0.48. Why is that so?</p>
 <p>It was described at [Moro et al., 2011] that:</p>
 <ul>
 <li><strong>pdays</strong>: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)</li>
@@ -415,11 +415,11 @@ Figure 2: Correlation between numerical predictors.
 <pre class="r"><code>apply(dat[,nume_col],2,sd)</code></pre>
 <pre><code>##         age     balance         day    duration    campaign       pdays    previous 
 ##   12.005758 3300.296919    8.476752  349.509259    2.588204  102.240956    2.745466</code></pre>
-<p>The distributions of each features and response is shown in Figure <a href="#fig:dist">3</a>. It can be seen that the distributions of predictors <code>balance</code>, <code>duration</code>, <code>campaign</code>, <code>pdays</code>, and <code>previous</code> are highly skewed.</p>
+<p>The distributions of each features and response is shown in Figure <a href="#fig:dist">4</a>. It can be seen that the distributions of predictors <code>balance</code>, <code>duration</code>, <code>campaign</code>, <code>pdays</code>, and <code>previous</code> are highly skewed.</p>
 <div class="figure"><span id="fig:dist"></span>
 <img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/dist-1.png" alt="Histograms and Kernel density esimates of Numerical predictors" width="672" />
 <p class="caption">
-Figure 3: Histograms and Kernel density esimates of Numerical predictors
+Figure 4: Histograms and Kernel density esimates of Numerical predictors
 </p>
 </div>
 </div>
@@ -465,10 +465,10 @@ choose_nodes</code></pre>
 <div class="figure"><span id="fig:nodes"></span>
 <img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/nodes-1.png" alt="The cross-validation error rate across the number of terminal nodes" width="672" />
 <p class="caption">
-Figure 4: The cross-validation error rate across the number of terminal nodes
+Figure 5: The cross-validation error rate across the number of terminal nodes
 </p>
 </div>
-<p>As shown in Figure <a href="#fig:nodes">4</a>, the best number of terminal nodes was 8 because it gives the lowest CV errors. The tree was pruned accordingly.</p>
+<p>As shown in Figure <a href="#fig:nodes">5</a>, the best number of terminal nodes was 8 because it gives the lowest CV errors. The tree was pruned accordingly.</p>
 <pre class="r"><code>prunetree = prune.misclass(treemod ,best = 8)
 sum_prune= summary(prunetree)
 err_prune = sum_prune$misclass[1]/sum_prune$misclass[2]
@@ -497,10 +497,10 @@ text(prunetree ,pretty = 0)</code></pre>
 <div class="figure"><span id="fig:treefig"></span>
 <img src="/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/treefig-1.png" alt="Visualization of decision tree." width="672" />
 <p class="caption">
-Figure 5: Visualization of decision tree.
+Figure 6: Visualization of decision tree.
 </p>
 </div>
-<p>The key variables shown in Figure <a href="#fig:treefig">5</a> are:</p>
+<p>The key variables shown in Figure <a href="#fig:treefig">6</a> are:</p>
 <ul>
 <li><strong>duration</strong>: last contact duration, in seconds</li>
 <li><strong>contact</strong>: contact communication type (“unknown”, “telephone”, “cellular”)</li>

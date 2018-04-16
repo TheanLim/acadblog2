@@ -79,12 +79,12 @@ Since all of the missing data exist at categorical data, the strategy used was t
 
 ## Imbalance Classification
 
-```{r resp_prop, fig.cap="Proportion of responses: Yes or No"}
+```{r resprop, fig.cap="Proportion of responses: Yes or No"}
 counts <- table(full_dat$y)
 barplot(counts,col = c("darkblue","red"),legend = rownames(counts), main = "Term Deposit")
 ```
 
-Due to the highly imbalance of the proportion of responses (as shown in Figure  \@ref(fig:res_prop), and due to large sample size of `r nrow(full_dat)`, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random. 
+Due to the highly imbalance of the proportion of responses (as shown in Figure  \@ref(fig:resprop), and due to large sample size of `r nrow(full_dat)`, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random. 
 
 ```{r}
 N = 2130

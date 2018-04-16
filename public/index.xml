@@ -11,6 +11,211 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Data Visualization with ggplot2</title>
+      <link>/readings/data-visualization-with-ggplot2/</link>
+      <pubDate>Sun, 15 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/data-visualization-with-ggplot2/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#first-steps&#34;&gt;First Steps&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#the-mpg-data-frame&#34;&gt;The mpg Data Frame&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#creating-a-ggplot&#34;&gt;Creating a ggplot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#a-graphing-template&#34;&gt;A Graphing Template&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#aesthetic-mappings&#34;&gt;Aesthetic Mappings&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#setting-the-aesthetic-properties-manually&#34;&gt;Setting the Aesthetic Properties Manually&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#mapping-aesthetics-to-a-continous-variable&#34;&gt;Mapping aesthetics to a continous variable&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#mapping-the-same-variable-to-multiple-aesthetics&#34;&gt;Mapping the same variable to multiple aesthetics&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#mapping-aethetics-to-a-non-variable&#34;&gt;Mapping aethetics to a &lt;code&gt;non-variable&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#common-problems&#34;&gt;Common Problems&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;** This post is heavily based on &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt;. Pleas consider to buy that book if you find this post useful.**&lt;/p&gt;
+&lt;div id=&#34;first-steps&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;First Steps&lt;/h1&gt;
+&lt;div id=&#34;the-mpg-data-frame&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The mpg Data Frame&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;mpg&lt;/code&gt; data frame will be used in this section. take a look on it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+head(mpg)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 11
+##   manufacturer model displ  year   cyl trans drv     cty   hwy fl    class
+##   &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt;
+## 1 audi         a4     1.80  1999     4 auto~ f        18    29 p     comp~
+## 2 audi         a4     1.80  1999     4 manu~ f        21    29 p     comp~
+## 3 audi         a4     2.00  2008     4 manu~ f        20    31 p     comp~
+## 4 audi         a4     2.00  2008     4 auto~ f        21    30 p     comp~
+## 5 audi         a4     2.80  1999     6 auto~ f        16    26 p     comp~
+## 6 audi         a4     2.80  1999     6 manu~ f        18    26 p     comp~&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;displ&lt;/strong&gt; is a car’s engine size, in liters.&lt;br /&gt;
+&lt;strong&gt;hwy&lt;/strong&gt;, a car’s fuel efficiency on the highway, in miles per gallon (mpg).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creating-a-ggplot&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Creating a ggplot&lt;/h2&gt;
+&lt;p&gt;Note that &lt;code&gt;ggplot()&lt;/code&gt; is an object. The following examples will explain it.&lt;/p&gt;
+&lt;p&gt;First, let’s make a basic plot on the &lt;code&gt;mpg&lt;/code&gt; dataset:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:basic&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/basic-1.png&#34; alt=&#34;A basic and a blank plot using ggplot.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: A basic and a blank plot using ggplot.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Why is that so? It’s because you need to specify the x-axis and y- axis of the plot.&lt;/p&gt;
+&lt;p&gt;Now, let’s plot &lt;strong&gt;displ&lt;/strong&gt; on the x-axis and &lt;strong&gt;hwy&lt;/strong&gt; on the y-axis.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:scatdisphwy&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/scatdisphwy-1.png&#34; alt=&#34;Scatterplot of hwy against disply&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 2: Scatterplot of hwy against disply
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Recall that &lt;strong&gt;ggplot(data = mpg)&lt;/strong&gt; creates an empty graph. Then, we add one or more layers to the object &lt;code&gt;ggplot()&lt;/code&gt; using &lt;code&gt;+&lt;/code&gt; operator.&lt;br /&gt;
+&lt;code&gt;geom_point()&lt;/code&gt; adds a layer of points to your plot, which creates scatterplot.&lt;/p&gt;
+
+&lt;p&gt;Each &lt;code&gt;geom&lt;/code&gt; function takes a &lt;em&gt;mapping&lt;/em&gt; argument. This defines how variables in your dataset are mapped to visual properties. The &lt;em&gt;mapping&lt;/em&gt; argument is always paired with &lt;strong&gt;aes()&lt;/strong&gt;. The x and y arguments of aes() specify which variables to map to the x and y-axes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-graphing-template&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A Graphing Template&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ggplot(data = DATA) +&lt;br /&gt;
+GEOM_FUNCTION(mapping = aes(MAPPINGS))&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;aesthetic-mappings&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Aesthetic Mappings&lt;/h1&gt;
+&lt;p&gt;The &lt;strong&gt;class&lt;/strong&gt; variable of the &lt;strong&gt;mpg&lt;/strong&gt; dataset classifies cars into groups such as compact, midsize, and SUV. We can add a third variable, like &lt;strong&gt;class&lt;/strong&gt;, to a two-dimensional scatterplot by mapping it to an &lt;em&gt;aesthetic&lt;/em&gt;.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;An aesthetic is a visual property of the objects in your plot. Aesthetics include things like the size, the shape, or the color of your points. Let’s use the word “level” to describe aesthetic properties.&lt;br /&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;Let’s map the colors of your points to the &lt;code&gt;class&lt;/code&gt; variable to reveal the class of each car. To map an aesthetic to a variable, associate the name of the aesthetic (ex: color) to the name of the variable inside &lt;em&gt;aes()&lt;/em&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:color&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/color-1.png&#34; alt=&#34;Mapping aethsthetic (color) to a third variable, class.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 3: Mapping aethsthetic (color) to a third variable, class.
+&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Now, mapped &lt;strong&gt;class&lt;/strong&gt; to the &lt;em&gt;size&lt;/em&gt; aesthetic in the same way. Generally, mapping an unordered variable (&lt;strong&gt;class&lt;/strong&gt;) to an ordered aesthetic (&lt;em&gt;size&lt;/em&gt;) is not a good idea because it could be misleading to your audience.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data  = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:size&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/size-1.png&#34; alt=&#34;Mapping aethsthetic (size) to a third variable, class&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4: Mapping aethsthetic (size) to a third variable, class
+&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can also map &lt;strong&gt;class&lt;/strong&gt; to the &lt;em&gt;shape&lt;/em&gt; and &lt;em&gt;alpha&lt;/em&gt; aesthetic, which controls the transparency of the points, or the shape of the points.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p &amp;lt;- ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+q &amp;lt;- ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+
+library(gridExtra)
+grid.arrange(p,q, ncol = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:alpha&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/alpha-1.png&#34; alt=&#34;Mapping aethsthetic (shape and alpha) to a third variable, class, to control transparency.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 5: Mapping aethsthetic (shape and alpha) to a third variable, class, to control transparency.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Note that SUV lost its shape because ggplot2 will only use six shapes at a time. By default, additional groups will go unplotted.&lt;/p&gt;
+
+&lt;div id=&#34;setting-the-aesthetic-properties-manually&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Setting the Aesthetic Properties Manually&lt;/h2&gt;
+&lt;p&gt;Let’s try to set the aesthetic properties of the &lt;code&gt;geom&lt;/code&gt; manually. For example, we can make all of the points in our plot blue. It can be done by setting the aesthetic by name as an argument of your &lt;strong&gt;geom()&lt;/strong&gt; function, not the &lt;em&gt;aes()&lt;/em&gt; function; i.e., it goes outside of aes().&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = &amp;quot;blue&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:bluemanual&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/bluemanual-1.png&#34; alt=&#34;Changing the color of the plot manually.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 6: Changing the color of the plot manually.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The following are some values that can be set:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The name of a color as a character string.&lt;/li&gt;
+&lt;li&gt;The size of a point in mm.&lt;/li&gt;
+&lt;li&gt;The shape of a point as a number.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mapping-aesthetics-to-a-continous-variable&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Mapping aesthetics to a continous variable&lt;/h2&gt;
+&lt;p&gt;So what would happen when we map a continuous variable to color, size, and shape? Let’s use &lt;strong&gt;year&lt;/strong&gt; as the continuos variable and check it out.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## color
+p &amp;lt;- ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = year))
+
+## size
+q &amp;lt;- ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = year))
+
+library(gridExtra)
+grid.arrange(p,q, nrow = 2)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:contaes&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/contaes-1.png&#34; alt=&#34;Mapping color and size aesthetics to a continous variable, year.&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 7: Mapping color and size aesthetics to a continous variable, year.
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;For shape:
+ggplot(data = mpg) +  
+  geom_point(mapping = aes(x = displ, y = hwy, shape = year))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As for color, it shows a range of colors. The same thing is happening on the size. However, a warning message stating that a continuous variable can not be mapped to shape.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mapping-the-same-variable-to-multiple-aesthetics&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Mapping the same variable to multiple aesthetics&lt;/h2&gt;
+&lt;p&gt;You can also map the same variable to multiple aesthetics.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) +
+  geom_point(mapping = aes(x= displ, y = hwy , color = class, size = class, shape = class))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:multipleaes&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/multipleaes-1.png&#34; alt=&#34;Mapping the same variable to multiple aesthethics&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 8: Mapping the same variable to multiple aesthethics
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mapping-aethetics-to-a-non-variable&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Mapping aethetics to a &lt;code&gt;non-variable&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;How about map an aesthetic to something other than a variable name, like &lt;code&gt;aes(color = displ &amp;lt; 5)&lt;/code&gt;?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = displ&amp;lt;5))&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:nonvar&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/nonvar-1.png&#34; alt=&#34;Mapping aesthetics using logical expression&#34; width=&#34;672&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 9: Mapping aesthetics using logical expression
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;common-problems&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Common Problems&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Correct the misplaced character such as pairing up the &lt;code&gt;&amp;quot; &amp;quot;&lt;/code&gt; and &lt;code&gt;( )&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Incomplete expression: the left-hand side of your console has a &lt;code&gt;+&lt;/code&gt;. This means that R is waiting for you to finish the expression.&lt;/li&gt;
+&lt;li&gt;Use help function. &lt;strong&gt;?function_name&lt;/strong&gt; or selecting the function name and pressing F1 in RStudio. You can skip down to the examples and look for code that matches what you’re trying to do.&lt;/li&gt;
+&lt;li&gt;Carefully read the error message. Sometimes the answer can be found there.&lt;/li&gt;
+&lt;li&gt;Google: trying googling the error message, as it’s likely someone else has had the same problem, and has received help online.&lt;/li&gt;
+&lt;li&gt;One common problem when creating ggplot2 graphics is to put the + in the wrong place: it has to come at the end of the line, not the start. Prevent:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;ggplot(data = mpg)  
+  + geom_point(mapping = aes(x = displ, y = hwy))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>K Nearest Neighbour Classsifier (self-written function)</title>
       <link>/post/k-nearest-neighbour-classifier-self-written-function/</link>
       <pubDate>Sun, 15 Apr 2018 00:00:00 +0000</pubDate>
@@ -456,13 +661,13 @@ Figure 1: Distribution of NA in the dataset.
 &lt;h2&gt;Imbalance Classification&lt;/h2&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;counts &amp;lt;- table(full_dat$y)
 barplot(counts,col = c(&amp;quot;darkblue&amp;quot;,&amp;quot;red&amp;quot;),legend = rownames(counts), main = &amp;quot;Term Deposit&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;
-&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/resp_prop-1.png&#34; alt=&#34;Proportion of responses: Yes or No&#34; width=&#34;672&#34; /&gt;
+&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:resprop&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/resprop-1.png&#34; alt=&#34;Proportion of responses: Yes or No&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-(#fig:resp_prop)Proportion of responses: Yes or No
+Figure 2: Proportion of responses: Yes or No
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;Due to the highly imbalance of the proportion of responses (as shown in Figure @ref(fig:res_prop), and due to large sample size of 45211, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random.&lt;/p&gt;
+&lt;p&gt;Due to the highly imbalance of the proportion of responses (as shown in Figure &lt;a href=&#34;#fig:resprop&#34;&gt;2&lt;/a&gt;, and due to large sample size of 45211, the dataset was subsetted at random with controlling the proportion of responses to be equal. This process is known as undersampling. From there, a dataset of size N = 2130 was drawn at random.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;N = 2130
 # Subset the data to &amp;quot;Yes&amp;quot; responses and &amp;quot;No&amp;quot; responses
 yes_dat &amp;lt;- full_dat[full_dat$y == &amp;quot;yes&amp;quot;,]
@@ -488,10 +693,10 @@ corrplot(pearson, type = &amp;quot;upper&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:corrplot&#34;&gt;&lt;/span&gt;
 &lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/corrplot-1.png&#34; alt=&#34;Correlation between numerical predictors.&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 2: Correlation between numerical predictors.
+Figure 3: Correlation between numerical predictors.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;Through visual inspection of Figure &lt;a href=&#34;#fig:corrplot&#34;&gt;2&lt;/a&gt;, it was found that the Pearson’s correlation between predictors are low except the one for features &lt;code&gt;previous&lt;/code&gt; and &lt;code&gt;pdays&lt;/code&gt;. The Pearson’s correlation is 0.48. Why is that so?&lt;/p&gt;
+&lt;p&gt;Through visual inspection of Figure &lt;a href=&#34;#fig:corrplot&#34;&gt;3&lt;/a&gt;, it was found that the Pearson’s correlation between predictors are low except the one for features &lt;code&gt;previous&lt;/code&gt; and &lt;code&gt;pdays&lt;/code&gt;. The Pearson’s correlation is 0.48. Why is that so?&lt;/p&gt;
 &lt;p&gt;It was described at [Moro et al., 2011] that:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;pdays&lt;/strong&gt;: number of days that passed by after the client was last contacted from a previous campaign (-1 means client was not previously contacted)&lt;/li&gt;
@@ -505,11 +710,11 @@ Figure 2: Correlation between numerical predictors.
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;apply(dat[,nume_col],2,sd)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##         age     balance         day    duration    campaign       pdays    previous 
 ##   12.005758 3300.296919    8.476752  349.509259    2.588204  102.240956    2.745466&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The distributions of each features and response is shown in Figure &lt;a href=&#34;#fig:dist&#34;&gt;3&lt;/a&gt;. It can be seen that the distributions of predictors &lt;code&gt;balance&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt;, &lt;code&gt;campaign&lt;/code&gt;, &lt;code&gt;pdays&lt;/code&gt;, and &lt;code&gt;previous&lt;/code&gt; are highly skewed.&lt;/p&gt;
+&lt;p&gt;The distributions of each features and response is shown in Figure &lt;a href=&#34;#fig:dist&#34;&gt;4&lt;/a&gt;. It can be seen that the distributions of predictors &lt;code&gt;balance&lt;/code&gt;, &lt;code&gt;duration&lt;/code&gt;, &lt;code&gt;campaign&lt;/code&gt;, &lt;code&gt;pdays&lt;/code&gt;, and &lt;code&gt;previous&lt;/code&gt; are highly skewed.&lt;/p&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:dist&#34;&gt;&lt;/span&gt;
 &lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/dist-1.png&#34; alt=&#34;Histograms and Kernel density esimates of Numerical predictors&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 3: Histograms and Kernel density esimates of Numerical predictors
+Figure 4: Histograms and Kernel density esimates of Numerical predictors
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -555,10 +760,10 @@ choose_nodes&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:nodes&#34;&gt;&lt;/span&gt;
 &lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/nodes-1.png&#34; alt=&#34;The cross-validation error rate across the number of terminal nodes&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 4: The cross-validation error rate across the number of terminal nodes
+Figure 5: The cross-validation error rate across the number of terminal nodes
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;As shown in Figure &lt;a href=&#34;#fig:nodes&#34;&gt;4&lt;/a&gt;, the best number of terminal nodes was 8 because it gives the lowest CV errors. The tree was pruned accordingly.&lt;/p&gt;
+&lt;p&gt;As shown in Figure &lt;a href=&#34;#fig:nodes&#34;&gt;5&lt;/a&gt;, the best number of terminal nodes was 8 because it gives the lowest CV errors. The tree was pruned accordingly.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prunetree = prune.misclass(treemod ,best = 8)
 sum_prune= summary(prunetree)
 err_prune = sum_prune$misclass[1]/sum_prune$misclass[2]
@@ -587,10 +792,10 @@ text(prunetree ,pretty = 0)&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:treefig&#34;&gt;&lt;/span&gt;
 &lt;img src=&#34;/project/2018-04-14-term-deposit-subscription-prediction_files/figure-html/treefig-1.png&#34; alt=&#34;Visualization of decision tree.&#34; width=&#34;672&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 5: Visualization of decision tree.
+Figure 6: Visualization of decision tree.
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;The key variables shown in Figure &lt;a href=&#34;#fig:treefig&#34;&gt;5&lt;/a&gt; are:&lt;/p&gt;
+&lt;p&gt;The key variables shown in Figure &lt;a href=&#34;#fig:treefig&#34;&gt;6&lt;/a&gt; are:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;duration&lt;/strong&gt;: last contact duration, in seconds&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;contact&lt;/strong&gt;: contact communication type (“unknown”, “telephone”, “cellular”)&lt;/li&gt;
@@ -921,24 +1126,6 @@ install_hugo()&lt;/code&gt;&lt;/pre&gt;
       
       <guid>/talk/example-talk/</guid>
       <description>&lt;p&gt;Embed your slides or video here using &lt;a href=&#34;https://sourcethemes.com/academic/post/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;. Further details can easily be added using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Deep Learning</title>
-      <link>/readings/deep-learning/</link>
-      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
-      
-      <guid>/readings/deep-learning/</guid>
-      <description>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis posuere tellus ac convallis placerat. Proin tincidunt magna sed ex sollicitudin condimentum. Sed ac faucibus dolor, scelerisque sollicitudin nisi. Cras purus urna, suscipit quis sapien eu, pulvinar tempor diam. Quisque risus orci, mollis id ante sit amet, gravida egestas nisl. Sed ac tempus magna. Proin in dui enim. Donec condimentum, sem id dapibus fringilla, tellus enim condimentum arcu, nec volutpat est felis vel metus. Vestibulum sit amet erat at nulla eleifend gravida.&lt;/p&gt;
-
-&lt;p&gt;Nullam vel molestie justo. Curabitur vitae efficitur leo. In hac habitasse platea dictumst. Sed pulvinar mauris dui, eget varius purus congue ac. Nulla euismod, lorem vel elementum dapibus, nunc justo porta mi, sed tempus est est vel tellus. Nam et enim eleifend, laoreet sem sit amet, elementum sem. Morbi ut leo congue, maximus velit ut, finibus arcu. In et libero cursus, rutrum risus non, molestie leo. Nullam congue quam et volutpat malesuada. Sed risus tortor, pulvinar et dictum nec, sodales non mi. Phasellus lacinia commodo laoreet. Nam mollis, erat in feugiat consectetur, purus eros egestas tellus, in auctor urna odio at nibh. Mauris imperdiet nisi ac magna convallis, at rhoncus ligula cursus.&lt;/p&gt;
-
-&lt;p&gt;Cras aliquam rhoncus ipsum, in hendrerit nunc mattis vitae. Duis vitae efficitur metus, ac tempus leo. Cras nec fringilla lacus. Quisque sit amet risus at ipsum pharetra commodo. Sed aliquam mauris at consequat eleifend. Praesent porta, augue sed viverra bibendum, neque ante euismod ante, in vehicula justo lorem ac eros. Suspendisse augue libero, venenatis eget tincidunt ut, malesuada at lorem. Donec vitae bibendum arcu. Aenean maximus nulla non pretium iaculis. Quisque imperdiet, nulla in pulvinar aliquet, velit quam ultrices quam, sit amet fringilla leo sem vel nunc. Mauris in lacinia lacus.&lt;/p&gt;
-
-&lt;p&gt;Suspendisse a tincidunt lacus. Curabitur at urna sagittis, dictum ante sit amet, euismod magna. Sed rutrum massa id tortor commodo, vitae elementum turpis tempus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean purus turpis, venenatis a ullamcorper nec, tincidunt et massa. Integer posuere quam rutrum arcu vehicula imperdiet. Mauris ullamcorper quam vitae purus congue, quis euismod magna eleifend. Vestibulum semper vel augue eget tincidunt. Fusce eget justo sodales, dapibus odio eu, ultrices lorem. Duis condimentum lorem id eros commodo, in facilisis mauris scelerisque. Morbi sed auctor leo. Nullam volutpat a lacus quis pharetra. Nulla congue rutrum magna a ornare.&lt;/p&gt;
-
-&lt;p&gt;Aliquam in turpis accumsan, malesuada nibh ut, hendrerit justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque sed erat nec justo posuere suscipit. Donec ut efficitur arcu, in malesuada neque. Nunc dignissim nisl massa, id vulputate nunc pretium nec. Quisque eget urna in risus suscipit ultricies. Pellentesque odio odio, tincidunt in eleifend sed, posuere a diam. Nam gravida nisl convallis semper elementum. Morbi vitae felis faucibus, vulputate orci placerat, aliquet nisi. Aliquam erat volutpat. Maecenas sagittis pulvinar purus, sed porta quam laoreet at.&lt;/p&gt;
 </description>
     </item>
     

@@ -1,0 +1,213 @@
+---
+title: Data Visualization with ggplot2
+author: Thean Lim
+date: '2018-04-15'
+slug: data-visualization-with-ggplot2
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+categories:
+  - R
+tags:
+  - visualization
+header:
+  caption: ''
+  image: ''
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#first-steps">First Steps</a><ul>
+<li><a href="#the-mpg-data-frame">The mpg Data Frame</a></li>
+<li><a href="#creating-a-ggplot">Creating a ggplot</a></li>
+<li><a href="#a-graphing-template">A Graphing Template</a></li>
+</ul></li>
+<li><a href="#aesthetic-mappings">Aesthetic Mappings</a><ul>
+<li><a href="#setting-the-aesthetic-properties-manually">Setting the Aesthetic Properties Manually</a></li>
+<li><a href="#mapping-aesthetics-to-a-continous-variable">Mapping aesthetics to a continous variable</a></li>
+<li><a href="#mapping-the-same-variable-to-multiple-aesthetics">Mapping the same variable to multiple aesthetics</a></li>
+<li><a href="#mapping-aethetics-to-a-non-variable">Mapping aethetics to a <code>non-variable</code></a></li>
+</ul></li>
+<li><a href="#common-problems">Common Problems</a></li>
+</ul>
+</div>
+
+<p>** This post is heavily based on <a href="http://r4ds.had.co.nz/">R for Data Science</a>. Pleas consider to buy that book if you find this post useful.**</p>
+<div id="first-steps" class="section level1">
+<h1>First Steps</h1>
+<div id="the-mpg-data-frame" class="section level2">
+<h2>The mpg Data Frame</h2>
+<p>The <code>mpg</code> data frame will be used in this section. take a look on it.</p>
+<pre class="r"><code>library(tidyverse)
+head(mpg)</code></pre>
+<pre><code>## # A tibble: 6 x 11
+##   manufacturer model displ  year   cyl trans drv     cty   hwy fl    class
+##   &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 audi         a4     1.80  1999     4 auto~ f        18    29 p     comp~
+## 2 audi         a4     1.80  1999     4 manu~ f        21    29 p     comp~
+## 3 audi         a4     2.00  2008     4 manu~ f        20    31 p     comp~
+## 4 audi         a4     2.00  2008     4 auto~ f        21    30 p     comp~
+## 5 audi         a4     2.80  1999     6 auto~ f        16    26 p     comp~
+## 6 audi         a4     2.80  1999     6 manu~ f        18    26 p     comp~</code></pre>
+<p><strong>displ</strong> is a car’s engine size, in liters.<br />
+<strong>hwy</strong>, a car’s fuel efficiency on the highway, in miles per gallon (mpg).</p>
+</div>
+<div id="creating-a-ggplot" class="section level2">
+<h2>Creating a ggplot</h2>
+<p>Note that <code>ggplot()</code> is an object. The following examples will explain it.</p>
+<p>First, let’s make a basic plot on the <code>mpg</code> dataset:</p>
+<pre class="r"><code>ggplot(data = mpg)</code></pre>
+<div class="figure"><span id="fig:basic"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/basic-1.png" alt="A basic and a blank plot using ggplot." width="672" />
+<p class="caption">
+Figure 1: A basic and a blank plot using ggplot.
+</p>
+</div>
+<p>Why is that so? It’s because you need to specify the x-axis and y- axis of the plot.</p>
+<p>Now, let’s plot <strong>displ</strong> on the x-axis and <strong>hwy</strong> on the y-axis.</p>
+<pre class="r"><code>ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))</code></pre>
+<div class="figure"><span id="fig:scatdisphwy"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/scatdisphwy-1.png" alt="Scatterplot of hwy against disply" width="672" />
+<p class="caption">
+Figure 2: Scatterplot of hwy against disply
+</p>
+</div>
+<p>Recall that <strong>ggplot(data = mpg)</strong> creates an empty graph. Then, we add one or more layers to the object <code>ggplot()</code> using <code>+</code> operator.<br />
+<code>geom_point()</code> adds a layer of points to your plot, which creates scatterplot.</p>
+
+<p>Each <code>geom</code> function takes a <em>mapping</em> argument. This defines how variables in your dataset are mapped to visual properties. The <em>mapping</em> argument is always paired with <strong>aes()</strong>. The x and y arguments of aes() specify which variables to map to the x and y-axes.</p>
+</div>
+<div id="a-graphing-template" class="section level2">
+<h2>A Graphing Template</h2>
+<blockquote>
+<p>ggplot(data = DATA) +<br />
+GEOM_FUNCTION(mapping = aes(MAPPINGS))</p>
+</blockquote>
+</div>
+</div>
+<div id="aesthetic-mappings" class="section level1">
+<h1>Aesthetic Mappings</h1>
+<p>The <strong>class</strong> variable of the <strong>mpg</strong> dataset classifies cars into groups such as compact, midsize, and SUV. We can add a third variable, like <strong>class</strong>, to a two-dimensional scatterplot by mapping it to an <em>aesthetic</em>.</p>
+<p>{{% alert note %}} An aesthetic is a visual property of the objects in your plot. Aesthetics include things like the size, the shape, or the color of your points. Let’s use the word “level” to describe aesthetic properties.<br />
+{{% /alert %}}</p>
+<p>Let’s map the colors of your points to the <code>class</code> variable to reveal the class of each car. To map an aesthetic to a variable, associate the name of the aesthetic (ex: color) to the name of the variable inside <em>aes()</em>.</p>
+<pre class="r"><code>ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))</code></pre>
+<div class="figure"><span id="fig:color"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/color-1.png" alt="Mapping aethsthetic (color) to a third variable, class." width="672" />
+<p class="caption">
+Figure 3: Mapping aethsthetic (color) to a third variable, class.
+</p>
+</div>
+
+<p>Now, mapped <strong>class</strong> to the <em>size</em> aesthetic in the same way. Generally, mapping an unordered variable (<strong>class</strong>) to an ordered aesthetic (<em>size</em>) is not a good idea because it could be misleading to your audience.</p>
+<pre class="r"><code>ggplot(data  = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))</code></pre>
+<div class="figure"><span id="fig:size"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/size-1.png" alt="Mapping aethsthetic (size) to a third variable, class" width="672" />
+<p class="caption">
+Figure 4: Mapping aethsthetic (size) to a third variable, class
+</p>
+</div>
+
+<p>We can also map <strong>class</strong> to the <em>shape</em> and <em>alpha</em> aesthetic, which controls the transparency of the points, or the shape of the points.</p>
+<pre class="r"><code>p &lt;- ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+q &lt;- ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+
+library(gridExtra)
+grid.arrange(p,q, ncol = 2)</code></pre>
+<div class="figure"><span id="fig:alpha"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/alpha-1.png" alt="Mapping aethsthetic (shape and alpha) to a third variable, class, to control transparency." width="672" />
+<p class="caption">
+Figure 5: Mapping aethsthetic (shape and alpha) to a third variable, class, to control transparency.
+</p>
+</div>
+<p>Note that SUV lost its shape because ggplot2 will only use six shapes at a time. By default, additional groups will go unplotted.</p>
+
+<div id="setting-the-aesthetic-properties-manually" class="section level2">
+<h2>Setting the Aesthetic Properties Manually</h2>
+<p>Let’s try to set the aesthetic properties of the <code>geom</code> manually. For example, we can make all of the points in our plot blue. It can be done by setting the aesthetic by name as an argument of your <strong>geom()</strong> function, not the <em>aes()</em> function; i.e., it goes outside of aes().</p>
+<pre class="r"><code>ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = &quot;blue&quot;)</code></pre>
+<div class="figure"><span id="fig:bluemanual"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/bluemanual-1.png" alt="Changing the color of the plot manually." width="672" />
+<p class="caption">
+Figure 6: Changing the color of the plot manually.
+</p>
+</div>
+<p>The following are some values that can be set:</p>
+<ul>
+<li>The name of a color as a character string.</li>
+<li>The size of a point in mm.</li>
+<li>The shape of a point as a number.</li>
+</ul>
+</div>
+<div id="mapping-aesthetics-to-a-continous-variable" class="section level2">
+<h2>Mapping aesthetics to a continous variable</h2>
+<p>So what would happen when we map a continuous variable to color, size, and shape? Let’s use <strong>year</strong> as the continuos variable and check it out.</p>
+<pre class="r"><code>## color
+p &lt;- ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = year))
+
+## size
+q &lt;- ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = year))
+
+library(gridExtra)
+grid.arrange(p,q, nrow = 2)</code></pre>
+<div class="figure"><span id="fig:contaes"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/contaes-1.png" alt="Mapping color and size aesthetics to a continous variable, year." width="672" />
+<p class="caption">
+Figure 7: Mapping color and size aesthetics to a continous variable, year.
+</p>
+</div>
+<pre><code>For shape:
+ggplot(data = mpg) +  
+  geom_point(mapping = aes(x = displ, y = hwy, shape = year))</code></pre>
+<p>As for color, it shows a range of colors. The same thing is happening on the size. However, a warning message stating that a continuous variable can not be mapped to shape.</p>
+</div>
+<div id="mapping-the-same-variable-to-multiple-aesthetics" class="section level2">
+<h2>Mapping the same variable to multiple aesthetics</h2>
+<p>You can also map the same variable to multiple aesthetics.</p>
+<pre class="r"><code>ggplot(data = mpg) +
+  geom_point(mapping = aes(x= displ, y = hwy , color = class, size = class, shape = class))</code></pre>
+<div class="figure"><span id="fig:multipleaes"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/multipleaes-1.png" alt="Mapping the same variable to multiple aesthethics" width="672" />
+<p class="caption">
+Figure 8: Mapping the same variable to multiple aesthethics
+</p>
+</div>
+</div>
+<div id="mapping-aethetics-to-a-non-variable" class="section level2">
+<h2>Mapping aethetics to a <code>non-variable</code></h2>
+<p>How about map an aesthetic to something other than a variable name, like <code>aes(color = displ &lt; 5)</code>?</p>
+<pre class="r"><code>ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = displ&lt;5))</code></pre>
+<div class="figure"><span id="fig:nonvar"></span>
+<img src="/readings/2018-04-15-data-visualization-with-ggplot2_files/figure-html/nonvar-1.png" alt="Mapping aesthetics using logical expression" width="672" />
+<p class="caption">
+Figure 9: Mapping aesthetics using logical expression
+</p>
+</div>
+</div>
+</div>
+<div id="common-problems" class="section level1">
+<h1>Common Problems</h1>
+<ol style="list-style-type: decimal">
+<li>Correct the misplaced character such as pairing up the <code>&quot; &quot;</code> and <code>( )</code>.</li>
+<li>Incomplete expression: the left-hand side of your console has a <code>+</code>. This means that R is waiting for you to finish the expression.</li>
+<li>Use help function. <strong>?function_name</strong> or selecting the function name and pressing F1 in RStudio. You can skip down to the examples and look for code that matches what you’re trying to do.</li>
+<li>Carefully read the error message. Sometimes the answer can be found there.</li>
+<li>Google: trying googling the error message, as it’s likely someone else has had the same problem, and has received help online.</li>
+<li>One common problem when creating ggplot2 graphics is to put the + in the wrong place: it has to come at the end of the line, not the start. Prevent:</li>
+</ol>
+<pre><code>ggplot(data = mpg)  
+  + geom_point(mapping = aes(x = displ, y = hwy))</code></pre>
+</div>
