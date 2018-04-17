@@ -1,0 +1,359 @@
+---
+title: Cross Validation Function for Classifier
+author: Thean Lim
+date: '2018-04-16'
+slug: cross-validation-function-for-classifier
+categories:
+  - R
+tags:
+  - classification
+  - function
+  - machine-learning
+  - simulation
+header:
+  caption: ''
+  image: ''
+summary: Self-define a cross validation function for classifier using R.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 4
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#self-defined-functions">Self-defined functions</a><ul>
+<li><a href="#cvclassifier"><code>cvclassifier</code></a><ul>
+<li><a href="#arguments-and-values">Arguments and Values</a></li>
+<li><a href="#implementations">Implementations</a></li>
+</ul></li>
+<li><a href="#classpred.cv"><code>classpred.cv</code></a><ul>
+<li><a href="#arguments-and-values-1">Arguments and Values</a></li>
+<li><a href="#implementations-1">Implementations</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#simulation-errors-and-knn-boundaries">Simulation, Errors and KNN Boundaries</a><ul>
+<li><a href="#example-1">Example 1</a><ul>
+<li><a href="#simulate-data">Simulate Data</a></li>
+<li><a href="#training-and-testing-errors">Training and Testing Errors</a><ul>
+<li><a href="#cross-validation">Cross Validation</a></li>
+</ul></li>
+<li><a href="#decision-boundaries">Decision Boundaries</a></li>
+</ul></li>
+<li><a href="#example-2">Example 2</a><ul>
+<li><a href="#simulate-data-1">Simulate Data</a></li>
+<li><a href="#training-and-testing-errors-1">Training and Testing Errors</a><ul>
+<li><a href="#cross-validation-1">Cross Validation</a></li>
+</ul></li>
+<li><a href="#decision-boundaries-1">Decision Boundaries</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>As mentioned in the <a href="https://theanlim.rbind.io/post/k-nearest-neighbour-classifier-self-written-function/">previous post</a>, the natural step after creating a KNN classifier is to define another function that can be used for cross-validation (CV).</p>
+<p>The kind of CV function that will be created here is only for classifier with <strong>one</strong> tuning parameter. This includes the KNN classsifier, which only tunes on the parameter <span class="math inline">\(K\)</span>.</p>
+</div>
+<div id="self-defined-functions" class="section level1">
+<h1>Self-defined functions</h1>
+<div id="cvclassifier" class="section level2">
+<h2><code>cvclassifier</code></h2>
+<div id="arguments-and-values" class="section level3">
+<h3>Arguments and Values</h3>
+<p><code>cvclassifier</code> has the following parameters:</p>
+<ul>
+<li>data: These are the training data</li>
+<li>class: These are classes (or groups) for the training data</li>
+<li>classifier: The type of classifier (i.e., KNN classifier)</li>
+<li>fold: Number of folds used in cross validation. The default value is 10.</li>
+<li>seed: Seed number for partitioning data into folds. The default value is 1001.</li>
+<li>… : Any arguments to be passed to the classifier</li>
+</ul>
+<p>Note that it is assumed that the classifier has the arguments in the following order: <strong>classifier(traindat, testdat, trainclass, …)</strong></p>
+<p><code>cvclassifier</code> returns the following:</p>
+<ul>
+<li>cverror: The cross-validation error for the specified number of folds and tuning parameter value.</li>
+<li>trainpred: The predicted classes for the training data for the specified tuning parameter value.</li>
+</ul>
+</div>
+<div id="implementations" class="section level3">
+<h3>Implementations</h3>
+<p>The steps of implementing <code>cvclassifier</code>:</p>
+<ol style="list-style-type: decimal">
+<li>Make sure that the number of folds is smaller than number of observations. Abort if that is not satisfied.<br />
+</li>
+<li>Set a seed value and shuffle the rows of the dataset (means the <code>data</code> and <code>class</code>) before partitioning into <em>m</em> folds. Make sure to keep a copy of the original dataset for future use.</li>
+<li>Assign indexes showing which fold that each row belongs to. Try to make the number of observation in each group to be the same. If not possible, randomly assign the remaining observation into any folds.</li>
+<li>For <span class="math inline">\(i = 1,..., m\)</span>, use the <span class="math inline">\(ith\)</span> fold as the testing data and the <span class="math inline">\(m-1\)</span> folds as the training data. With a specified tuning parameter value, use the classifier to predict the classes of testing data and record the rate of misclassification. Repeat this step for <span class="math inline">\(m\)</span> times.</li>
+<li>Return the average error rate and the predicted classes using the whole training data.</li>
+</ol>
+<pre class="r"><code>cvclassifier &lt;-  function(data, class, classifier, fold = 10, seed = 1001, ...)
+{
+  # Condition check first
+  if (nrow(data) &lt; fold) try(stop(&quot;Number of folds is greater than number of observations.\n Reduce numder of folds.&quot;))
+  
+  # Set a random seed to control for results
+  set.seed(seed)
+  # Make a copy of original dataand class
+  oridata = data
+  oriclass = class
+  # Shuffle data and break into k folds
+  shuffle_index &lt;- sample.int(nrow(data))
+  data &lt;- data[shuffle_index, ]
+  class &lt;- class[shuffle_index]
+  
+  # Partition data (into m folds)
+  num_per_fold &lt;- nrow(data) %/% fold
+  remaining &lt;- nrow(data) %% fold
+  # Initialize space holder that deffines which fold each observation belongs to
+  part_data &lt;- c()
+  # Allocating folds
+  for (j in 1:fold)
+  {
+    part_data &lt;- c(part_data, rep(j, num_per_fold))
+  }
+  # Fill in the remaining randomly into any fold
+  if(remaining != 0){
+    for (k in 1:remaining)
+    {
+      part_data &lt;- c(part_data, rep(sample.int(fold,1), 1))
+    }
+  }
+  # For each fold, use the classsifer to fit and calculate testing error
+  # Initialize error rate
+  err &lt;- 0
+  for (i in 1 : fold)
+  {
+    test_index = which(part_data == i, arr.ind = TRUE)
+    train_index &lt;-  -test_index
+    testdat &lt;- data[test_index,]; testclass = class[test_index]
+    traindat &lt;- data[train_index,]; trainclass = class[train_index]
+    
+    ## Use classifier
+    pred &lt;- classifier(traindat, testdat, trainclass, ...)
+    err &lt;- err + mean(pred != testclass)
+  }
+  
+  # The avearge of error
+   err &lt;- err/fold
+  
+  # Predicted values of all data
+   pred_train &lt;- classifier(oridata, oridata, oriclass, ...)
+
+  # Return the results
+  return(list(cverror = err, trainpred = pred_train))
+}</code></pre>
+<p>The function defined here is good enough to perform cross validation with a specified tuning parameter value. Let’s define another function that allows us to try on a range of tuning parameter values before choosing the best one.</p>
+</div>
+</div>
+<div id="classpred.cv" class="section level2">
+<h2><code>classpred.cv</code></h2>
+<div id="arguments-and-values-1" class="section level3">
+<h3>Arguments and Values</h3>
+<p><code>classpred.cv</code> has the following parameters:</p>
+<ul>
+<li>traindat: The training dataset</li>
+<li>trainclass: The training data’s classes</li>
+<li>testdat: The testing dataset.</li>
+<li>testclass: The testing data’s classes</li>
+<li>classifier: Type of classifier to be used such as KNN classifier.</li>
+<li>parameter: Tuning parameter values. It is usually entered as a vector. The default value is NULL.</li>
+<li>fold: <span class="math inline">\(m\)</span> fold for CV purpose. The default value is 10.</li>
+<li>seed: Seed value. The default value is 1001.</li>
+</ul>
+<p><code>classpred.cv</code> returns the following:</p>
+<ul>
+<li>train_pred: Predicted classes for training data.</li>
+<li>train_err: Training data error rate.</li>
+<li>test_pred: Predicted classes for testing data. The prediction is done based on the parameter value that gives the lowest cross-validated error.</li>
+<li>test_err: Testing data error rate.</li>
+<li>parameter: Values of parameter used.</li>
+<li>best_param: The best tuning parameter. It’s the parameter value that gives the lowest CV error.</li>
+<li>cverror: Cross-validated errors in training data for all parameter values.</li>
+<li>cvpred: Predicted classes for training data for all parameter values.</li>
+<li>plot: Allow user to plot <strong>cverror</strong> vs <strong>parameter</strong>.</li>
+</ul>
+</div>
+<div id="implementations-1" class="section level3">
+<h3>Implementations</h3>
+<p>The steps of implementing <code>classpred.cv</code>:</p>
+<ol style="list-style-type: decimal">
+<li>Make sure that at least a tuning parameter value is provided. Abort if no value was provided.</li>
+<li>For each of the parameter values, collect the cross-validated error and train data predicted classes from the <code>cvclassifier</code>.</li>
+<li>Save the best training data predicted classes. The predicted classes are chosen by using the tuning parameter value that minimizes the cross-validation error, <span class="math inline">\(tune_{best}\)</span>. Calculate the training error too.</li>
+<li>Predict the classses for testing data using <span class="math inline">\(tune_{best}\)</span> and calculate the testing error.</li>
+<li>Using ggplot2 to create and save a plot object.</li>
+</ol>
+<pre class="r"><code>classpred.cv &lt;- function(traindat, trainclass, testdat, testclass,
+                         classifier, parameter=NULL, fold = 10, seed = 1001)
+{
+  if (is.null(parameter)) try(stop (&quot;No parameter range stated&quot;))
+  
+  trainclass &lt;- as.factor(trainclass)
+  # prediction list
+  cvpred &lt;- list()
+  ## error list
+  cverror &lt;- c()
+  
+  for (i in parameter)
+  {
+    results &lt;- cvclassifier(traindat, trainclass, classifier,
+                            fold, seed, i)
+    cvpred [[i]] &lt;- results$trainpred
+    cverror &lt;- c(cverror, results$cverror)
+  }
+  
+  #Clearing up the NULL elements
+  cvpred[sapply(cvpred,is.null)] &lt;- NULL
+
+  train_pred = cvpred [[which.min(cverror)]]
+  train_err &lt;- mean(train_pred!=trainclass)
+  
+  #Predict using the best parameter
+  test_pred = classifier(traindat, testdat, 
+                         trainclass, parameter[which.min(cverror)])
+  
+  # calculated test error
+  test_err = mean(test_pred!=testclass)
+  
+  
+  cat(&quot;The best parameter is &quot;, parameter[which.min(cverror)], 
+      &quot;with cross-validated error of &quot;, cverror[which.min(cverror)], &quot;.\n&quot;)
+  cat(&quot;The training error using parameter = &quot;, parameter[which.min(cverror)], 
+      &quot; is &quot;, train_err, &quot;. \n&quot;)
+  cat(&quot;The testing error using parameter = &quot;, parameter[which.min(cverror)], 
+      &quot; is &quot;, test_err, &quot;.&quot;)
+  
+  require(ggplot2)
+  p.plot &lt;- qplot(data =as.data.frame(cbind(parameter,cverror)),
+                  x = parameter,
+                  y = cverror,
+                  geom = c(&quot;point&quot;, &quot;line&quot;),
+                  main = &quot;Cross Validation Error across parameter values&quot;,
+                  xlab = &quot;Values of parameter&quot;,
+                  ylab = &quot;C.V. Error&quot;,
+                  colour = I(&quot;dodgerblue&quot;),
+                  size = I(1))
+  
+  return(list(train_pred=train_pred, 
+         train_err = train_err,
+         test_pred = test_pred,
+         test_err = test_err,
+         parameter = parameter,
+         best_param = parameter[which.min(cverror)],
+         cverror = cverror,
+         cvpred =  cvpred,
+         plot = p.plot))
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="simulation-errors-and-knn-boundaries" class="section level1">
+<h1>Simulation, Errors and KNN Boundaries</h1>
+<div id="example-1" class="section level2">
+<h2>Example 1</h2>
+<div id="simulate-data" class="section level3">
+<h3>Simulate Data</h3>
+<p>Lets generate some data in two dimensions. Three classes (groups) are created.</p>
+<pre class="r"><code>set.seed(1001); n = 600
+x = matrix(rnorm(n, sd = 4),n/2,2)
+class = rep(c(1,2,3),each = n/6)
+x[class == 1,] = x[class == 1,] + 7
+x[class == 2,] = x[class == 2,] + 12
+x[class == 2,2] = x[class == 2,2] - 15
+plot(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;, &quot;green3&quot;)[class],pch = 20, xlab = &quot;x1&quot;, ylab = &quot;x2&quot;)</code></pre>
+<p><img src="/post/2018-04-16-cross-validation-function-for-classifier_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="training-and-testing-errors" class="section level3">
+<h3>Training and Testing Errors</h3>
+<p>First, let’s split the dataset into training and testing data.</p>
+<pre class="r"><code>set.seed(1001)
+train = sample.int(n/2, n/4); test = -train
+x.train = x[train,]; x.test = x[test,]
+class.train = class[train]; class.test = class[test]</code></pre>
+<div id="cross-validation" class="section level4">
+<h4>Cross Validation</h4>
+<p>Let’s use the <code>classpred.cv</code> function to choose the best number of <span class="math inline">\(K\)</span> depending on the cross-validated error. Let’s use 10 folds in this case and set the tuning parameter values range from 1 to 100.</p>
+<pre class="r"><code>pred = classpred.cv(x.train, as.factor(class.train), x.test, class.test,
+                    myknn, parameter = 1:100, fold = 10, seed = 1001)</code></pre>
+<pre><code>## The best parameter is  17 with cross-validated error of  0.1066667 .
+## The training error using parameter =  17  is  0.1066667 . 
+## The testing error using parameter =  17  is  0.1066667 .</code></pre>
+<p>We can even plot the cross validation error as a function of tuning parameter using <code>pred$plot</code></p>
+<pre class="r"><code>pred$plot</code></pre>
+<p><img src="/post/2018-04-16-cross-validation-function-for-classifier_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+</div>
+<div id="decision-boundaries" class="section level3">
+<h3>Decision Boundaries</h3>
+<p>Let’s visualise the decision boundary with three separate groups. We will be using the <code>make.grid</code> function defined in the [previous post] (<a href="https://theanlim.rbind.io/post/k-nearest-neighbour-classifier-self-written-function/" class="uri">https://theanlim.rbind.io/post/k-nearest-neighbour-classifier-self-written-function/</a>).</p>
+<pre class="r"><code>xgrid = make.grid(x, n = 150)
+ygrid = myknn(x,xgrid, class, k = pred$best_param)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;,&quot;palegreen3&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = paste(&quot;K = &quot;, pred$best_param))
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;, &quot;green3&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-16-cross-validation-function-for-classifier_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+</div>
+<div id="example-2" class="section level2">
+<h2>Example 2</h2>
+<p>Let’s try working on another example. We will start with simulating the data first. This data is simulated such that the overlap between classes is minimal.</p>
+<div id="simulate-data-1" class="section level3">
+<h3>Simulate Data</h3>
+<pre class="r"><code>set.seed(1001)
+r1 = runif(n/3, -1,1)
+r2 = c(runif(n/6,-2,-1), runif(n/6,1,2))
+r3 = -r2
+rad = seq(1,2*pi, length = n/3)
+x1 &lt;- c(r1*cos(rad), r2*cos(rad), r3*cos(rad) )
+x2 &lt;- c(r1*sin(rad), r2*sin(rad), r3*sin(rad))
+x = cbind(x1,x2)
+class = rep(c(1,2, 3), each=n/3 )
+plot(x1, x2 , col = c(&quot;orangered&quot;, &quot;navyblue&quot;, &quot;green3&quot;)[class], pch = 20)</code></pre>
+<p><img src="/post/2018-04-16-cross-validation-function-for-classifier_files/figure-html/unnamed-chunk-9-1.png" width="672" /> The aim in this example in to explore whether KNN classifier is able to distiguish classes that are nested (i.e., the orange dots are surrounded by two different classes)</p>
+</div>
+<div id="training-and-testing-errors-1" class="section level3">
+<h3>Training and Testing Errors</h3>
+<p>First, let’s split the dataset into training and testing data.</p>
+<pre class="r"><code>set.seed(1001)
+train = sample.int(n, n/2)
+test = -train
+x.train = x[train,]
+x.test = x[test,]
+class.train = class[train]; class.test = class[test]</code></pre>
+<div id="cross-validation-1" class="section level4">
+<h4>Cross Validation</h4>
+<p>Again, let’s use 10 folds in this case and set the tuning parameter values range from 1 to 100.</p>
+<pre class="r"><code>pred = classpred.cv(x.train, as.factor(class.train), x.test, class.test,
+                    myknn, parameter = 1:100, fold = 10, seed = 1001)</code></pre>
+<pre><code>## The best parameter is  5 with cross-validated error of  0.04333333 .
+## The training error using parameter =  5  is  0.03 . 
+## The testing error using parameter =  5  is  0.04 .</code></pre>
+<p>Plot the cross validation error as a function of tuning parameter using <code>pred$plot</code></p>
+<pre class="r"><code>pred$plot</code></pre>
+<p><img src="/post/2018-04-16-cross-validation-function-for-classifier_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>The plot shows that a lower value of <span class="math inline">\(K\)</span> performs better as it has a lower cross validation error. This makes sense because, by definition, increasing the number of <span class="math inline">\(k\)</span> expands its neighbourhood in a <strong>circular</strong> way and that is only helpful to the orange points on the plot, but not the others. The other two groups form curvature shapes on the X1 - X2 dimension.</p>
+<p>In addition, a small <span class="math inline">\(k\)</span> is all we need because the classes are highly separable. We see a lower test error in this example compared to Example 1 because the classes are separated pretty cleanly.</p>
+</div>
+</div>
+<div id="decision-boundaries-1" class="section level3">
+<h3>Decision Boundaries</h3>
+<p>How would the decision boundaries look like?</p>
+<pre class="r"><code>xgrid = make.grid(x, n = 150)
+ygrid = myknn(x,xgrid, class, k = pred$best_param)
+plot(xgrid,col=c(&quot;orange&quot;,&quot;dodgerblue&quot;,&quot;palegreen3&quot;)[as.numeric(ygrid)],pch = 20,cex = .2, main = paste(&quot;K = &quot;, pred$best_param))
+points(x,col = c(&quot;orangered&quot;, &quot;navyblue&quot;, &quot;green3&quot;)[class],pch = 20)</code></pre>
+<p><img src="/post/2018-04-16-cross-validation-function-for-classifier_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>It seems like the decision boundaries are flexible enough to classify correctly.</p>
+</div>
+</div>
+</div>
+<div id="next-steps" class="section level1">
+<h1>Next Steps</h1>
+<p>We have finally created KNN classifier and a cross-validated function for classifiers. One can explore and create other clasifiers in addition to KNN classifier. Besides, the KNN classfier is also applicable in higher dimensions space. How would the visulaization of 3D decision boundary would look like?</p>
+</div>

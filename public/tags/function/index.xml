@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Sun, 15 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/function/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Cross Validation Function for Classifier</title>
+      <link>/post/cross-validation-function-for-classifier/</link>
+      <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/cross-validation-function-for-classifier/</guid>
+      <description>IntroductionSelf-defined functionscvclassifierArguments and ValuesImplementationsclasspred.cvArguments and ValuesImplementationsSimulation, Errors and KNN BoundariesExample 1Simulate DataTraining and Testing ErrorsCross ValidationDecision BoundariesExample 2Simulate DataTraining and Testing ErrorsCross ValidationDecision BoundariesNext StepsIntroductionAs mentioned in the previous post, the natural step after creating a KNN classifier is to define another function that can be used for cross-validation (CV).</description>
+    </item>
     
     <item>
       <title>K Nearest Neighbour Classsifier (self-written function)</title>
