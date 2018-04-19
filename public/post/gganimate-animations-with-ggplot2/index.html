@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/gganimate-animations-with-ggplot2/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/gganimate-animations-with-ggplot2/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/post/gganimate-animations-with-ggplot2/">
+  <meta property="og:title" content="gganimate: Animations with ggplot2 | Thean C. Lim">
+  <meta property="og:description" content="">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-04-19T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-04-19T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>gganimate: Animations with ggplot2 | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">gganimate: Animations with ggplot2</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-04-19 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Thu, Apr 19, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Thean Lim">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=gganimate%3a%20Animations%20with%20ggplot2&amp;url=%2fpost%2fgganimate-animations-with-ggplot2%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2fgganimate-animations-with-ggplot2%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2fgganimate-animations-with-ggplot2%2f&amp;title=gganimate%3a%20Animations%20with%20ggplot2"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2fgganimate-animations-with-ggplot2%2f&amp;title=gganimate%3a%20Animations%20with%20ggplot2"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=gganimate%3a%20Animations%20with%20ggplot2&amp;body=%2fpost%2fgganimate-animations-with-ggplot2%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#install">Install</a></li>
+<li><a href="#demo-dataset">Demo dataset</a><ul>
+<li><a href="#simple-animation">Simple Animation</a></li>
+<li><a href="#fixing-running-gganimate-problem">Fixing running <code>gganimate()</code> problem</a><ul>
+<li><a href="#install-imagemagick-through-r">Install ImageMagick through R</a></li>
+<li><a href="#error-after-installing-imagemagick">Error after installing ImageMagick</a></li>
+</ul></li>
+<li><a href="#customization">Customization</a><ul>
+<li><a href="#highlight-points-rather-than-moving-them">Highlight points (rather than moving them)</a></li>
+<li><a href="#cumulative-layer">Cumulative Layer</a></li>
+<li><a href="#matching-frame-with-other-dimension-variables">Matching <code>frame</code> with other dimension (variables)</a></li>
+<li><a href="#statistics-summarization">Statistics Summarization</a></li>
+<li><a href="#animation-options">Animation Options</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<p>The following content is based on <a href="https://github.com/dgrtwo/gganimate" class="uri">https://github.com/dgrtwo/gganimate</a></p>
+<div id="install" class="section level1">
+<h1>Install</h1>
+<pre class="r"><code>if(!require(devtools)) install.packages(&quot;devtools&quot;)
+if(!require(gganimate)) devtools::install_github(&quot;dgrtwo/gganimate&quot;)</code></pre>
+<p>The main argument is the <code>frame</code> ( the time frame/ time points in the argument). Treat <code>frame</code> as another aesthetics such as <strong>size, color, x and y</strong>. Then, use the <code>gganimate()</code> function.</p>
+</div>
+<div id="demo-dataset" class="section level1">
+<h1>Demo dataset</h1>
+<p>The dataset that will be used is <code>gapminder</code>. This is an excerpt of the Gapminder data on life expectancy, GDP per capita, and population by country. Let’s install the package to get the data and take a look on it.</p>
+<pre class="r"><code>if(!require(gapminder)) install.packages(&quot;gapminder&quot;)
+# Loading the two libraries required
+library(gapminder)
+head(gapminder)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   country     continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Afghanistan Asia       1952    28.8  8425333      779.
+## 2 Afghanistan Asia       1957    30.3  9240934      821.
+## 3 Afghanistan Asia       1962    32.0 10267083      853.
+## 4 Afghanistan Asia       1967    34.0 11537966      836.
+## 5 Afghanistan Asia       1972    36.1 13079460      740.
+## 6 Afghanistan Asia       1977    38.4 14880372      786.</code></pre>
+<div id="simple-animation" class="section level2">
+<h2>Simple Animation</h2>
+<ul>
+<li>Build a scatterplot the Life Expectancy against gdp per capita across years.</li>
+<li>Use color and sizes to show the continents and population size.</li>
+</ul>
+<p>** The only thing different from usual plotting is the <code>frame</code> aesthetics. Then, we use the <code>gganimate()</code> function**.</p>
+<pre class="r"><code># Load required package
+library(gapminder)
+library(ggplot2)
+library(gganimate)
+
+## Basic Scatterplot
+p &lt;- ggplot(gapminder, mapping = aes(x = gdpPercap, y = lifeExp, 
+                           size = pop, color = continent, frame = year)) +
+  geom_point() +
+  scale_x_log10()
+
+# Animation
+gganimate(p)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-3.gif" width="672" /> Note that the axis remains the same, making comparison across time easier.</p>
+<div class="alert alert-note">
+  <p>Set <code>fig.show = &quot;animate&quot;</code> chunk option if you are using Rmd and knitr. Add in <code>fig.show = &quot;animate&quot;, ffmpeg.format=&lsquo;gif&rsquo;, dev=&lsquo;jpeg&rsquo;</code> if you are using blogdown.</p>
+
+</div>
+
+<p>The animation could be saved by the followings:</p>
+<pre class="r"><code>gganimate(p, &quot;output.gif&quot;)
+gganimate(p, &quot;output.mp4&quot;)
+gganimate(p, &quot;output.swf&quot;)
+gganimate(p, &quot;output.html&quot;)</code></pre>
+<div class="alert alert-note">
+  <p>ffmpeg and ImageMagick drivers should be installed on your computer.</p>
+
+</div>
+
+<div class="alert alert-warning">
+  <p>I met some problems with running the <code>gganimate(p)</code> and I found the following solution.</p>
+<p><a href="https://medium.com/@DaveQuartey/solutions-to-installing-imagemagick-for-gganimate-r-package-errors-8b36d0736f85">Solutions to “Installing #ImageMagick for #gganimate R package” errors</a></p>
+
+</div>
+
+</div>
+<div id="fixing-running-gganimate-problem" class="section level2">
+<h2>Fixing running <code>gganimate()</code> problem</h2>
+<p>Just in case that the page is removed in the future, I am going to copy and paste whatever is in that page:</p>
+<div id="install-imagemagick-through-r" class="section level3">
+<h3>Install ImageMagick through R</h3>
+<p>Do this through the following. Make sure to select <code>legacy utilities</code> whiles installing ImageMagick to install convert.exe on your machine.</p>
+<pre class="r"><code>if (!require(&quot;installr&quot;)){ 
+install.packages(&quot;installr&quot;)
+library(installr)
+install.imagemagick(&quot;https://www.imagemagick.org/script/download.php&quot;
+} else {
+library(installr)
+install.imagemagick(&quot;https://www.imagemagick.org/script/download.php&quot;)</code></pre>
+<p>This downloads ImageMagick onto the PC. Rerun the <code>gganimate()</code> code after this step.</p>
+</div>
+<div id="error-after-installing-imagemagick" class="section level3">
+<h3>Error after installing ImageMagick</h3>
+<pre><code>cannot find ImageMagick with convert = &quot;convert&quot;</code></pre>
+<p>Install ImageMagick and point R path to its folder . Make sure to restart RStudio after pointing R path to its folder.</p>
+<div id="path-through-r" class="section level4">
+<h4>Path through R</h4>
+<p><a href="https://github.com/dgrtwo/gganimate/issues/22#issuecomment-264352060">Point</a> R path to its folder in R using:</p>
+<pre><code>Sys.setenv(PATH = paste(&quot;C:/Program Files/ImageMagick/bin&quot;,
+Sys.getenv(&quot;PATH&quot;), sep = &quot;;&quot;))</code></pre>
+</div>
+<div id="restart-rstudio" class="section level4">
+<h4>Restart Rstudio</h4>
+<p>if the following error comes up after installing ImageMagick and directing R to its path. Just restart Rstudio.</p>
+<pre><code>C:\Program&#39; is not recognized as an internal or external command,
+operable program or batch file.</code></pre>
+</div>
+</div>
+</div>
+<div id="customization" class="section level2">
+<h2>Customization</h2>
+<div id="highlight-points-rather-than-moving-them" class="section level3">
+<h3>Highlight points (rather than moving them)</h3>
+<p>What if I want to highlight the change in the <code>population</code> throughout the years but not moving it?</p>
+<p>All I need to do is to remove the <code>frame</code> aesthetics from the global chunk but add it into specific <code>geom</code>.</p>
+<pre class="r"><code>p2 &lt;- ggplot(gapminder, mapping = aes(x = gdpPercap, y = lifeExp, size = pop)) +
+  geom_point() +
+  geom_point(aes(frame = year), color = &quot;violetred&quot;) +
+  scale_x_log10()
+
+gganimate(p2)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-6.gif" width="672" /></p>
+</div>
+<div id="cumulative-layer" class="section level3">
+<h3>Cumulative Layer</h3>
+<p>This can be done by adding an aesthetic <code>cumulative = TRUE</code>. It’s useful for building path over time. Also note that the <code>group</code> aesthetics is used so that it knows which variables to accumulate on.</p>
+<pre class="r"><code>p3 &lt;- ggplot(gapminder, mapping = aes(x = gdpPercap, y = lifeExp, frame = year)) +
+  geom_path(aes(cumulative = TRUE, group = country)) +
+  scale_x_log10() +
+  facet_wrap(~continent)
+
+gganimate(p3)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-7.gif" width="672" /></p>
+</div>
+<div id="matching-frame-with-other-dimension-variables" class="section level3">
+<h3>Matching <code>frame</code> with other dimension (variables)</h3>
+<p>Let’s try to match <code>continent</code> to <code>frame</code> aesthetics</p>
+<pre class="r"><code>p4 &lt;- ggplot(gapminder, 
+             mapping = aes(x = gdpPercap, y = lifeExp, size = pop, frame = continent)) +
+  geom_point(color = &quot;blue&quot;) +
+  scale_x_log10()
+
+gganimate(p4)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-8.gif" width="672" /></p>
+</div>
+<div id="statistics-summarization" class="section level3">
+<h3>Statistics Summarization</h3>
+<p>Always add in <code>group</code> in the <code>geom</code> (such as <code>geom_smoooth()</code>) or the statistics will be calculated across all frames and thus be constant in animation.</p>
+<p><code>scales = &quot;free&quot;</code> was added because the range of x axis is fixed by default.</p>
+<pre class="r"><code>p5 &lt;- ggplot(gapminder, 
+             mapping = aes(x = gdpPercap, y = lifeExp, size = pop, frame = year)) +
+  geom_point() +
+  geom_smooth(aes(group = year), method = &quot;lm&quot;, show.legend = FALSE) +
+  facet_wrap(~continent, scales = &quot;free&quot;) +
+  scale_x_log10() 
+
+gganimate(p5)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-9.gif" width="672" /></p>
+</div>
+<div id="animation-options" class="section level3">
+<h3>Animation Options</h3>
+<p>You can control your animation with the same options described in <code>ani.options</code> from the <code>animation</code> package, passed directly to <code>gganimate</code> or to <code>ani.options</code> beforehand. Note that you always need to add the parameters passed to <code>gganimate</code> to the chunks in the knitr of Rmd.</p>
+<p>Now, let’s try to set the <code>interval</code> argument and make the animation goes faster.</p>
+<p>We will start with passing the argument directly intto <code>gganimate()</code></p>
+<pre class="r"><code>gganimate(p, interval = .2)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-10.gif" width="672" /></p>
+<p>In fact, simply making the chunk to include <code>interval = 0.2</code> is good enough in Rmd.</p>
+<pre class="r"><code>gganimate(p)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-11.gif" width="672" /></p>
+<p>Let’s do the same thing but a instead using the <code>ani.options</code>. This is how you do it in Rstudio in general.</p>
+<pre class="r"><code>library(animation)
+ani.options(interval = .2)
+gganimate(p)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-12.gif" width="672" /></p>
+</div>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/visualization">visualization</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/animation">animation</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>Related</h3>
+      <ul>
+        
+        <li><a href="/readings/data-visualization-with-ggplot2/">Data Visualization with ggplot2</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

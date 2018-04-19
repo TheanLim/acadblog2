@@ -1,0 +1,197 @@
+---
+title: 'gganimate: Animations with ggplot2'
+author: Thean Lim
+date: '2018-04-19'
+slug: gganimate-animations-with-ggplot2
+categories:
+  - R
+tags:
+  - visualization
+  - animation
+header:
+  caption: ''
+  image: ''
+summary: How to create animated plots from ggplot2?
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#install">Install</a></li>
+<li><a href="#demo-dataset">Demo dataset</a><ul>
+<li><a href="#simple-animation">Simple Animation</a></li>
+<li><a href="#fixing-running-gganimate-problem">Fixing running <code>gganimate()</code> problem</a><ul>
+<li><a href="#install-imagemagick-through-r">Install ImageMagick through R</a></li>
+<li><a href="#error-after-installing-imagemagick">Error after installing ImageMagick</a></li>
+</ul></li>
+<li><a href="#customization">Customization</a><ul>
+<li><a href="#highlight-points-rather-than-moving-them">Highlight points (rather than moving them)</a></li>
+<li><a href="#cumulative-layer">Cumulative Layer</a></li>
+<li><a href="#matching-frame-with-other-dimension-variables">Matching <code>frame</code> with other dimension (variables)</a></li>
+<li><a href="#statistics-summarization">Statistics Summarization</a></li>
+<li><a href="#animation-options">Animation Options</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<p>The following content is based on <a href="https://github.com/dgrtwo/gganimate" class="uri">https://github.com/dgrtwo/gganimate</a></p>
+<div id="install" class="section level1">
+<h1>Install</h1>
+<pre class="r"><code>if(!require(devtools)) install.packages(&quot;devtools&quot;)
+if(!require(gganimate)) devtools::install_github(&quot;dgrtwo/gganimate&quot;)</code></pre>
+<p>The main argument is the <code>frame</code> ( the time frame/ time points in the argument). Treat <code>frame</code> as another aesthetics such as <strong>size, color, x and y</strong>. Then, use the <code>gganimate()</code> function.</p>
+</div>
+<div id="demo-dataset" class="section level1">
+<h1>Demo dataset</h1>
+<p>The dataset that will be used is <code>gapminder</code>. This is an excerpt of the Gapminder data on life expectancy, GDP per capita, and population by country. Let’s install the package to get the data and take a look on it.</p>
+<pre class="r"><code>if(!require(gapminder)) install.packages(&quot;gapminder&quot;)
+# Loading the two libraries required
+library(gapminder)
+head(gapminder)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   country     continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Afghanistan Asia       1952    28.8  8425333      779.
+## 2 Afghanistan Asia       1957    30.3  9240934      821.
+## 3 Afghanistan Asia       1962    32.0 10267083      853.
+## 4 Afghanistan Asia       1967    34.0 11537966      836.
+## 5 Afghanistan Asia       1972    36.1 13079460      740.
+## 6 Afghanistan Asia       1977    38.4 14880372      786.</code></pre>
+<div id="simple-animation" class="section level2">
+<h2>Simple Animation</h2>
+<ul>
+<li>Build a scatterplot the Life Expectancy against gdp per capita across years.</li>
+<li>Use color and sizes to show the continents and population size.</li>
+</ul>
+<p>** The only thing different from usual plotting is the <code>frame</code> aesthetics. Then, we use the <code>gganimate()</code> function**.</p>
+<pre class="r"><code># Load required package
+library(gapminder)
+library(ggplot2)
+library(gganimate)
+
+## Basic Scatterplot
+p &lt;- ggplot(gapminder, mapping = aes(x = gdpPercap, y = lifeExp, 
+                           size = pop, color = continent, frame = year)) +
+  geom_point() +
+  scale_x_log10()
+
+# Animation
+gganimate(p)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-3.gif" width="672" /> Note that the axis remains the same, making comparison across time easier.</p>
+<p>{{% alert note %}} Set <code>fig.show = &quot;animate&quot;</code> chunk option if you are using Rmd and knitr. Add in <code>fig.show = &quot;animate&quot;, ffmpeg.format='gif', dev='jpeg'</code> if you are using blogdown. {{% /alert %}}</p>
+<p>The animation could be saved by the followings:</p>
+<pre class="r"><code>gganimate(p, &quot;output.gif&quot;)
+gganimate(p, &quot;output.mp4&quot;)
+gganimate(p, &quot;output.swf&quot;)
+gganimate(p, &quot;output.html&quot;)</code></pre>
+<p>{{% alert note %}} ffmpeg and ImageMagick drivers should be installed on your computer. {{% /alert %}}</p>
+<p>{{% alert warning %}} I met some problems with running the <code>gganimate(p)</code> and I found the following solution.</p>
+<p><a href="https://medium.com/@DaveQuartey/solutions-to-installing-imagemagick-for-gganimate-r-package-errors-8b36d0736f85">Solutions to “Installing #ImageMagick for #gganimate R package” errors</a> {{% /alert %}}</p>
+</div>
+<div id="fixing-running-gganimate-problem" class="section level2">
+<h2>Fixing running <code>gganimate()</code> problem</h2>
+<p>Just in case that the page is removed in the future, I am going to copy and paste whatever is in that page:</p>
+<div id="install-imagemagick-through-r" class="section level3">
+<h3>Install ImageMagick through R</h3>
+<p>Do this through the following. Make sure to select <code>legacy utilities</code> whiles installing ImageMagick to install convert.exe on your machine.</p>
+<pre class="r"><code>if (!require(&quot;installr&quot;)){ 
+install.packages(&quot;installr&quot;)
+library(installr)
+install.imagemagick(&quot;https://www.imagemagick.org/script/download.php&quot;
+} else {
+library(installr)
+install.imagemagick(&quot;https://www.imagemagick.org/script/download.php&quot;)</code></pre>
+<p>This downloads ImageMagick onto the PC. Rerun the <code>gganimate()</code> code after this step.</p>
+</div>
+<div id="error-after-installing-imagemagick" class="section level3">
+<h3>Error after installing ImageMagick</h3>
+<pre><code>cannot find ImageMagick with convert = &quot;convert&quot;</code></pre>
+<p>Install ImageMagick and point R path to its folder . Make sure to restart RStudio after pointing R path to its folder.</p>
+<div id="path-through-r" class="section level4">
+<h4>Path through R</h4>
+<p><a href="https://github.com/dgrtwo/gganimate/issues/22#issuecomment-264352060">Point</a> R path to its folder in R using:</p>
+<pre><code>Sys.setenv(PATH = paste(&quot;C:/Program Files/ImageMagick/bin&quot;,
+Sys.getenv(&quot;PATH&quot;), sep = &quot;;&quot;))</code></pre>
+</div>
+<div id="restart-rstudio" class="section level4">
+<h4>Restart Rstudio</h4>
+<p>if the following error comes up after installing ImageMagick and directing R to its path. Just restart Rstudio.</p>
+<pre><code>C:\Program&#39; is not recognized as an internal or external command,
+operable program or batch file.</code></pre>
+</div>
+</div>
+</div>
+<div id="customization" class="section level2">
+<h2>Customization</h2>
+<div id="highlight-points-rather-than-moving-them" class="section level3">
+<h3>Highlight points (rather than moving them)</h3>
+<p>What if I want to highlight the change in the <code>population</code> throughout the years but not moving it?</p>
+<p>All I need to do is to remove the <code>frame</code> aesthetics from the global chunk but add it into specific <code>geom</code>.</p>
+<pre class="r"><code>p2 &lt;- ggplot(gapminder, mapping = aes(x = gdpPercap, y = lifeExp, size = pop)) +
+  geom_point() +
+  geom_point(aes(frame = year), color = &quot;violetred&quot;) +
+  scale_x_log10()
+
+gganimate(p2)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-6.gif" width="672" /></p>
+</div>
+<div id="cumulative-layer" class="section level3">
+<h3>Cumulative Layer</h3>
+<p>This can be done by adding an aesthetic <code>cumulative = TRUE</code>. It’s useful for building path over time. Also note that the <code>group</code> aesthetics is used so that it knows which variables to accumulate on.</p>
+<pre class="r"><code>p3 &lt;- ggplot(gapminder, mapping = aes(x = gdpPercap, y = lifeExp, frame = year)) +
+  geom_path(aes(cumulative = TRUE, group = country)) +
+  scale_x_log10() +
+  facet_wrap(~continent)
+
+gganimate(p3)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-7.gif" width="672" /></p>
+</div>
+<div id="matching-frame-with-other-dimension-variables" class="section level3">
+<h3>Matching <code>frame</code> with other dimension (variables)</h3>
+<p>Let’s try to match <code>continent</code> to <code>frame</code> aesthetics</p>
+<pre class="r"><code>p4 &lt;- ggplot(gapminder, 
+             mapping = aes(x = gdpPercap, y = lifeExp, size = pop, frame = continent)) +
+  geom_point(color = &quot;blue&quot;) +
+  scale_x_log10()
+
+gganimate(p4)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-8.gif" width="672" /></p>
+</div>
+<div id="statistics-summarization" class="section level3">
+<h3>Statistics Summarization</h3>
+<p>Always add in <code>group</code> in the <code>geom</code> (such as <code>geom_smoooth()</code>) or the statistics will be calculated across all frames and thus be constant in animation.</p>
+<p><code>scales = &quot;free&quot;</code> was added because the range of x axis is fixed by default.</p>
+<pre class="r"><code>p5 &lt;- ggplot(gapminder, 
+             mapping = aes(x = gdpPercap, y = lifeExp, size = pop, frame = year)) +
+  geom_point() +
+  geom_smooth(aes(group = year), method = &quot;lm&quot;, show.legend = FALSE) +
+  facet_wrap(~continent, scales = &quot;free&quot;) +
+  scale_x_log10() 
+
+gganimate(p5)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-9.gif" width="672" /></p>
+</div>
+<div id="animation-options" class="section level3">
+<h3>Animation Options</h3>
+<p>You can control your animation with the same options described in <code>ani.options</code> from the <code>animation</code> package, passed directly to <code>gganimate</code> or to <code>ani.options</code> beforehand. Note that you always need to add the parameters passed to <code>gganimate</code> to the chunks in the knitr of Rmd.</p>
+<p>Now, let’s try to set the <code>interval</code> argument and make the animation goes faster.</p>
+<p>We will start with passing the argument directly intto <code>gganimate()</code></p>
+<pre class="r"><code>gganimate(p, interval = .2)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-10.gif" width="672" /></p>
+<p>In fact, simply making the chunk to include <code>interval = 0.2</code> is good enough in Rmd.</p>
+<pre class="r"><code>gganimate(p)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-11.gif" width="672" /></p>
+<p>Let’s do the same thing but a instead using the <code>ani.options</code>. This is how you do it in Rstudio in general.</p>
+<pre class="r"><code>library(animation)
+ani.options(interval = .2)
+gganimate(p)</code></pre>
+<p><img src="/post/2018-04-19-gganimate-animations-with-ggplot2_files/figure-html/unnamed-chunk-12.gif" width="672" /></p>
+</div>
+</div>
+</div>
