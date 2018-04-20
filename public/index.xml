@@ -11,6 +11,266 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Clustering: k-means, k-means &#43;&#43; and gganimate</title>
+      <link>/post/clustering-k-means-k-means-and-gganimate/</link>
+      <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/clustering-k-means-k-means-and-gganimate/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#introduction&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-problem&#34;&gt;The Problem&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#k-means-clustering&#34;&gt;K-means Clustering&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#implementation&#34;&gt;Implementation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#data-simulation-and-visualization&#34;&gt;Data Simulation and Visualization&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#k-means-clustering-1&#34;&gt;K-means ++ Clustering&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#implementations&#34;&gt;Implementations&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#visualization&#34;&gt;Visualization&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#choosing-k---the-elbow-method&#34;&gt;Choosing K - the Elbow Method&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#next-step&#34;&gt;Next Step&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#references&#34;&gt;References&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;Clustering methods attempt to group object based on the similarities of the objects. For example, one can group their customers into several clusters so that one can aim a specific way of marketing to each type of customers.&lt;/p&gt;
+&lt;p&gt;Since there is no preexisting group labels for each cluster, we can never know the accuracy of clustering methods unless using a simulated data.&lt;/p&gt;
+&lt;p&gt;There are some complexities in clusterings:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the number of clusters? We have no way to validate the results so we can’t even use cross-validation to choose one. Perhaps, using domain knowledge is the best way to validate the results. We will use the &lt;strong&gt;Elbow Method&lt;/strong&gt; to decide the &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; here.&lt;/li&gt;
+&lt;li&gt;How do we define &lt;strong&gt;similar&lt;/strong&gt;? In other words, what is the similarity measure? Clustering results depend heavily on the measure of similarity. Some of the famous measures between two data points are:&lt;/li&gt;
+&lt;li&gt;Pearson correlation between two points&lt;/li&gt;
+&lt;li&gt;Distance between two points&lt;/li&gt;
+&lt;li&gt;Number of matches between two points (i.e., having the same category)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I am using the &lt;strong&gt;Distance&lt;/strong&gt;, the Euclidean distance to be specific, as the similarity measure in this post.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-problem&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The Problem&lt;/h1&gt;
+&lt;p&gt;Let’s say we have &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; data vectors &lt;span class=&#34;math inline&#34;&gt;\(X_1, ..., X_n \in \mathbb{R}^p\)&lt;/span&gt; and we have &lt;span class=&#34;math inline&#34;&gt;\(K\)&lt;/span&gt; vector clusters with cluster centers of &lt;span class=&#34;math inline&#34;&gt;\(c_1, ..., c_k \in \mathbb{R}^p\)&lt;/span&gt;. We want to minimize the following error:&lt;br /&gt;
+&lt;span class=&#34;math display&#34;&gt;\[R (c_1, ..., c_k) = \frac{1}{n} \sum_{i=1}^{n} \underset{1\leq j \leq k}{\mathrm{argmin}}||X_i - c_j||^2\]&lt;/span&gt; In other words, given a fixed number of cluster, &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;, we want to mimimize within cluster dissimilarity. This is calculated by taking the difference between each data points from its cluster centroid (the center, &lt;span class=&#34;math inline&#34;&gt;\(c_k\)&lt;/span&gt;), which also has &lt;span class=&#34;math inline&#34;&gt;\(p\)&lt;/span&gt; dimensions. This also means that we cluster the data points to the closest centroids from them.&lt;/p&gt;
+&lt;p&gt;However, finding &lt;span class=&#34;math inline&#34;&gt;\(c_1, ..., c_k\)&lt;/span&gt; that minimizes &lt;span class=&#34;math inline&#34;&gt;\(R (c_1, ..., c_k)\)&lt;/span&gt; is NP-hard (as hard as nondeterministic polynomial time problem). It is not feasible to find: &lt;span class=&#34;math display&#34;&gt;\[\underset{c_1, ..., c_k}{argmin}\ R (c_1, ..., c_k)\]&lt;/span&gt; because we have to minimize over all possible assignments of &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; points to &lt;span class=&#34;math inline&#34;&gt;\(K\)&lt;/span&gt; clusters. The number of distinct assignments is: &lt;span class=&#34;math display&#34;&gt;\[S\ (n,k) = \frac{1}{K!}\sum_{k=1}^{K}(-1)^{K-k} {K \choose k} k^n\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;k-means-clustering&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;K-means Clustering&lt;/h1&gt;
+&lt;p&gt;The Lloyd’s algorithm turns out to be the most famous iterative algorithm used to attempt minimizing the objective function.&lt;/p&gt;
+&lt;p&gt;The algorithm is simple:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Partition the &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; objects into &lt;span class=&#34;math inline&#34;&gt;\(K\)&lt;/span&gt; initial clusters &lt;span class=&#34;math inline&#34;&gt;\(c_1,...,c_k\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;Do the following:
+&lt;ul&gt;
+&lt;li&gt;Assign object &lt;span class=&#34;math inline&#34;&gt;\(X_i\)&lt;/span&gt; to cluster &lt;span class=&#34;math inline&#34;&gt;\(c_k\)&lt;/span&gt; that has the closest centroid(mean). Repeat this for &lt;span class=&#34;math inline&#34;&gt;\(i= 1,...,n\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;Update the cluster centroids by taking the sample mean within each cluster.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Repeat 2 until no changes in cluster assignment is observed (means it has converged).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div id=&#34;implementation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Implementation&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mykmeans &amp;lt;- function (data, k, centers = NULL, stop_crit = 10e-3, seed = 1001)
+{
+
+  # Initializations
+  set.seed(seed)
+  # Assigning the initial centroids. Random value will be used
+  # if no values were specified
+  if(is.null(centers)) centers = sample.int(nrow(data), k)
+  centroid &amp;lt;- data[centers, ]
+  # Keep a history of the centroid values for visualization purpose
+  cen_hist = data.frame(centroid)
+  # Randomly assign clusters to each observations
+  cluster &amp;lt;- c(sample.int(k, nrow(data), replace = TRUE))
+  # Keep a histpry of the data frame that includes assigned clusters
+  # for visualization purpose
+  data_hist &amp;lt;- data.frame(data,cluster)
+  # Within group Sum of squares
+  withinss = c()
+  # size of each cluster
+  size = c()
+  # Does it converge?
+  conver &amp;lt;- F
+  # distance between old and updated centroids
+  # Set it as arbitarily large
+  dist_crit = 10e5
+  # Number of iteration
+  iter = 1
+  
+  while (conver == FALSE)
+  {
+    old_centroid = centroid
+    
+    # assign to cluster that has the closest centroid to a specific data point
+    for (i in 1 : nrow(data))
+    {
+      dist = apply(centroid, 1, function(x) sum((x - data[i,])^2))
+      cluster[i] = which.min(dist)
+    }
+    
+    # Update the centroid mean
+    for (j in 1 : k)
+    {
+      centroid[j, ] = apply(data[cluster == j, ], 2, mean)
+    }
+    
+    ## Keep the history of the centroid and data + cluster
+    cen_hist = rbind(cen_hist, data.frame(centroid))
+    data_hist = rbind(data_hist, data.frame(data,cluster))
+    
+    # Is the stopping criteria met?
+    dist_crit = mean((old_centroid - centroid)^2)
+    if (dist_crit &amp;lt;= stop_crit) conver = TRUE
+    
+    # Update iteration
+    iter = iter + 1
+  }
+  
+  #### Sum of squares calculations#####
+  for (m in 1 : k)
+  {
+    withinss[m] = sum((apply(data[cluster == m, ],1, 
+                             function(x) x - apply(data[cluster == m, ],2,mean)))^2)
+    size [m] = sum(cluster == m)
+  }
+  
+  totss = sum(apply(data, 1, function(x) sum((x - apply(data,2,mean))^2)))
+  tot.withinss = sum(withinss)
+  
+  return(list(data = data.frame(data,cluster),
+              cluster = cluster,
+              centroid = centroid,
+              totss = totss,
+              withinss = withinss,
+              tot.withinss = tot.withinss,
+              betweenss = totss - tot.withinss,
+              size = size,
+              cen_hist = cen_hist,
+              data_hist = data_hist,
+              iterations = iter))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-simulation-and-visualization&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data Simulation and Visualization&lt;/h2&gt;
+&lt;p&gt;The following simulation is adapted from &lt;a href=&#34;http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/&#34; class=&#34;uri&#34;&gt;http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;5 clusters with 300 observarions each are simulated. Let’s take a look.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;require(MASS)
+require(ggplot2)
+set.seed(1234)
+set1=mvrnorm(n = 300, c(-4,10), matrix(c(1.5,1,1,1.5),2))
+set2=mvrnorm(n = 300, c(5,7), matrix(c(1,2,2,6),2))
+set3=mvrnorm(n = 300, c(-1,1), matrix(c(4,0,0,4),2))
+set4=mvrnorm(n = 300, c(10,-10), matrix(c(4,0,0,4),2))
+set5=mvrnorm(n = 300, c(3,-3), matrix(c(4,0,0,4),2))
+DF=data.frame(rbind(set1,set2,set3,set4,set5),cluster=as.factor(c(rep(1:5,each=300))))
+ggplot(DF,aes(x=X1,y=X2,color=cluster))+geom_point()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Now, let’s apply the K-means clustering function that we just defined. We can also visualize how K-means is performing in this dataset.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;k = 5
+res=mykmeans(DF[1:2],k=k)
+res$centroid$cluster=1:k
+res$data$isCentroid=F
+res$centroid$isCentroid=T
+data_plot2=rbind(res$centroid,res$data)
+
+ggplot(data_plot2,aes(x=X1,y=X2,color=as.factor(cluster),
+                           size=isCentroid,alpha=isCentroid)) +
+  geom_point()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;It appears that the K-means clustering is working well here since the 5 clusters are separated correctly.&lt;/p&gt;
+&lt;p&gt;Let’s look at how the K-means algorithm is working in the following visualization. We can see how the &lt;span class=&#34;math inline&#34;&gt;\(k = 5\)&lt;/span&gt; centroid is moving and form the 5 clusters correctly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-4.gif&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;k-means-clustering-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;K-means ++ Clustering&lt;/h1&gt;
+&lt;p&gt;The problem with k-means clustering is that it only provide local minimum but not global minimum. In other words, where you set as the inital centroids plays a big role. Thus, the usual method is to use different initial values, look for the stable solution (clusters) and choose the best initial value from there.&lt;/p&gt;
+&lt;p&gt;In 2007, David Arthur and Sergei Vassilvitskii introduced &lt;a href=&#34;http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf&#34;&gt;k-means++&lt;/a&gt;.&lt;br /&gt;
+The big idea is that instead of choosing &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; centroids randomly, it’s better to choose the centroids such that they are far from each other. The major advantage of this approach is that we don’t have to try several initial values. This cuts down the computational time a lot.&lt;/p&gt;
+&lt;p&gt;The following is the algorithm of choosing the initial centroids:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Denote a randomly chosen point as &lt;span class=&#34;math inline&#34;&gt;\(s_1\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;For the &lt;span class=&#34;math inline&#34;&gt;\(l\)&lt;/span&gt; th iteration, &lt;span class=&#34;math inline&#34;&gt;\(l = 2,..., k\)&lt;/span&gt;, compute the squared distances, &lt;span class=&#34;math inline&#34;&gt;\(D_i^2\)&lt;/span&gt;: &lt;span class=&#34;math display&#34;&gt;\[D_i^2 = min \{||Y_i -s_1||^2,..., ||Y_i -s_{l-1}||^2 \}\]&lt;/span&gt;. The probability that &lt;span class=&#34;math inline&#34;&gt;\(Y_i\)&lt;/span&gt; is chosen as the centroid, &lt;span class=&#34;math inline&#34;&gt;\(s_l\)&lt;/span&gt;, is &lt;span class=&#34;math display&#34;&gt;\[D_i^2/\sum_{j}D_j^2\]&lt;/span&gt; with &lt;span class=&#34;math inline&#34;&gt;\(i \neq j\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(i, j = 1,..., n\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;Repeat this until we collect &lt;span class=&#34;math inline&#34;&gt;\(s_1, ..., s_k\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;Use the collected points as the staring centroids for k-means algorithm.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div id=&#34;implementations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Implementations&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;kmeanplus &amp;lt;- function(data, k, ...)
+{
+  n = nrow(data)
+  
+  # Place holder
+  centroids &amp;lt;- rep(NA, k)
+  dist &amp;lt;- matrix(nrow = n, ncol = k-1)
+  
+  # Initialize probability = 1 for all data points
+  probs = rep(1, n)
+  
+  for (i in 1: (k-1))
+  {
+    # The s_k
+    centroids[i] = sample.int(n, 1, prob = probs)
+    # The D_i^2
+    dist[,i] = (apply(data, 1, function(x) sum((x- data[centroids[i], ])^2)))
+    # Not counting the exact probabily here. All we care is the relative weight.
+    probs = apply(dist, 1, function(y) y[which.min(y)])
+  }
+  centroids[k] = sample.int(n, 1, prob = probs)
+  
+  res &amp;lt;- mykmeans(data = data, centers = centroids,  k = k, ...)
+  return(res)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualization&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualization&lt;/h2&gt;
+&lt;p&gt;Let’s reuse the same dataset as above and visualize the clustering process.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;res &amp;lt;-  kmeanplus(DF[1:2], k = 5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-7.gif&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The number of iterations is 7 this time.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;choosing-k---the-elbow-method&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Choosing K - the Elbow Method&lt;/h1&gt;
+&lt;p&gt;The Elbow Method will be used in this case. Recall that all we were doing is to minimize the within cluster sum of squares. We can vary the value of &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt;, say from 3 to 7, and plot the within sum of squares against the &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; s. The location of a bend in the plot can be considered as the optimal &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; because it means that further increasing number of &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; is not decreasing the within sum of squares a lot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(1001)
+
+# Compute and plot wss for k = 3 to k = 7
+k.values &amp;lt;-3:7
+
+wss = c()
+
+for (k in k.values)
+{
+  wss = c(wss, kmeanplus(DF[1:2], k = k)$tot.withinss)
+}
+
+plot(k.values, wss,
+       type=&amp;quot;b&amp;quot;, pch = 19, frame = FALSE, 
+       xlab=&amp;quot;Number of clusters K&amp;quot;,
+       ylab=&amp;quot;Total within-clusters sum of squares&amp;quot;,
+       col = &amp;quot;dodgerblue&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The Elbow is seen at &lt;span class=&#34;math inline&#34;&gt;\(k = 5\)&lt;/span&gt; and that is congruent with our simulated 5 clusters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;next-step&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Next Step&lt;/h1&gt;
+&lt;p&gt;There are different ways of choosing the number of clusters &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; in adddition to the Elbow method. One can also try on more data simulations and discover the limitations of k-means clustering.&lt;/p&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://normaldeviate.wordpress.com/2012/09/30/the-remarkable-k-means/&#34; class=&#34;uri&#34;&gt;https://normaldeviate.wordpress.com/2012/09/30/the-remarkable-k-means/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/&#34; class=&#34;uri&#34;&gt;http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf&#34; class=&#34;uri&#34;&gt;http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://uc-r.github.io/kmeans_clustering#optimal&#34; class=&#34;uri&#34;&gt;https://uc-r.github.io/kmeans_clustering#optimal&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>gganimate: Animations with ggplot2</title>
       <link>/post/gganimate-animations-with-ggplot2/</link>
       <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
@@ -797,7 +1057,7 @@ Figure 9: Mapping aesthetics using logical expression
   pred = c()
   
   # calculate distance
-  # The output of the &amp;quot;dist&amp;quot; dataframe is such that the columns are the 
+  # The output of the &amp;quot;dist&amp;quot; dataframe is such that the rows are the 
   #     training data points, while the columns are the testing observations.
   #     The cells for each row-column pair are the Euclidean distance from
   #     training data to the corresponsing testing data

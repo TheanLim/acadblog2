@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Mon, 16 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/function/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Clustering: k-means, k-means &#43;&#43; and gganimate</title>
+      <link>/post/clustering-k-means-k-means-and-gganimate/</link>
+      <pubDate>Thu, 19 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/clustering-k-means-k-means-and-gganimate/</guid>
+      <description>IntroductionThe ProblemK-means ClusteringImplementationData Simulation and VisualizationK-means ++ ClusteringImplementationsVisualizationChoosing K - the Elbow MethodNext StepReferencesIntroductionClustering methods attempt to group object based on the similarities of the objects. For example, one can group their customers into several clusters so that one can aim a specific way of marketing to each type of customers.
+Since there is no preexisting group labels for each cluster, we can never know the accuracy of clustering methods unless using a simulated data.</description>
+    </item>
     
     <item>
       <title>Cross Validation Function for Classifier</title>

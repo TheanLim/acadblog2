@@ -1,0 +1,277 @@
+---
+title: 'Clustering: k-means, k-means ++ and gganimate'
+author: Thean Lim
+date: '2018-04-19'
+slug: clustering-k-means-k-means-and-gganimate
+categories:
+  - R
+tags:
+  - clustering
+  - algorithm
+  - function
+  - simulation
+  - visualization
+  - animation
+header:
+  caption: ''
+  image: ''
+summary: Explain and visualize how kmeans and kmeans++ work.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#the-problem">The Problem</a></li>
+<li><a href="#k-means-clustering">K-means Clustering</a><ul>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#data-simulation-and-visualization">Data Simulation and Visualization</a></li>
+</ul></li>
+<li><a href="#k-means-clustering-1">K-means ++ Clustering</a><ul>
+<li><a href="#implementations">Implementations</a></li>
+<li><a href="#visualization">Visualization</a></li>
+</ul></li>
+<li><a href="#choosing-k---the-elbow-method">Choosing K - the Elbow Method</a></li>
+<li><a href="#next-step">Next Step</a><ul>
+<li><a href="#references">References</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Clustering methods attempt to group object based on the similarities of the objects. For example, one can group their customers into several clusters so that one can aim a specific way of marketing to each type of customers.</p>
+<p>Since there is no preexisting group labels for each cluster, we can never know the accuracy of clustering methods unless using a simulated data.</p>
+<p>There are some complexities in clusterings:</p>
+<ul>
+<li>What is the number of clusters? We have no way to validate the results so we can’t even use cross-validation to choose one. Perhaps, using domain knowledge is the best way to validate the results. We will use the <strong>Elbow Method</strong> to decide the <span class="math inline">\(k\)</span> here.</li>
+<li>How do we define <strong>similar</strong>? In other words, what is the similarity measure? Clustering results depend heavily on the measure of similarity. Some of the famous measures between two data points are:</li>
+<li>Pearson correlation between two points</li>
+<li>Distance between two points</li>
+<li>Number of matches between two points (i.e., having the same category)</li>
+</ul>
+<p>I am using the <strong>Distance</strong>, the Euclidean distance to be specific, as the similarity measure in this post.</p>
+</div>
+<div id="the-problem" class="section level1">
+<h1>The Problem</h1>
+<p>Let’s say we have <span class="math inline">\(n\)</span> data vectors <span class="math inline">\(X_1, ..., X_n \in \mathbb{R}^p\)</span> and we have <span class="math inline">\(K\)</span> vector clusters with cluster centers of <span class="math inline">\(c_1, ..., c_k \in \mathbb{R}^p\)</span>. We want to minimize the following error:<br />
+<span class="math display">\[R (c_1, ..., c_k) = \frac{1}{n} \sum_{i=1}^{n} \underset{1\leq j \leq k}{\mathrm{argmin}}||X_i - c_j||^2\]</span> In other words, given a fixed number of cluster, <span class="math inline">\(k\)</span>, we want to mimimize within cluster dissimilarity. This is calculated by taking the difference between each data points from its cluster centroid (the center, <span class="math inline">\(c_k\)</span>), which also has <span class="math inline">\(p\)</span> dimensions. This also means that we cluster the data points to the closest centroids from them.</p>
+<p>However, finding <span class="math inline">\(c_1, ..., c_k\)</span> that minimizes <span class="math inline">\(R (c_1, ..., c_k)\)</span> is NP-hard (as hard as nondeterministic polynomial time problem). It is not feasible to find: <span class="math display">\[\underset{c_1, ..., c_k}{argmin}\ R (c_1, ..., c_k)\]</span> because we have to minimize over all possible assignments of <span class="math inline">\(n\)</span> points to <span class="math inline">\(K\)</span> clusters. The number of distinct assignments is: <span class="math display">\[S\ (n,k) = \frac{1}{K!}\sum_{k=1}^{K}(-1)^{K-k} {K \choose k} k^n\]</span></p>
+</div>
+<div id="k-means-clustering" class="section level1">
+<h1>K-means Clustering</h1>
+<p>The Lloyd’s algorithm turns out to be the most famous iterative algorithm used to attempt minimizing the objective function.</p>
+<p>The algorithm is simple:</p>
+<ol style="list-style-type: decimal">
+<li>Partition the <span class="math inline">\(n\)</span> objects into <span class="math inline">\(K\)</span> initial clusters <span class="math inline">\(c_1,...,c_k\)</span>.</li>
+<li>Do the following:
+<ul>
+<li>Assign object <span class="math inline">\(X_i\)</span> to cluster <span class="math inline">\(c_k\)</span> that has the closest centroid(mean). Repeat this for <span class="math inline">\(i= 1,...,n\)</span>.</li>
+<li>Update the cluster centroids by taking the sample mean within each cluster.</li>
+</ul></li>
+<li>Repeat 2 until no changes in cluster assignment is observed (means it has converged).</li>
+</ol>
+<div id="implementation" class="section level2">
+<h2>Implementation</h2>
+<pre class="r"><code>mykmeans &lt;- function (data, k, centers = NULL, stop_crit = 10e-3, seed = 1001)
+{
+
+  # Initializations
+  set.seed(seed)
+  # Assigning the initial centroids. Random value will be used
+  # if no values were specified
+  if(is.null(centers)) centers = sample.int(nrow(data), k)
+  centroid &lt;- data[centers, ]
+  # Keep a history of the centroid values for visualization purpose
+  cen_hist = data.frame(centroid)
+  # Randomly assign clusters to each observations
+  cluster &lt;- c(sample.int(k, nrow(data), replace = TRUE))
+  # Keep a histpry of the data frame that includes assigned clusters
+  # for visualization purpose
+  data_hist &lt;- data.frame(data,cluster)
+  # Within group Sum of squares
+  withinss = c()
+  # size of each cluster
+  size = c()
+  # Does it converge?
+  conver &lt;- F
+  # distance between old and updated centroids
+  # Set it as arbitarily large
+  dist_crit = 10e5
+  # Number of iteration
+  iter = 1
+  
+  while (conver == FALSE)
+  {
+    old_centroid = centroid
+    
+    # assign to cluster that has the closest centroid to a specific data point
+    for (i in 1 : nrow(data))
+    {
+      dist = apply(centroid, 1, function(x) sum((x - data[i,])^2))
+      cluster[i] = which.min(dist)
+    }
+    
+    # Update the centroid mean
+    for (j in 1 : k)
+    {
+      centroid[j, ] = apply(data[cluster == j, ], 2, mean)
+    }
+    
+    ## Keep the history of the centroid and data + cluster
+    cen_hist = rbind(cen_hist, data.frame(centroid))
+    data_hist = rbind(data_hist, data.frame(data,cluster))
+    
+    # Is the stopping criteria met?
+    dist_crit = mean((old_centroid - centroid)^2)
+    if (dist_crit &lt;= stop_crit) conver = TRUE
+    
+    # Update iteration
+    iter = iter + 1
+  }
+  
+  #### Sum of squares calculations#####
+  for (m in 1 : k)
+  {
+    withinss[m] = sum((apply(data[cluster == m, ],1, 
+                             function(x) x - apply(data[cluster == m, ],2,mean)))^2)
+    size [m] = sum(cluster == m)
+  }
+  
+  totss = sum(apply(data, 1, function(x) sum((x - apply(data,2,mean))^2)))
+  tot.withinss = sum(withinss)
+  
+  return(list(data = data.frame(data,cluster),
+              cluster = cluster,
+              centroid = centroid,
+              totss = totss,
+              withinss = withinss,
+              tot.withinss = tot.withinss,
+              betweenss = totss - tot.withinss,
+              size = size,
+              cen_hist = cen_hist,
+              data_hist = data_hist,
+              iterations = iter))
+}</code></pre>
+</div>
+<div id="data-simulation-and-visualization" class="section level2">
+<h2>Data Simulation and Visualization</h2>
+<p>The following simulation is adapted from <a href="http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/" class="uri">http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/</a> .</p>
+<p>5 clusters with 300 observarions each are simulated. Let’s take a look.</p>
+<pre class="r"><code>require(MASS)
+require(ggplot2)
+set.seed(1234)
+set1=mvrnorm(n = 300, c(-4,10), matrix(c(1.5,1,1,1.5),2))
+set2=mvrnorm(n = 300, c(5,7), matrix(c(1,2,2,6),2))
+set3=mvrnorm(n = 300, c(-1,1), matrix(c(4,0,0,4),2))
+set4=mvrnorm(n = 300, c(10,-10), matrix(c(4,0,0,4),2))
+set5=mvrnorm(n = 300, c(3,-3), matrix(c(4,0,0,4),2))
+DF=data.frame(rbind(set1,set2,set3,set4,set5),cluster=as.factor(c(rep(1:5,each=300))))
+ggplot(DF,aes(x=X1,y=X2,color=cluster))+geom_point()</code></pre>
+<p><img src="/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>Now, let’s apply the K-means clustering function that we just defined. We can also visualize how K-means is performing in this dataset.</p>
+<pre class="r"><code>k = 5
+res=mykmeans(DF[1:2],k=k)
+res$centroid$cluster=1:k
+res$data$isCentroid=F
+res$centroid$isCentroid=T
+data_plot2=rbind(res$centroid,res$data)
+
+ggplot(data_plot2,aes(x=X1,y=X2,color=as.factor(cluster),
+                           size=isCentroid,alpha=isCentroid)) +
+  geom_point()</code></pre>
+<p><img src="/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>It appears that the K-means clustering is working well here since the 5 clusters are separated correctly.</p>
+<p>Let’s look at how the K-means algorithm is working in the following visualization. We can see how the <span class="math inline">\(k = 5\)</span> centroid is moving and form the 5 clusters correctly.</p>
+<p><img src="/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-4.gif" width="672" /></p>
+</div>
+</div>
+<div id="k-means-clustering-1" class="section level1">
+<h1>K-means ++ Clustering</h1>
+<p>The problem with k-means clustering is that it only provide local minimum but not global minimum. In other words, where you set as the inital centroids plays a big role. Thus, the usual method is to use different initial values, look for the stable solution (clusters) and choose the best initial value from there.</p>
+<p>In 2007, David Arthur and Sergei Vassilvitskii introduced <a href="http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf">k-means++</a>.<br />
+The big idea is that instead of choosing <span class="math inline">\(k\)</span> centroids randomly, it’s better to choose the centroids such that they are far from each other. The major advantage of this approach is that we don’t have to try several initial values. This cuts down the computational time a lot.</p>
+<p>The following is the algorithm of choosing the initial centroids:</p>
+<ol style="list-style-type: decimal">
+<li>Denote a randomly chosen point as <span class="math inline">\(s_1\)</span>.</li>
+<li>For the <span class="math inline">\(l\)</span> th iteration, <span class="math inline">\(l = 2,..., k\)</span>, compute the squared distances, <span class="math inline">\(D_i^2\)</span>: <span class="math display">\[D_i^2 = min \{||Y_i -s_1||^2,..., ||Y_i -s_{l-1}||^2 \}\]</span>. The probability that <span class="math inline">\(Y_i\)</span> is chosen as the centroid, <span class="math inline">\(s_l\)</span>, is <span class="math display">\[D_i^2/\sum_{j}D_j^2\]</span> with <span class="math inline">\(i \neq j\)</span> and <span class="math inline">\(i, j = 1,..., n\)</span>.</li>
+<li>Repeat this until we collect <span class="math inline">\(s_1, ..., s_k\)</span>.</li>
+<li>Use the collected points as the staring centroids for k-means algorithm.</li>
+</ol>
+<div id="implementations" class="section level2">
+<h2>Implementations</h2>
+<pre class="r"><code>kmeanplus &lt;- function(data, k, ...)
+{
+  n = nrow(data)
+  
+  # Place holder
+  centroids &lt;- rep(NA, k)
+  dist &lt;- matrix(nrow = n, ncol = k-1)
+  
+  # Initialize probability = 1 for all data points
+  probs = rep(1, n)
+  
+  for (i in 1: (k-1))
+  {
+    # The s_k
+    centroids[i] = sample.int(n, 1, prob = probs)
+    # The D_i^2
+    dist[,i] = (apply(data, 1, function(x) sum((x- data[centroids[i], ])^2)))
+    # Not counting the exact probabily here. All we care is the relative weight.
+    probs = apply(dist, 1, function(y) y[which.min(y)])
+  }
+  centroids[k] = sample.int(n, 1, prob = probs)
+  
+  res &lt;- mykmeans(data = data, centers = centroids,  k = k, ...)
+  return(res)
+}</code></pre>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>Let’s reuse the same dataset as above and visualize the clustering process.</p>
+<pre class="r"><code>res &lt;-  kmeanplus(DF[1:2], k = 5)</code></pre>
+<p><img src="/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-7.gif" width="672" /></p>
+<p>The number of iterations is 7 this time.</p>
+</div>
+</div>
+<div id="choosing-k---the-elbow-method" class="section level1">
+<h1>Choosing K - the Elbow Method</h1>
+<p>The Elbow Method will be used in this case. Recall that all we were doing is to minimize the within cluster sum of squares. We can vary the value of <span class="math inline">\(k\)</span>, say from 3 to 7, and plot the within sum of squares against the <span class="math inline">\(k\)</span> s. The location of a bend in the plot can be considered as the optimal <span class="math inline">\(k\)</span> because it means that further increasing number of <span class="math inline">\(k\)</span> is not decreasing the within sum of squares a lot.</p>
+<pre class="r"><code>set.seed(1001)
+
+# Compute and plot wss for k = 3 to k = 7
+k.values &lt;-3:7
+
+wss = c()
+
+for (k in k.values)
+{
+  wss = c(wss, kmeanplus(DF[1:2], k = k)$tot.withinss)
+}
+
+plot(k.values, wss,
+       type=&quot;b&quot;, pch = 19, frame = FALSE, 
+       xlab=&quot;Number of clusters K&quot;,
+       ylab=&quot;Total within-clusters sum of squares&quot;,
+       col = &quot;dodgerblue&quot;)</code></pre>
+<p><img src="/post/2018-04-19-cllustering-k-means-k-means-and-gganimate_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>The Elbow is seen at <span class="math inline">\(k = 5\)</span> and that is congruent with our simulated 5 clusters.</p>
+</div>
+<div id="next-step" class="section level1">
+<h1>Next Step</h1>
+<p>There are different ways of choosing the number of clusters <span class="math inline">\(k\)</span> in adddition to the Elbow method. One can also try on more data simulations and discover the limitations of k-means clustering.</p>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><a href="https://normaldeviate.wordpress.com/2012/09/30/the-remarkable-k-means/" class="uri">https://normaldeviate.wordpress.com/2012/09/30/the-remarkable-k-means/</a></li>
+<li><a href="http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/" class="uri">http://enhancedatascience.com/2017/10/24/machine-learning-explained-kmeans/</a></li>
+<li><a href="http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf" class="uri">http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf</a></li>
+<li><a href="https://uc-r.github.io/kmeans_clustering#optimal" class="uri">https://uc-r.github.io/kmeans_clustering#optimal</a></li>
+</ul>
+</div>
+</div>
