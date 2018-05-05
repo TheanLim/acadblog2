@@ -8,6 +8,7 @@ categories:
 tags: 
   - simulation
   - linear-regression
+  - plotly
 summary: Basic theories, simulation and visualizations of Multiple Linear Regression.
 header:
   caption: ''
