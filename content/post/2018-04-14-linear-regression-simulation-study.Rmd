@@ -16,7 +16,7 @@ header:
   image: ''
 output:
   blogdown::html_page:
-    toc: true
+    toc: false
     number_sections: false
     toc_depth: 2
 ---
@@ -30,6 +30,10 @@ library(tidyr)
 library(ggplot2)
 theme_set(theme_light())
 ```
+
+  
+Multiple linear regression. visualization. using plotly.                                                                                                         .                                                                                                         .                                                                                                         .
+
 
 In general, linear regression is a linear approach of modelling the relationship of a numerical response (dependent) variable and one or more explanatory (independent) variables.  
 
