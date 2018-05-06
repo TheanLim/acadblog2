@@ -11,14 +11,14 @@ weight = 5
 [interests]
   interests = [
     "Artificial Intelligence",
-    "Statistics",
+    "Statistical Analyses",
     "Machine Learning",
     "Text Mining"
   ]
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
-  course = "Undegraduate in Statistics"
+  course = "Undergraduate in Statistics"
   institution = "University of Minnesota Twin Cities"
   year = 2018
 
