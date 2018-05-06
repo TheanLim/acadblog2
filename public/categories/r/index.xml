@@ -60,10 +60,10 @@ Since there is no preexisting group labels for each cluster, we can never know t
     
     <item>
       <title>Linear Regression Simulation Study</title>
-      <link>/post/linear-regression-simulation-study/</link>
+      <link>/post/linear-regression-simulation-study-plotly-theanlim/</link>
       <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/linear-regression-simulation-study/</guid>
+      <guid>/post/linear-regression-simulation-study-plotly-theanlim/</guid>
       <description>TheoriesModel AssumptionsOrdinary Least Square Estimator (OLS) of \(\beta\)Estimator of \(\sigma^2\)SimulationVisualize data pointsEstimating \(\beta\) and \(\epsilon\)Visualize fitted planeIn general, linear regression is a linear approach of modelling the relationship of a numerical response (dependent) variable and one or more explanatory (independent) variables.
 TheoriesModel AssumptionsLet:
 \(y_i \in \mathbb{R}^n\) as the measured response for the \(i\)th subject.</description>
