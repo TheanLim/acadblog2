@@ -294,3 +294,5 @@ defaultContentLanguageInSubdir = false
 
 ### Added following this page:
 ## https://keithpblog.org/post/hugo-website-seo/
+enableRobotsTXT = true
+canonifyURLs = true
