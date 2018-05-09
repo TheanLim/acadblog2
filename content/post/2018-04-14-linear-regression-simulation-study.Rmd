@@ -10,7 +10,7 @@ tags:
   - linear-regression
   - plotly
 summary: Basic theories, simulation and visualizations of Multiple Linear Regression.
-description: 'plotly, multiple liinear regression, theanlim'
+abstract: 'plotly, multiple liinear regression, theanlim'
 header:
   caption: ''
   image: ''
