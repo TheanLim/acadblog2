@@ -128,8 +128,10 @@
 
   <title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
 
+  {{ partial "seo_schema" . }}
+  <title>
+
 </head>
 <body id="top" data-spy="scroll" data-target="{{ if or .IsHome .Params.widgets }}#navbar-main{{ else }}#toc{{ end }}" data-offset="71" {{ if not ($scr.Get "light") }}class="dark"{{ end }}>
 
-{{ partial "seo_schema" . }}
-<title>
+
