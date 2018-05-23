@@ -5,6 +5,42 @@
     
     <url>
     
+      <loc>/readings/introduction-to-sql-understanding-sql/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/readings/introduction-to-sql-retrieving-data/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/readings/introduction-to-sql-sorting-retrieved-data/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/readings/introduction-to-sql-filtering-data/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/post/clustering-k-means-k-means-and-gganimate/</loc>
       <lastmod>2018-04-19T00:00:00+00:00</lastmod>
     </url>
@@ -86,24 +122,6 @@
     
     <url>
     
-      <loc>/talk/example-talk/</loc>
-      <lastmod>2017-01-01T00:00:00-06:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
-      <loc>/post/</loc>
-      <lastmod>2017-01-01T00:00:00-06:00</lastmod>
-    </url>
-    
-  
-    
-    
-    <url>
-    
       <loc>/tags/academic/</loc>
       <lastmod>2017-01-01T00:00:00+00:00</lastmod>
     </url>
@@ -124,6 +142,24 @@
     
       <loc>/talk/</loc>
       <lastmod>2017-01-01T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/talk/example-talk/</loc>
+      <lastmod>2017-01-01T00:00:00+08:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/post/</loc>
+      <lastmod>2017-01-01T00:00:00+08:00</lastmod>
     </url>
     
   
@@ -318,8 +354,48 @@
     
     <url>
     
-      <loc>/readings/</loc>
+      <loc>/tags/r-for-data-science/</loc>
       <lastmod>2018-04-15T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/r4ds/</loc>
+      <lastmod>2018-04-15T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/readings/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/sql/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/categories/sql/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -330,6 +406,16 @@
     
       <loc>/tags/simulation/</loc>
       <lastmod>2018-04-19T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/tags/tysql/</loc>
+      <lastmod>2018-05-23T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
@@ -349,7 +435,7 @@
     <url>
     
       <loc>/</loc>
-      <lastmod>2018-04-12T00:00:00-05:00</lastmod>
+      <lastmod>2018-04-12T00:00:00+08:00</lastmod>
       <priority>0</priority>
     </url>
     

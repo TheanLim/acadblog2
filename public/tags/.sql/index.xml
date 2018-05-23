@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>.sql on Thean C. Lim</title>
+    <link>/tags/.sql/</link>
+    <description>Recent content in .sql on Thean C. Lim</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
+    <lastBuildDate>Wed, 23 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/.sql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Introduction to SQL: Understanding SQL</title>
+      <link>/readings/introduction-to-sql-understanding-sql/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-understanding-sql/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

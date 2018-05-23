@@ -37,8 +37,12 @@ filter_default = 0
   tag = ".r4ds"
 
 [[filter]]
+  name = "SQL"
+  tag = ".SQL"
+
+[[filter]]
   name = "Other"
-  tag = ".demo"
+  tag = ".Other"
 
 +++
 

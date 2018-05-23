@@ -7,8 +7,411 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Thu, 12 Apr 2018 00:00:00 -0500</lastBuildDate>
+    <lastBuildDate>Thu, 12 Apr 2018 00:00:00 +0800</lastBuildDate>
     <atom:link href="/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Introduction to SQL: 1.Understanding SQL</title>
+      <link>/readings/introduction-to-sql-understanding-sql/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-understanding-sql/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#database-basics&#34;&gt;Database Basics&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#databases&#34;&gt;Databases&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#tables&#34;&gt;Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#columns-and-datatypes&#34;&gt;Columns and Datatypes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#what-is-sql&#34;&gt;What Is SQL?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;This post is heavily based on &lt;a href=&#34;https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073&#34;&gt;Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)&lt;/a&gt;. Please consider to buy the book if you find this post useful.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;database-basics&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Database Basics&lt;/h1&gt;
+&lt;div id=&#34;databases&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Databases&lt;/h2&gt;
+&lt;p&gt;Let’s define database as a collection of data stored in some organized fashion. You can think of it as a filing cabinet.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tables&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Tables&lt;/h2&gt;
+&lt;p&gt;A table is a structured list of data of a &lt;strong&gt;specific&lt;/strong&gt; type. It might contain a list of customers, a product catalog, or any other list of information. Files within the filing cabinet can be thought as tables.&lt;/p&gt;
+&lt;p&gt;Each table stores &lt;strong&gt;unique&lt;/strong&gt; data type or list to ease data retrieval and access. While you cannot use the same table name twice in the same database, you definitely can reuse table names in different databases.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Schema&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Schema is information about database and table layout and properties. These include information about what data may be stored, how it is broken up, how individual pieces of information are named.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div id=&#34;columns-and-datatypes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Columns and Datatypes&lt;/h2&gt;
+&lt;p&gt;Tables are made up of columns. A column contains a particular piece of information within a table. You can imagine tables as grids, somewhat like spreadsheets. Each column in the grid contains a particular piece of information. Each column in a database has an associated datatype.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Datatype&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A type of allowed data. Every table column has an associated datatype that restricts (or allows) specific data in that column.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;div id=&#34;rows&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Rows&lt;/h3&gt;
+&lt;p&gt;Data in a table is stored in rows; each record saved is stored in its own row. Envisioning a table as a spreadsheet style grid, the vertical columns in the grid are the table columns, and the horizontal rows are the table rows.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;primary-keys&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Primary Keys&lt;/h3&gt;
+&lt;p&gt;Primary keys are a column (or set of columns) whose values uniquely identify every row in a table. These keys are the IDS for each rows. For example, it could be employees SSN Numbers. The primary key is used to refer to a specific row.&lt;/p&gt;
+&lt;p&gt;The folowing rules apply to Primary Keys:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Primary key value has to ne unique.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Every row &lt;strong&gt;MUST&lt;/strong&gt; have a primary key value. No NULL values are allowed.&lt;/li&gt;
+&lt;li&gt;Values in primary key columns should never be modified or updated.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Primary key values should &lt;strong&gt;NEVER&lt;/strong&gt; be reused in the future.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;what-is-sql&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;What Is SQL?&lt;/h1&gt;
+&lt;p&gt;It stands for Structured Query Language and is promounces as &lt;em&gt;sequel&lt;/em&gt;. It is a language to communicate with databases. The biggest advantage of SQL is that SQL is not a proprietary language used by specific database vendors. Almost every major DBMS (Database Management Systems) supports SQL.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction to SQL: 2.Retrieving Data</title>
+      <link>/readings/introduction-to-sql-retrieving-data/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-retrieving-data/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#the-select-statement&#34;&gt;The &lt;code&gt;SELECT&lt;/code&gt; Statement&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#retrieving-individual-columns&#34;&gt;Retrieving Individual Columns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#retrieving-multiple-columns&#34;&gt;Retrieving Multiple Columns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#retrieving-all-columns&#34;&gt;Retrieving All Columns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#retrieving-distinct-rows&#34;&gt;Retrieving Distinct Rows&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#limiting-results&#34;&gt;Limiting Results&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-comments&#34;&gt;Using Comments&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;This post is heavily based on &lt;a href=&#34;https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073&#34;&gt;Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)&lt;/a&gt;. Please consider to buy the book if you find this post useful.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;the-select-statement&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The &lt;code&gt;SELECT&lt;/code&gt; Statement&lt;/h1&gt;
+&lt;p&gt;Each SQL statement is made up of one or more keywords.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Keyword&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A reserved word that is part of the SQL language. Never name a table or column using a keyword.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;To use &lt;code&gt;SELECT&lt;/code&gt; to retrieve table data you must, at a minimum, specify two arguments - what you want to select, and from where you want to select it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;retrieving-individual-columns&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Retrieving Individual Columns&lt;/h1&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;p&gt;The following is using the data provided by the author of the book in the &lt;a href=&#34;http://forta.com/books/0672336073/&#34;&gt;book Webpage.&lt;/a&gt; I am keeping a copy at my github page, named as &lt;a href=&#34;https://github.com/TheanLim/acadblog2/tree/master/public/data&#34;&gt;tysql&lt;/a&gt; but I do not own it. I am also using Microsoft Access throughout. Download the data, open it with Access, and find a way to get to &lt;strong&gt;SQL View&lt;/strong&gt; before executing SQL statements. There may be some differences brought by different versions of Microsoft Access.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;You can type the following statements in the &lt;strong&gt;SQL View&lt;/strong&gt; and &lt;strong&gt;Run&lt;/strong&gt; it.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above retrieves a single column called &lt;em&gt;prod_name&lt;/em&gt; from the &lt;em&gt;Products&lt;/em&gt; table in the dataset. The following is how it appears in the Microsoft Access.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/tysql/02.Retrieving_Data/select_single_col.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Terminating Statements&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Multiple SQL statements must be separated by semicolons (the ; character).&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;CASE&lt;/p&gt;
+
+&lt;/div&gt;
+ The SQL statements are case-insensitive, so &lt;code&gt;SELECT&lt;/code&gt; is the same as &lt;code&gt;select&lt;/code&gt;, which is the same as &lt;code&gt;Select&lt;/code&gt;. The convention is to use UPPERCASE for the KEYWORDS and lowercase for column and table names. While the SQL language is case-insensitive, the names of tables, columns, and values may not be.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;White space&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;In addition, all extra white space within a SQL statement is ignored when that statement is processed. So, the followings are the same:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products;  
+
+SELECT prod_name FROM Products;  
+
+SELECT
+prod_name
+FROM
+Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;retrieving-multiple-columns&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Retrieving Multiple Columns&lt;/h1&gt;
+&lt;p&gt;When selecting multiple columns be sure to specify a comma between each column name, but not after the last column name.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_id, prod_name, prod_price
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;retrieving-all-columns&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Retrieving All Columns&lt;/h1&gt;
+&lt;p&gt;Use the asterisk (*) wildcard character in lieu of actual column names to retrieve all columns.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT *
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Using Wildcards&lt;/strong&gt;&lt;br /&gt;
+As a rule, you are better off not using the * wildcard unless you really do need every column in the table. Retrieving unnecessary columns usually slows down the performance of your retrieval.&lt;br /&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div id=&#34;retrieving-distinct-rows&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Retrieving Distinct Rows&lt;/h1&gt;
+&lt;p&gt;Suppose you want the &lt;code&gt;DISTINCT&lt;/code&gt; vendor ID of all vendors with products in the &lt;strong&gt;products&lt;/strong&gt; table. Doing the following gives everey occurences of the the vendor ID.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT vend_id
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using the &lt;code&gt;DISTINCT&lt;/code&gt; keyword instructs the database to only return distinct values. The &lt;code&gt;DISTINCT&lt;/code&gt; keyword must be placed directly in front of the column names.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT DISTINCT vend_id
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;Can’t Be Partially &lt;code&gt;DISTINCT&lt;/code&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;DISTINCT&lt;/code&gt; keyword applies to all columns, not just the one it precedes. The following returns all rows retrieved because the combination of the specified columns are not distinct.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT DISTINCT vend_id, prod_price
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;limiting-results&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Limiting Results&lt;/h1&gt;
+&lt;p&gt;To select top number of entries, use the &lt;code&gt;TOP&lt;/code&gt; keyword. The following uses the &lt;code&gt;SELECT TOP 5 statement&lt;/code&gt; to retrieve just the first five rows. Please note that this applies to Microsoft Access and Microsoft SQL Server but not to other DBMs.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT TOP 5 prod_name
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-comments&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Using Comments&lt;/h1&gt;
+&lt;p&gt;Commenting in not allowed in Access at this point of time. The following is applicable to other DBMs.&lt;br /&gt;
+A # at the start of a line makes the entire line a comment.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# This is a comment
+SELECT prod_name
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Using &lt;code&gt;/*  */&lt;/code&gt; for multi-lines comments.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/* SELECT prod_name, vend_id
+FROM Products; */
+SELECT prod_name
+FROM Products;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Anything between &lt;code&gt;/* and */&lt;/code&gt; is comment text. This type of comment is often used to comment out code, as seen in this example.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction to SQL: 3.Sorting Retrieved Data</title>
+      <link>/readings/introduction-to-sql-sorting-retrieved-data/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-sorting-retrieved-data/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#sorting-data&#34;&gt;Sorting Data&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#sorting-by-multiple-columns&#34;&gt;Sorting by Multiple Columns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#sorting-by-column-position&#34;&gt;Sorting by Column Position&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#specifying-sort-direction&#34;&gt;Specifying Sort Direction&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;This post is heavily based on &lt;a href=&#34;https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073&#34;&gt;Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)&lt;/a&gt;. Please consider to buy the book if you find this post useful.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;sorting-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Sorting Data&lt;/h1&gt;
+&lt;p&gt;To explicitly sort data retrieved using a &lt;code&gt;SELECT&lt;/code&gt; statement, the &lt;code&gt;ORDER BY&lt;/code&gt; clause is used. &lt;code&gt;ORDER BY&lt;/code&gt; takes the name of one or more columns by which to sort the output.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;CLAUSE&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;SQL statements are made up of clauses, some required and some optional. A clause usually consists of a keyword and supplied data. An example of this is the SELECT statement’s FROM clause.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products
+ORDER BY prod_name;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The following shows before and after sorting:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/tysql/02.Retrieving_Data/select_single_col.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/tysql/03.Sort/single_col_sort.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;What is interesting here is that &lt;code&gt;8 inch teddy bear&lt;/code&gt; is located below the 12 and the 18 inches’.&lt;/p&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;p&gt;Position of &lt;code&gt;ORDER BY&lt;/code&gt; Clause&lt;/p&gt;
+&lt;p&gt;When specifying an &lt;code&gt;ORDER BY&lt;/code&gt; clause, be sure that it is the last clause in your &lt;code&gt;SELECT&lt;/code&gt; statement. If it is not the last clause, an error will be generated.&lt;br /&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Sorting by Nonselected Columns&lt;/strong&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;It is perfectly legal to sort data by a column that is not retrieved such as the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products
+ORDER BY vend_id;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;sorting-by-multiple-columns&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Sorting by Multiple Columns&lt;/h1&gt;
+&lt;p&gt;To sort by multiple columns, simply specify the column names separated by commas.&lt;br /&gt;
+The following code retrieves three columns and sorts the results by two of them -first by price and then by name.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price, prod_name;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that the sort sequence is exactly as specified. For example, the products are sorted by the &lt;code&gt;prod_name&lt;/code&gt; column only when multiple rows have the same &lt;code&gt;prod_price&lt;/code&gt; value. If all the values in the &lt;code&gt;prod_price&lt;/code&gt; column had been &lt;strong&gt;unique&lt;/strong&gt;, no data would have been sorted by &lt;code&gt;prod_name&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;sorting-by-column-position&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Sorting by Column Position&lt;/h1&gt;
+&lt;p&gt;Instead of naming out the columns to be sorted, we can put it the column number. The follwing goves the same output as the above:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY 2, 3;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The main limitation of this technique is you cannot sort by columns that are not in the &lt;code&gt;SELECT&lt;/code&gt; list However, you can mix and match actual column names and relative column positions in a single statement if needed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;specifying-sort-direction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Specifying Sort Direction&lt;/h1&gt;
+&lt;p&gt;Bt default, the columns selected are sorted in ascending order. To sort by descending order, the keyword &lt;code&gt;DESC&lt;/code&gt; must be specified. The opposite of &lt;code&gt;DESC&lt;/code&gt; is &lt;code&gt;ASC&lt;/code&gt;.&lt;br /&gt;
+The following example sorts the products by price in descending order (most expensive first):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price DESC;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What if you were to sort by multiple columns? The &lt;code&gt;DESC&lt;/code&gt; keyword only applies to the column name that directly precedes it. For example:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price DESC, prod_name;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;prod_price&lt;/code&gt; column is sorted in descending order, but the &lt;code&gt;prod_name&lt;/code&gt; column (within each price) is still sorted in standard ascending order.&lt;/p&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;If you want to sort descending on multiple columns, be sure each column has its own &lt;code&gt;DESC&lt;/code&gt; keyword.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;Depending on your DBMS, &lt;em&gt;A&lt;/em&gt; might be same as &lt;em&gt;a&lt;/em&gt;, and &lt;em&gt;a&lt;/em&gt; come before &lt;em&gt;B&lt;/em&gt; or after &lt;em&gt;Z&lt;/em&gt;. If you do need an alternate sort order, you may not be able to accomplish this with a simple &lt;code&gt;ORDER BY&lt;/code&gt; clause.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction to SQL: 4. Filtering Data</title>
+      <link>/readings/introduction-to-sql-filtering-data/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-filtering-data/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#using-the-where-clause&#34;&gt;Using the &lt;code&gt;WHERE&lt;/code&gt; Clause&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-where-clause-operators&#34;&gt;The &lt;code&gt;WHERE&lt;/code&gt; Clause Operators&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#checking-against-a-single-value&#34;&gt;Checking Against a Single Value&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#checking-for-nonmatches&#34;&gt;Checking for Nonmatches&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#checking-for-a-range-of-values-using-between-operator&#34;&gt;Checking for a Range of Values using &lt;code&gt;BETWEEN&lt;/code&gt; operator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#checking-for-no-value-using-is-null&#34;&gt;Checking for No Value using &lt;code&gt;IS NULL&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;This post is heavily based on &lt;a href=&#34;https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073&#34;&gt;Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)&lt;/a&gt;. Please consider to buy the book if you find this post useful.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;using-the-where-clause&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Using the &lt;code&gt;WHERE&lt;/code&gt; Clause&lt;/h1&gt;
+&lt;p&gt;Within a &lt;code&gt;SELECT&lt;/code&gt; statement, data is filtered by specifying search criteria in the &lt;code&gt;WHERE&lt;/code&gt; clause. The &lt;code&gt;WHERE&lt;/code&gt; clause is specified right after the table name (the &lt;code&gt;FROM&lt;/code&gt; clause) as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price = 3.49;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The following shows the output.&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/tysql/04.Filter/filtercol.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;p&gt;Position of &lt;code&gt;WHERE&lt;/code&gt; Clause&lt;/p&gt;
+&lt;p&gt;When using both &lt;code&gt;ORDER BY&lt;/code&gt; and&lt;code&gt;WHERE&lt;/code&gt; clauses, make sure that &lt;code&gt;ORDER BY&lt;/code&gt; comes after the &lt;code&gt;WHERE&lt;/code&gt;, otherwise an error will be generated.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;div id=&#34;the-where-clause-operators&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The &lt;code&gt;WHERE&lt;/code&gt; Clause Operators&lt;/h1&gt;
+&lt;p&gt;SQL supports a whole range of conditional operators as listed as follows. Not all of these operators are supported by all DBMSs. Refer to your DBMS documentation to determine exactly what it supports.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/img/tysql/04.Filter/operators.jpg&#34; /&gt; Many DBMSs extend the standard set of operators, providing advanced filtering options. Refer to your DBMS documentation for more information.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;checking-against-a-single-value&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Checking Against a Single Value&lt;/h2&gt;
+&lt;p&gt;Ex: List all products that cost less than $10:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price &amp;lt; 10;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ex: Retrieve all products costing $10 or less:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price &amp;lt;= 10;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checking-for-nonmatches&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Checking for Nonmatches&lt;/h2&gt;
+&lt;p&gt;Ex: List all products &lt;strong&gt;not&lt;/strong&gt; made by vendor DLL01:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT vend_id, prod_name
+FROM Products
+WHERE vend_id &amp;lt;&amp;gt; &amp;#39;DLL01&amp;#39;;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-note&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;Using Quotes&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The single quotes are used to delimit a string. If you are comparing a value against a column that is a string datatype, the delimiting quotes are required. Quotes are not used to delimit values used with numeric columns.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;Ex: Do the same as above but use &lt;code&gt;!=&lt;/code&gt; insetad of &lt;code&gt;&amp;lt; &amp;gt;&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT vend_id, prod_name
+FROM Products
+WHERE vend_id != &amp;#39;DLL01&amp;#39;;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above doesnt work in Microsoft Access because it is not supported. &lt;code&gt;!=&lt;/code&gt; works in certain DBMS.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checking-for-a-range-of-values-using-between-operator&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Checking for a Range of Values using &lt;code&gt;BETWEEN&lt;/code&gt; operator&lt;/h2&gt;
+&lt;p&gt;To check for a range of values, you can use the &lt;code&gt;BETWEEN&lt;/code&gt; operator. Let’s retrieve all products with a price between &lt;em&gt;$5&lt;/em&gt; and &lt;em&gt;$10&lt;/em&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price BETWEEN 5 AND 10;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When &lt;code&gt;BETWEEN&lt;/code&gt; is used, two values must be specified -the low end and high end of the desired range. The two values must also be separated by the &lt;code&gt;AND&lt;/code&gt; keyword. &lt;code&gt;BETWEEN&lt;/code&gt; matches all the values in the range, &lt;strong&gt;including&lt;/strong&gt; the specified start and end values.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checking-for-no-value-using-is-null&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Checking for No Value using &lt;code&gt;IS NULL&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;To determine if a value is NULL, you cannot simply check to see if = NULL. The IS NULL clause should be used.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products
+WHERE prod_price IS NULL;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nothing is returned because everything is priced.&lt;/p&gt;
+&lt;p&gt;The Customers table, however, does contain columns with NULL values:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT cust_name
+FROM CUSTOMERS
+WHERE cust_email IS NULL;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;alert alert-warning&#34;&gt;
+  &lt;p&gt;&lt;strong&gt;NULL and Non-matches&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When you filter to select all rows that do not have a particular value, rows with a NULL will not be returned.&lt;/p&gt;
+
+&lt;/div&gt;
+
+&lt;p&gt;It’s because of the special meaning of &lt;em&gt;unknown&lt;/em&gt;, the database does not know whether or not they match, and so they are not returned when filtering for matches or when filtering for non-matches.&lt;br /&gt;
+When filtering data, make sure to verify that the rows with a NULL in the filtered column are really present in the returned data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Clustering: k-means, k-means &#43;&#43; and gganimate</title>
@@ -833,7 +1236,7 @@ points(x,col = c(&amp;quot;orangered&amp;quot;, &amp;quot;navyblue&amp;quot;, &a
 &lt;/ul&gt;
 &lt;/div&gt;
 
-&lt;p&gt;** This post is heavily based on &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt;. Pleas consider to buy that book if you find this post useful.**&lt;/p&gt;
+&lt;p&gt;** This post is heavily based on &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt;. Please consider to buy that book if you find this post useful.**&lt;/p&gt;
 &lt;div id=&#34;first-steps&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;First Steps&lt;/h1&gt;
 &lt;div id=&#34;the-mpg-data-frame&#34; class=&#34;section level2&#34;&gt;
@@ -1922,7 +2325,7 @@ install_hugo()&lt;/code&gt;&lt;/pre&gt;
     <item>
       <title>Example Talk</title>
       <link>/talk/example-talk/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 -0600</pubDate>
+      <pubDate>Sun, 01 Jan 2017 00:00:00 +0800</pubDate>
       
       <guid>/talk/example-talk/</guid>
       <description>&lt;p&gt;Embed your slides or video here using &lt;a href=&#34;https://sourcethemes.com/academic/post/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;. Further details can easily be added using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
@@ -1935,16 +2338,6 @@ install_hugo()&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
       
       <guid>/publication/person-re-identification/</guid>
-      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Mobile visual clothing search</title>
-      <link>/publication/clothing-search/</link>
-      <pubDate>Mon, 01 Jul 2013 00:00:00 +0000</pubDate>
-      
-      <guid>/publication/clothing-search/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>

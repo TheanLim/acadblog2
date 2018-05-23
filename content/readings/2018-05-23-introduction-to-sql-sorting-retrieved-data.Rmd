@@ -1,0 +1,115 @@
+---
+title: 'Introduction to SQL: 3.Sorting Retrieved Data'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-sorting-retrieved-data
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to use the SELECT statement's ORDER BY clause to sort retrieved data as needed.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 1
+---
+
+**This post is heavily based on [Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)](https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073). Please consider to buy the book if you find this post useful.** 
+
+# Sorting Data
+
+To explicitly sort data retrieved using a `SELECT` statement, the `ORDER BY` clause is used. `ORDER BY` takes the name of one or more columns by which to sort the output.
+
+{{% alert note %}}
+**CLAUSE**  
+
+SQL statements are made up of clauses, some required and some optional. A clause usually consists of a keyword and supplied data. An example of this is the SELECT statement's FROM clause.
+{{% /alert %}}
+
+```
+SELECT prod_name
+FROM Products
+ORDER BY prod_name;
+```
+The following shows before and after sorting:
+
+![](/img/tysql/02.Retrieving_Data/select_single_col.jpg)
+
+![](/img/tysql/03.Sort/single_col_sort.jpg)  
+
+What is interesting here is that `8 inch teddy bear` is located below the 12 and the 18 inches'.  
+
+{{% alert warning %}}
+Position of `ORDER BY` Clause  
+
+When specifying an `ORDER BY` clause, be sure that it is the last clause in your `SELECT` statement. If it is not the last clause, an error will be generated.  
+{{% /alert %}}
+
+{{% alert note %}}
+**Sorting by Nonselected Columns**  
+{{% /alert %}}
+
+It is perfectly legal to sort data by a column that is not retrieved such as the following:  
+```
+SELECT prod_name
+FROM Products
+ORDER BY vend_id;
+```
+
+# Sorting by Multiple Columns
+
+To sort by multiple columns, simply specify the column names separated by commas.  
+The following code retrieves three columns and sorts the results by two of them -first by price and then by name.  
+
+```
+SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price, prod_name;
+```
+Note that the sort sequence is exactly as specified. For example, the products are sorted by the `prod_name` column only when multiple rows have the same `prod_price` value. If all the values in the `prod_price` column had been **unique**, no data would have been sorted by `prod_name`.  
+
+# Sorting by Column Position
+
+Instead of naming out the columns to be sorted, we can put it the column number. The follwing goves the same output as the above:  
+
+```
+SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY 2, 3;
+```
+The main limitation of this technique is you cannot sort by columns that are not in the `SELECT` list However, you can mix and match actual column names and relative column positions in a single statement if needed.  
+
+# Specifying Sort Direction
+
+Bt default, the columns selected are sorted in ascending order. To sort by descending order, the keyword `DESC` must be specified. The opposite of `DESC` is `ASC`.    
+The following example sorts the products by price in descending order (most expensive first):  
+
+```
+SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price DESC;
+```
+
+What if you were to sort by multiple columns? The `DESC` keyword only applies to the column name that directly precedes it. For example:  
+```
+SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price DESC, prod_name;
+```
+The `prod_price` column is sorted in descending order, but the `prod_name` column (within each price) is still sorted in standard ascending order.  
+
+{{% alert note %}}
+If you want to sort descending on multiple columns, be sure each column has its own `DESC` keyword.
+{{% /alert %}}
+
+{{% alert note %}}
+Depending on your DBMS, *A* might be same as *a*, and *a* come before *B* or after *Z*. If you do need an alternate sort order, you may not be able to accomplish this with a simple `ORDER BY` clause.
+{{% /alert %}}  
+
+
+

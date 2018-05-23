@@ -1,0 +1,116 @@
+---
+title: 'Introduction to SQL: 2.Retrieving Data'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-retrieving-data
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to use the SELECT statement to retrieve one or more columns of data from a table. Code commenting and returning distinct values are introduced too.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 1
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#the-select-statement">The <code>SELECT</code> Statement</a></li>
+<li><a href="#retrieving-individual-columns">Retrieving Individual Columns</a></li>
+<li><a href="#retrieving-multiple-columns">Retrieving Multiple Columns</a></li>
+<li><a href="#retrieving-all-columns">Retrieving All Columns</a></li>
+<li><a href="#retrieving-distinct-rows">Retrieving Distinct Rows</a></li>
+<li><a href="#limiting-results">Limiting Results</a></li>
+<li><a href="#using-comments">Using Comments</a></li>
+</ul>
+</div>
+
+<p><strong>This post is heavily based on <a href="https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073">Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)</a>. Please consider to buy the book if you find this post useful.</strong></p>
+<div id="the-select-statement" class="section level1">
+<h1>The <code>SELECT</code> Statement</h1>
+<p>Each SQL statement is made up of one or more keywords.</p>
+<p>{{% alert note %}} <strong>Keyword</strong></p>
+<p>A reserved word that is part of the SQL language. Never name a table or column using a keyword. {{% /alert %}}</p>
+<p>To use <code>SELECT</code> to retrieve table data you must, at a minimum, specify two arguments - what you want to select, and from where you want to select it.</p>
+</div>
+<div id="retrieving-individual-columns" class="section level1">
+<h1>Retrieving Individual Columns</h1>
+<p>{{% alert warning %}} The following is using the data provided by the author of the book in the <a href="http://forta.com/books/0672336073/">book Webpage.</a> I am keeping a copy at my github page, named as <a href="https://github.com/TheanLim/acadblog2/tree/master/public/data">tysql</a> but I do not own it. I am also using Microsoft Access throughout. Download the data, open it with Access, and find a way to get to <strong>SQL View</strong> before executing SQL statements. There may be some differences brought by different versions of Microsoft Access. {{% /alert %}}</p>
+<p>You can type the following statements in the <strong>SQL View</strong> and <strong>Run</strong> it.</p>
+<pre><code>SELECT prod_name
+FROM Products;</code></pre>
+<p>The above retrieves a single column called <em>prod_name</em> from the <em>Products</em> table in the dataset. The following is how it appears in the Microsoft Access.</p>
+<div class="figure">
+<img src="/img/tysql/02.Retrieving_Data/select_single_col.jpg" />
+
+</div>
+<p>{{% alert note %}} <strong>Terminating Statements</strong></p>
+<p>Multiple SQL statements must be separated by semicolons (the ; character). {{% /alert %}}</p>
+<p>{{% alert note %}} CASE {{% /alert %}} The SQL statements are case-insensitive, so <code>SELECT</code> is the same as <code>select</code>, which is the same as <code>Select</code>. The convention is to use UPPERCASE for the KEYWORDS and lowercase for column and table names. While the SQL language is case-insensitive, the names of tables, columns, and values may not be.</p>
+<p>{{% alert note %}} White space {{% /alert %}}</p>
+<p>In addition, all extra white space within a SQL statement is ignored when that statement is processed. So, the followings are the same:</p>
+<pre><code>SELECT prod_name
+FROM Products;  
+
+SELECT prod_name FROM Products;  
+
+SELECT
+prod_name
+FROM
+Products;</code></pre>
+</div>
+<div id="retrieving-multiple-columns" class="section level1">
+<h1>Retrieving Multiple Columns</h1>
+<p>When selecting multiple columns be sure to specify a comma between each column name, but not after the last column name.</p>
+<pre><code>SELECT prod_id, prod_name, prod_price
+FROM Products;</code></pre>
+</div>
+<div id="retrieving-all-columns" class="section level1">
+<h1>Retrieving All Columns</h1>
+<p>Use the asterisk (*) wildcard character in lieu of actual column names to retrieve all columns.</p>
+<pre><code>SELECT *
+FROM Products;</code></pre>
+<p>{{% alert note %}} <strong>Using Wildcards</strong><br />
+As a rule, you are better off not using the * wildcard unless you really do need every column in the table. Retrieving unnecessary columns usually slows down the performance of your retrieval.<br />
+{{% /alert %}}</p>
+</div>
+<div id="retrieving-distinct-rows" class="section level1">
+<h1>Retrieving Distinct Rows</h1>
+<p>Suppose you want the <code>DISTINCT</code> vendor ID of all vendors with products in the <strong>products</strong> table. Doing the following gives everey occurences of the the vendor ID.</p>
+<pre><code>SELECT vend_id
+FROM Products;</code></pre>
+<p>Using the <code>DISTINCT</code> keyword instructs the database to only return distinct values. The <code>DISTINCT</code> keyword must be placed directly in front of the column names.</p>
+<pre><code>SELECT DISTINCT vend_id
+FROM Products;</code></pre>
+<p>{{% alert note %}} Can’t Be Partially <code>DISTINCT</code> {{% /alert %}}</p>
+<p>The <code>DISTINCT</code> keyword applies to all columns, not just the one it precedes. The following returns all rows retrieved because the combination of the specified columns are not distinct.</p>
+<pre><code>SELECT DISTINCT vend_id, prod_price
+FROM Products;</code></pre>
+</div>
+<div id="limiting-results" class="section level1">
+<h1>Limiting Results</h1>
+<p>To select top number of entries, use the <code>TOP</code> keyword. The following uses the <code>SELECT TOP 5 statement</code> to retrieve just the first five rows. Please note that this applies to Microsoft Access and Microsoft SQL Server but not to other DBMs.</p>
+<pre><code>SELECT TOP 5 prod_name
+FROM Products;</code></pre>
+</div>
+<div id="using-comments" class="section level1">
+<h1>Using Comments</h1>
+<p>Commenting in not allowed in Access at this point of time. The following is applicable to other DBMs.<br />
+A # at the start of a line makes the entire line a comment.</p>
+<pre><code># This is a comment
+SELECT prod_name
+FROM Products;</code></pre>
+<p>Using <code>/*  */</code> for multi-lines comments.</p>
+<pre><code>/* SELECT prod_name, vend_id
+FROM Products; */
+SELECT prod_name
+FROM Products;</code></pre>
+<p>Anything between <code>/* and */</code> is comment text. This type of comment is often used to comment out code, as seen in this example.</p>
+</div>

@@ -1,0 +1,154 @@
+---
+title: 'Introduction to SQL: 2.Retrieving Data'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-retrieving-data
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to use the SELECT statement to retrieve one or more columns of data from a table. Code commenting and returning distinct values are introduced too.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 1
+---
+
+**This post is heavily based on [Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)](https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073). Please consider to buy the book if you find this post useful.** 
+
+# The `SELECT` Statement
+
+Each SQL statement is made up of one or more keywords.  
+
+{{% alert note %}}
+**Keyword**  
+
+A reserved word that is part of the SQL language. Never name a table or column using a keyword.
+{{% /alert %}}
+
+To use `SELECT` to retrieve table data you must, at a minimum, specify two arguments - what you want to select, and from where you want to select it.  
+
+# Retrieving Individual Columns
+
+{{% alert warning %}}
+The following is using the data provided by the author of the book in the [book Webpage.](http://forta.com/books/0672336073/) I am keeping a copy at my github page, named as [tysql](https://github.com/TheanLim/acadblog2/tree/master/public/data) but I do not own it. I am also using Microsoft Access throughout. Download the data, open it with Access, and find a  way to get to **SQL View** before executing SQL statements. There may be some differences brought by different versions of Microsoft Access.
+{{% /alert %}}
+
+You can type the following statements in the **SQL View** and **Run** it. 
+
+```
+SELECT prod_name
+FROM Products;
+```
+The above retrieves a single column called *prod_name* from the *Products* table in the dataset. The following is how it appears in the Microsoft Access.  
+
+![](/img/tysql/02.Retrieving_Data/select_single_col.jpg)
+
+{{% alert note %}}
+**Terminating Statements**  
+
+Multiple SQL statements must be separated by semicolons (the ; character).
+{{% /alert %}}
+
+{{% alert note %}}
+CASE
+{{% /alert %}}
+The SQL statements are case-insensitive, so `SELECT` is the same as `select`, which is the same as `Select`. The convention is to use UPPERCASE for the KEYWORDS and lowercase for column and table names. While the SQL language is case-insensitive, the names of tables, columns, and values may not be.  
+
+{{% alert note %}}
+White space
+{{% /alert %}}
+
+In addition, all extra white space within a SQL statement is ignored when that statement is processed. So, the followings are the same:
+
+```
+SELECT prod_name
+FROM Products;  
+
+SELECT prod_name FROM Products;  
+
+SELECT
+prod_name
+FROM
+Products;
+```
+# Retrieving Multiple Columns
+
+When selecting multiple columns be sure to specify a comma between each column name, but not after the last column name.  
+
+```
+SELECT prod_id, prod_name, prod_price
+FROM Products;
+```
+
+# Retrieving All Columns
+
+Use the asterisk (*) wildcard character in lieu of actual column names to retrieve all columns.  
+
+```
+SELECT *
+FROM Products;
+```
+{{% alert note %}}
+**Using Wildcards**  
+As a rule, you are better off not using the * wildcard unless you really do need every column in the table. Retrieving unnecessary columns usually slows down the performance of your retrieval.  
+{{% /alert %}}
+
+# Retrieving Distinct Rows
+
+Suppose you want the `DISTINCT` vendor ID of all vendors with products in the **products** table. Doing the following gives everey occurences of the the vendor ID.
+
+```
+SELECT vend_id
+FROM Products;
+```
+Using the `DISTINCT` keyword instructs the database to only return distinct values. The `DISTINCT` keyword must be placed directly in front of the column names.  
+
+```
+SELECT DISTINCT vend_id
+FROM Products;
+```
+{{% alert note %}}
+Can't Be Partially `DISTINCT`
+{{% /alert %}}
+
+The `DISTINCT` keyword applies to all columns, not just the one it precedes. The following returns all rows retrieved because the combination of the specified columns are not distinct.  
+```
+SELECT DISTINCT vend_id, prod_price
+FROM Products;
+```
+
+# Limiting Results
+
+To select top number of entries, use the `TOP` keyword. The following uses the `SELECT TOP 5 statement` to retrieve just the first five rows. Please note that this applies to Microsoft Access and Microsoft SQL Server but not to other DBMs.  
+
+```
+SELECT TOP 5 prod_name
+FROM Products;
+```
+
+# Using Comments
+
+Commenting in not allowed in Access at this point of time. The following is applicable to other DBMs.  
+A # at the start of a line makes the entire line a comment.  
+
+```
+# This is a comment
+SELECT prod_name
+FROM Products;
+```
+Using `/*  */` for multi-lines comments.  
+
+```
+/* SELECT prod_name, vend_id
+FROM Products; */
+SELECT prod_name
+FROM Products;
+```
+Anything between `/* and */` is comment text. This type of comment is often used to comment out code, as seen in this example.
+

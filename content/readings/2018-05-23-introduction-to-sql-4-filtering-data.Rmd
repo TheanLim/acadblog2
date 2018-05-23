@@ -1,0 +1,138 @@
+---
+title: 'Introduction to SQL: 4. Filtering Data'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-filtering-data
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to use the SELECT statement's WHERE clause to specify search conditions.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+**This post is heavily based on [Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)](https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073). Please consider to buy the book if you find this post useful.** 
+
+# Using the `WHERE` Clause
+
+Within a `SELECT` statement, data is filtered by specifying search criteria in the `WHERE` clause. The `WHERE` clause is specified right after the table name (the `FROM` clause) as follows:  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price = 3.49;
+```
+The following shows the output. 
+
+![](/img/tysql/04.Filter/filtercol.jpg) 
+
+{{% alert warning %}}
+Position of `WHERE` Clause  
+
+When using both `ORDER BY` and`WHERE` clauses, make sure that `ORDER BY` comes after the `WHERE`, otherwise an error will be generated.
+{{% /alert %}}  
+
+# The `WHERE` Clause Operators
+
+SQL supports a whole range of conditional operators as listed as follows. Not all of these
+operators are supported by all DBMSs. Refer to your DBMS documentation to determine exactly what it supports.  
+
+![](/img/tysql/04.Filter/operators.jpg) 
+Many DBMSs extend the standard set of operators, providing advanced filtering options. Refer to your DBMS documentation for more information.
+
+<br>
+
+## Checking Against a Single Value
+
+Ex: List all products that cost less than $10:  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price < 10;
+```
+Ex: Retrieve all products costing $10 or less:
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price <= 10;
+```
+<br>
+
+## Checking for Nonmatches
+
+Ex: List all products **not** made by vendor DLL01:  
+
+```
+SELECT vend_id, prod_name
+FROM Products
+WHERE vend_id <> 'DLL01';
+```
+
+{{% alert note %}}
+**Using Quotes**   
+
+The single quotes are used to delimit a string. If you are comparing a value against a column that is a string datatype, the delimiting quotes are required. Quotes are not used to delimit values used with numeric columns.
+{{% /alert %}}  
+
+Ex: Do the same as above but use `!=` insetad of `< >`:  
+
+```
+SELECT vend_id, prod_name
+FROM Products
+WHERE vend_id != 'DLL01';
+```
+The above doesnt work in Microsoft Access because it is not supported. `!=` works in certain DBMS.  
+
+<br>
+
+## Checking for a Range of Values using `BETWEEN` operator
+
+To check for a range of values, you can use the `BETWEEN` operator. Let's retrieve all products with a price between *$5* and *$10*:  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price BETWEEN 5 AND 10;
+```
+When `BETWEEN` is used, two values must be specified -the low end and high end of the desired range. The two values must also be separated by the `AND` keyword. `BETWEEN` matches all the values in the range, **including** the specified start and end values.
+
+<br>
+
+## Checking for No Value using `IS NULL`
+
+To determine if a value is NULL, you cannot simply check to see if = NULL. The IS NULL clause should be used.  
+
+```
+SELECT prod_name
+FROM Products
+WHERE prod_price IS NULL;
+```
+Nothing is returned because everything is priced.  
+
+The Customers table, however, does contain columns with NULL values:  
+
+```
+SELECT cust_name
+FROM CUSTOMERS
+WHERE cust_email IS NULL;
+```
+
+{{% alert warning %}}
+**NULL and Non-matches**  
+
+When you filter to select all rows that do not have a particular value, rows with a NULL will not be returned.
+{{% /alert %}}  
+
+It's because of the special meaning of *unknown*, the database does not know whether or not they match, and so they are not returned when filtering for matches or when filtering for non-matches.  
+When filtering data, make sure to verify that the rows with a NULL in the filtered column are really present in the returned data.
+

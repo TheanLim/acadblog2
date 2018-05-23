@@ -12,6 +12,8 @@ categories:
   - R
 tags:
   - visualization
+  - R for Data Science
+  - r4ds
 header:
   caption: ''
   image: ''
@@ -25,7 +27,7 @@ library(ggplot2)
 theme_set(theme_light())
 ```
 
-** This post is heavily based on [R for Data Science](http://r4ds.had.co.nz/). Pleas consider to buy that book if you find this post useful.** 
+** This post is heavily based on [R for Data Science](http://r4ds.had.co.nz/). Please consider to buy that book if you find this post useful.** 
 
 # First Steps
 ## The mpg Data Frame

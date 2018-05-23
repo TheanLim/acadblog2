@@ -1,0 +1,72 @@
+---
+title: 'Introduction to SQL: 1.Understanding SQL'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-understanding-sql
+categories: ["SQL"]
+tags: ["SQL", "TYSQL"]
+header:
+  caption: ''
+  image: ''
+summary: Learn what SQL is and review some basic database terminology.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#database-basics">Database Basics</a><ul>
+<li><a href="#databases">Databases</a></li>
+<li><a href="#tables">Tables</a></li>
+<li><a href="#columns-and-datatypes">Columns and Datatypes</a></li>
+</ul></li>
+<li><a href="#what-is-sql">What Is SQL?</a></li>
+</ul>
+</div>
+
+<p><strong>This post is heavily based on <a href="https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073">Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)</a>. Please consider to buy the book if you find this post useful.</strong></p>
+<div id="database-basics" class="section level1">
+<h1>Database Basics</h1>
+<div id="databases" class="section level2">
+<h2>Databases</h2>
+<p>Let’s define database as a collection of data stored in some organized fashion. You can think of it as a filing cabinet.</p>
+</div>
+<div id="tables" class="section level2">
+<h2>Tables</h2>
+<p>A table is a structured list of data of a <strong>specific</strong> type. It might contain a list of customers, a product catalog, or any other list of information. Files within the filing cabinet can be thought as tables.</p>
+<p>Each table stores <strong>unique</strong> data type or list to ease data retrieval and access. While you cannot use the same table name twice in the same database, you definitely can reuse table names in different databases.</p>
+<p>{{% alert note %}} <strong>Schema</strong></p>
+<p>Schema is information about database and table layout and properties. These include information about what data may be stored, how it is broken up, how individual pieces of information are named. {{% /alert %}}</p>
+</div>
+<div id="columns-and-datatypes" class="section level2">
+<h2>Columns and Datatypes</h2>
+<p>Tables are made up of columns. A column contains a particular piece of information within a table. You can imagine tables as grids, somewhat like spreadsheets. Each column in the grid contains a particular piece of information. Each column in a database has an associated datatype.</p>
+<p>{{% alert note %}} <strong>Datatype</strong></p>
+<p>A type of allowed data. Every table column has an associated datatype that restricts (or allows) specific data in that column. {{% /alert %}}</p>
+<div id="rows" class="section level3">
+<h3>Rows</h3>
+<p>Data in a table is stored in rows; each record saved is stored in its own row. Envisioning a table as a spreadsheet style grid, the vertical columns in the grid are the table columns, and the horizontal rows are the table rows.</p>
+</div>
+<div id="primary-keys" class="section level3">
+<h3>Primary Keys</h3>
+<p>Primary keys are a column (or set of columns) whose values uniquely identify every row in a table. These keys are the IDS for each rows. For example, it could be employees SSN Numbers. The primary key is used to refer to a specific row.</p>
+<p>The folowing rules apply to Primary Keys:</p>
+<ul>
+<li>Primary key value has to ne unique.<br />
+</li>
+<li>Every row <strong>MUST</strong> have a primary key value. No NULL values are allowed.</li>
+<li>Values in primary key columns should never be modified or updated.<br />
+</li>
+<li>Primary key values should <strong>NEVER</strong> be reused in the future.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="what-is-sql" class="section level1">
+<h1>What Is SQL?</h1>
+<p>It stands for Structured Query Language and is promounces as <em>sequel</em>. It is a language to communicate with databases. The biggest advantage of SQL is that SQL is not a proprietary language used by specific database vendors. Almost every major DBMS (Database Management Systems) supports SQL.</p>
+</div>

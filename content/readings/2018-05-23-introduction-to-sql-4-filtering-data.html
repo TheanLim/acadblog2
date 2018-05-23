@@ -1,0 +1,107 @@
+---
+title: 'Introduction to SQL: 4. Filtering Data'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-filtering-data
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to use the SELECT statement's WHERE clause to specify search conditions.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#using-the-where-clause">Using the <code>WHERE</code> Clause</a></li>
+<li><a href="#the-where-clause-operators">The <code>WHERE</code> Clause Operators</a><ul>
+<li><a href="#checking-against-a-single-value">Checking Against a Single Value</a></li>
+<li><a href="#checking-for-nonmatches">Checking for Nonmatches</a></li>
+<li><a href="#checking-for-a-range-of-values-using-between-operator">Checking for a Range of Values using <code>BETWEEN</code> operator</a></li>
+<li><a href="#checking-for-no-value-using-is-null">Checking for No Value using <code>IS NULL</code></a></li>
+</ul></li>
+</ul>
+</div>
+
+<p><strong>This post is heavily based on <a href="https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073">Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)</a>. Please consider to buy the book if you find this post useful.</strong></p>
+<div id="using-the-where-clause" class="section level1">
+<h1>Using the <code>WHERE</code> Clause</h1>
+<p>Within a <code>SELECT</code> statement, data is filtered by specifying search criteria in the <code>WHERE</code> clause. The <code>WHERE</code> clause is specified right after the table name (the <code>FROM</code> clause) as follows:</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price = 3.49;</code></pre>
+<p>The following shows the output.</p>
+<div class="figure">
+<img src="/img/tysql/04.Filter/filtercol.jpg" />
+
+</div>
+<p>{{% alert warning %}} Position of <code>WHERE</code> Clause</p>
+<p>When using both <code>ORDER BY</code> and<code>WHERE</code> clauses, make sure that <code>ORDER BY</code> comes after the <code>WHERE</code>, otherwise an error will be generated. {{% /alert %}}</p>
+</div>
+<div id="the-where-clause-operators" class="section level1">
+<h1>The <code>WHERE</code> Clause Operators</h1>
+<p>SQL supports a whole range of conditional operators as listed as follows. Not all of these operators are supported by all DBMSs. Refer to your DBMS documentation to determine exactly what it supports.</p>
+<p><img src="/img/tysql/04.Filter/operators.jpg" /> Many DBMSs extend the standard set of operators, providing advanced filtering options. Refer to your DBMS documentation for more information.</p>
+<p><br></p>
+<div id="checking-against-a-single-value" class="section level2">
+<h2>Checking Against a Single Value</h2>
+<p>Ex: List all products that cost less than $10:</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price &lt; 10;</code></pre>
+<p>Ex: Retrieve all products costing $10 or less:</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price &lt;= 10;</code></pre>
+<p><br></p>
+</div>
+<div id="checking-for-nonmatches" class="section level2">
+<h2>Checking for Nonmatches</h2>
+<p>Ex: List all products <strong>not</strong> made by vendor DLL01:</p>
+<pre><code>SELECT vend_id, prod_name
+FROM Products
+WHERE vend_id &lt;&gt; &#39;DLL01&#39;;</code></pre>
+<p>{{% alert note %}} <strong>Using Quotes</strong></p>
+<p>The single quotes are used to delimit a string. If you are comparing a value against a column that is a string datatype, the delimiting quotes are required. Quotes are not used to delimit values used with numeric columns. {{% /alert %}}</p>
+<p>Ex: Do the same as above but use <code>!=</code> insetad of <code>&lt; &gt;</code>:</p>
+<pre><code>SELECT vend_id, prod_name
+FROM Products
+WHERE vend_id != &#39;DLL01&#39;;</code></pre>
+<p>The above doesnt work in Microsoft Access because it is not supported. <code>!=</code> works in certain DBMS.</p>
+<p><br></p>
+</div>
+<div id="checking-for-a-range-of-values-using-between-operator" class="section level2">
+<h2>Checking for a Range of Values using <code>BETWEEN</code> operator</h2>
+<p>To check for a range of values, you can use the <code>BETWEEN</code> operator. Let’s retrieve all products with a price between <em>$5</em> and <em>$10</em>:</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE prod_price BETWEEN 5 AND 10;</code></pre>
+<p>When <code>BETWEEN</code> is used, two values must be specified -the low end and high end of the desired range. The two values must also be separated by the <code>AND</code> keyword. <code>BETWEEN</code> matches all the values in the range, <strong>including</strong> the specified start and end values.</p>
+<p><br></p>
+</div>
+<div id="checking-for-no-value-using-is-null" class="section level2">
+<h2>Checking for No Value using <code>IS NULL</code></h2>
+<p>To determine if a value is NULL, you cannot simply check to see if = NULL. The IS NULL clause should be used.</p>
+<pre><code>SELECT prod_name
+FROM Products
+WHERE prod_price IS NULL;</code></pre>
+<p>Nothing is returned because everything is priced.</p>
+<p>The Customers table, however, does contain columns with NULL values:</p>
+<pre><code>SELECT cust_name
+FROM CUSTOMERS
+WHERE cust_email IS NULL;</code></pre>
+<p>{{% alert warning %}} <strong>NULL and Non-matches</strong></p>
+<p>When you filter to select all rows that do not have a particular value, rows with a NULL will not be returned. {{% /alert %}}</p>
+<p>It’s because of the special meaning of <em>unknown</em>, the database does not know whether or not they match, and so they are not returned when filtering for matches or when filtering for non-matches.<br />
+When filtering data, make sure to verify that the rows with a NULL in the filtered column are really present in the returned data.</p>
+</div>
+</div>

@@ -1,0 +1,92 @@
+---
+title: 'Introduction to SQL: 3.Sorting Retrieved Data'
+author: Thean Lim
+date: '2018-05-23'
+slug: introduction-to-sql-sorting-retrieved-data
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to use the SELECT statement's ORDER BY clause to sort retrieved data as needed.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 1
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#sorting-data">Sorting Data</a></li>
+<li><a href="#sorting-by-multiple-columns">Sorting by Multiple Columns</a></li>
+<li><a href="#sorting-by-column-position">Sorting by Column Position</a></li>
+<li><a href="#specifying-sort-direction">Specifying Sort Direction</a></li>
+</ul>
+</div>
+
+<p><strong>This post is heavily based on <a href="https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073">Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)</a>. Please consider to buy the book if you find this post useful.</strong></p>
+<div id="sorting-data" class="section level1">
+<h1>Sorting Data</h1>
+<p>To explicitly sort data retrieved using a <code>SELECT</code> statement, the <code>ORDER BY</code> clause is used. <code>ORDER BY</code> takes the name of one or more columns by which to sort the output.</p>
+<p>{{% alert note %}} <strong>CLAUSE</strong></p>
+<p>SQL statements are made up of clauses, some required and some optional. A clause usually consists of a keyword and supplied data. An example of this is the SELECT statement’s FROM clause. {{% /alert %}}</p>
+<pre><code>SELECT prod_name
+FROM Products
+ORDER BY prod_name;</code></pre>
+<p>The following shows before and after sorting:</p>
+<div class="figure">
+<img src="/img/tysql/02.Retrieving_Data/select_single_col.jpg" />
+
+</div>
+<div class="figure">
+<img src="/img/tysql/03.Sort/single_col_sort.jpg" />
+
+</div>
+<p>What is interesting here is that <code>8 inch teddy bear</code> is located below the 12 and the 18 inches’.</p>
+<p>{{% alert warning %}} Position of <code>ORDER BY</code> Clause</p>
+<p>When specifying an <code>ORDER BY</code> clause, be sure that it is the last clause in your <code>SELECT</code> statement. If it is not the last clause, an error will be generated.<br />
+{{% /alert %}}</p>
+<p>{{% alert note %}} <strong>Sorting by Nonselected Columns</strong><br />
+{{% /alert %}}</p>
+<p>It is perfectly legal to sort data by a column that is not retrieved such as the following:</p>
+<pre><code>SELECT prod_name
+FROM Products
+ORDER BY vend_id;</code></pre>
+</div>
+<div id="sorting-by-multiple-columns" class="section level1">
+<h1>Sorting by Multiple Columns</h1>
+<p>To sort by multiple columns, simply specify the column names separated by commas.<br />
+The following code retrieves three columns and sorts the results by two of them -first by price and then by name.</p>
+<pre><code>SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price, prod_name;</code></pre>
+<p>Note that the sort sequence is exactly as specified. For example, the products are sorted by the <code>prod_name</code> column only when multiple rows have the same <code>prod_price</code> value. If all the values in the <code>prod_price</code> column had been <strong>unique</strong>, no data would have been sorted by <code>prod_name</code>.</p>
+</div>
+<div id="sorting-by-column-position" class="section level1">
+<h1>Sorting by Column Position</h1>
+<p>Instead of naming out the columns to be sorted, we can put it the column number. The follwing goves the same output as the above:</p>
+<pre><code>SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY 2, 3;</code></pre>
+<p>The main limitation of this technique is you cannot sort by columns that are not in the <code>SELECT</code> list However, you can mix and match actual column names and relative column positions in a single statement if needed.</p>
+</div>
+<div id="specifying-sort-direction" class="section level1">
+<h1>Specifying Sort Direction</h1>
+<p>Bt default, the columns selected are sorted in ascending order. To sort by descending order, the keyword <code>DESC</code> must be specified. The opposite of <code>DESC</code> is <code>ASC</code>.<br />
+The following example sorts the products by price in descending order (most expensive first):</p>
+<pre><code>SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price DESC;</code></pre>
+<p>What if you were to sort by multiple columns? The <code>DESC</code> keyword only applies to the column name that directly precedes it. For example:</p>
+<pre><code>SELECT prod_id, prod_price, prod_name
+FROM Products
+ORDER BY prod_price DESC, prod_name;</code></pre>
+<p>The <code>prod_price</code> column is sorted in descending order, but the <code>prod_name</code> column (within each price) is still sorted in standard ascending order.</p>
+<p>{{% alert note %}} If you want to sort descending on multiple columns, be sure each column has its own <code>DESC</code> keyword. {{% /alert %}}</p>
+<p>{{% alert note %}} Depending on your DBMS, <em>A</em> might be same as <em>a</em>, and <em>a</em> come before <em>B</em> or after <em>Z</em>. If you do need an alternate sort order, you may not be able to accomplish this with a simple <code>ORDER BY</code> clause. {{% /alert %}}</p>
+</div>

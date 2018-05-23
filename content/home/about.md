@@ -18,12 +18,12 @@ weight = 5
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
-  course = "Undergraduate in Statistics"
+  course = "Undergraduate in Statistical Practice"
   institution = "University of Minnesota Twin Cities"
   year = 2018
 
 [[education.courses]]
-  course = "undergraduate in Psychology"
+  course = "Undergraduate in Psychology"
   institution = "University of Minnesota Twin Cities"
   year = 2018
 
