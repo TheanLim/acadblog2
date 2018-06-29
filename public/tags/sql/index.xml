@@ -7,10 +7,33 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Wed, 23 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 24 May 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/sql/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Introduction to SQL: 5.Advanced Data Filtering</title>
+      <link>/readings/introduction-to-sql-advanced-data-filtering/</link>
+      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-advanced-data-filtering/</guid>
+      <description>Combining WHERE ClausesUsing the AND OperatorUsing the OR OperatorUnderstanding Order of EvaluationUsing the IN OperatorUsing the NOT OperatorThis post is heavily based on Sams Teach Yourself SQL in 10 Minutes (Fourth Edition). Please consider to buy the book if you find this post useful.
+Combining WHERE ClausesWe can specify multiple WHERE clauses. These clauses may be used in two ways: as AND clauses or as OR clauses.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to SQL: 6.Using Wildcard Filtering</title>
+      <link>/readings/introduction-to-sql-using-wildcard-filtering/</link>
+      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-using-wildcard-filtering/</guid>
+      <description>Using the LIKE OperatorThe Percent Sign (%) WildcardThe Underscore (_) WildcardThe Brackets ([]) WildcardTips for Using WildcardsThis post is heavily based on Sams Teach Yourself SQL in 10 Minutes (Fourth Edition). Please consider to buy the book if you find this post useful.
+Using the LIKE Operator
+The Percent Sign (%) Wildcard
+The Underscore (_) Wildcard
+The Brackets ([]) Wildcard</description>
+    </item>
     
     <item>
       <title>Introduction to SQL: 1.Understanding SQL</title>

@@ -1,0 +1,474 @@
+---
+title: Exploratory Data Analysis (EDA)
+author: Thean Lim
+date: '2018-06-30'
+slug: exploratory-data-analysis
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 6
+summary: Learn how to use various plots to unearth the hidden pattern of data during Exploratory Data Analysis.
+categories:
+  - R
+tags:
+  - R for Data Science
+  - r4ds
+  - visualization
+header:
+  caption: ''
+  image: ''
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE, warning = FALSE)
+library(methods)
+library(ggplot2)
+theme_set(theme_light())
+```
+
+** This post is heavily based on [R for Data Science](http://r4ds.had.co.nz/). Please consider to buy that book if you find this post useful.** 
+
+We always look for variations and covariations of variables during EDA. 
+
+# Variation  
+
+## Visualizations
+
+### Categorical Variable -- Bar chart with `geom_bar`
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))
+```
+
+<br>
+
+### Continuous Variable
+
+#### Histogram with `geom_histogram`
+```{r}
+ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = carat), binwidth = 0.5)
+```
+
+<br>
+
+#### Overlapping Histograms using `geom_freqpoly`
+
+Problem: unable to compare directly between categories since they are not having the same number of instances within a category. Add in `y = ..density..` in the aes() to create density plot.
+
+```{r, include = FALSE}
+smaller <- diamonds %>%
+    filter(carat < 3)
+```
+
+```{r}
+ggplot(data = smaller, mapping = aes(x = carat, color = cut)) +
+  geom_freqpoly(binwidth = 0.1)
+```
+
+<br>
+
+## Typical values
+
+Look for anything unexpected: 
+
+* Which values are the most common? Why?
+* Which values are rare? Why? Does that match your expectations?
+* Can you see any unusual patterns? What might explain them?
+
+In general, clusters of similar values suggest that subgroups exist in your data. To understand the subgroups, ask:  
+
+* How are the observations within each cluster similar to each other?
+* How are the observations in separate clusters different from each other?  
+* How can you explain or describe the clusters?  
+* Why might the appearance of clusters be misleading?
+
+<br>
+
+## Unusual Values
+
+Outliers are observations that are unusual; data points that don't seem to fit the pattern.  
+
+Repeat your analysis with and without the outliers:  
+
+* If they have minimal effect on the results, and you can't figure out why they're there, replace them with missing values and move on.
+* If they have a substantial effect, you shouldn't drop them without justification. You'll need to figure out what caused them (e.g., a data entry error) and disclose that you removed them in your write-up.  
+
+<br>
+
+### Zoom in into plot without resetting xlim and ylim with `coord_cartesian`
+
+`coord_cartesian` simply zooms in on the area specified by the limits. The calculation of the histogram is unaffected. However, the xlim and ylim functions first drop any values outside the limits, then calculates the histogram, and draws the graph with the given limits.  
+
+```{r}
+ggplot(diamonds) +
+  geom_histogram(mapping = aes(x = y), binwidth = 0.5) + ## y is one of the vars
+  coord_cartesian(ylim = c(0, 50)) ## vs ylim(c(0, 50))
+```
+
+<br>
+
+# Missing Values
+
+The missing values in a histogram are removed with warnings while NAs in bar chart are treated as another bar (i.e., another category). The NAs are removed prior to performing calulation (i.e., mean, sum,...). May na.rm is not TRUE, the functions return NA.
+
+<br>
+
+## Rowwise Deletion vs Replacing with NAs
+
+Two options when you encountered missing values in your data:
+
+* Drop the entire row with the strange values. This is not recommended because one it is a waste to remove other variables' measurements because of one invalid variable value. Besides, a large number of data removal will handicap your analyses when you have a low quality data.
+* Instead, I recommend replacing the unusual values with missing values. The easiest way to do this is to use mutate() to replace the variable with a modified copy. You can use the ifelse() function to replace unusual values with NA.The arguments for `ifelse` are `ifelse(test, value if true, value if false)`:  
+
+```{r}
+# Replace with NA
+diamonds2 <- diamonds %>%
+    mutate(y = ifelse(y < 3 | y > 20, NA, y))
+```
+
+<br>
+
+## Suppressing ggplot2 NAs removal warnings with `na.rm = TRUE`
+
+**ggplot2** always warns the NA values that it removes prior to plotting,
+
+```{r, eval = FALSE}
+ggplot(data = diamonds2, mapping = aes(x = x, y = y)) +
+  geom_point(na.rm = TRUE)
+```
+
+<br>
+
+## Comparing missing vs non-missing values by creating new variable using `is.na()`
+
+Ex: compare the scheduled departure times for cancelled and noncancelled times.  
+
+```{r}
+nycflights13::flights %>%
+  mutate(
+    cancelled = is.na(dep_time),
+    sched_hour = sched_dep_time %/% 100,
+    sched_min = sched_dep_time %% 100,
+    sched_dep_time = sched_hour + sched_min / 60
+  )
+```
+
+<br>
+
+# Covariation
+
+It is the tendency for the values of two or more variables to vary together in a related way.  
+
+## A Categorical and Continuous Variable
+
+It is used to explore the distribution of a continuous variable broken down by a categorical variable.  
+
+<br>
+
+### Density Plot with `geom_freqpoly`
+
+Problem of faceted histogram: unable to compare directly between categories since they are not having the same number of instances within a category.
+Density plot ensures that we are comparing categories in a same scale -- density.
+
+```{r}
+ggplot(
+  data = diamonds,
+    mapping = aes(x = price, y = ..density..)
+  ) +
+  geom_freqpoly(mapping = aes(color = cut), binwidth = 500)
+```
+
+<br>
+
+### Large Dataset
+
+#### Letter-value plot (for large dataset|instead of boxplot) using `geom_lv`
+
+The boxes of the letter-value plot (lvplot) correspond to many more quantiles. They are useful for larger datasets because
+
+1. larger datasets can give precise estimates of quantiles beyond the quartiles, and
+2. in expectation, larger datasets should have more outliers (in absolute numbers).
+
+```{r}
+library(lvplot)
+ggplot(diamonds, aes(x = cut, y = price)) +
+  geom_lv()
+```
+
+<br>
+
+#### Violin plot (to show distributions) using `geom_violin`
+
+A violin plot is a hybrid of a box plot and a kernel density plot, which shows peaks in the data.
+
+```{r}
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_violin() +
+  coord_flip()
+```
+
+<br>
+
+### Small Dataset
+
+
+#### Boxplot (for small dataset) using `geom_boxplot` 
+
+* Interquantile range (IQR) = 25 to 75th percentile. These are the two lines of the box in a boxplot.
+* Median is the 50th percentile.
+* Visual points are outliers. They fall beyond 1.5 x IQR.
+* The whisker (or a line) is the range of the non-outliers.
+* Problem 1: tend to display a prohibitively large number of "outlying values" and is more suitable for small dataset. Use letter-value plot for large dataset.
+* Problem 2: Limiting for multimodal distributions (those with multiple peaks).  
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
+  geom_boxplot()
+```
+
+<br>
+
+##### Reorder the levels of categorical variables using `reorder()`
+
+`reorder(factor_to_be_ordered, values_that_decide_the order, FUN)`
+
+To make the trend easier to see, we can reorder class based on the median value of `hwy`: 
+
+```{r}
+ggplot(data = mpg) +
+  geom_boxplot(
+    mapping = aes(
+      x = reorder(class, hwy, FUN = median),
+      y = hwy
+  )
+)
+```
+
+<br>
+
+##### Horizontal boxplot using `coord_flip` or `geom_boxploth`
+
+The first one using `coord_flip`.
+```{r}
+ggplot(data = mpg) +
+  geom_boxplot(
+    mapping = aes(
+      x = reorder(class, hwy, FUN = median),
+      y = hwy
+  )
+) +
+  coord_flip()
+```
+
+The second uses `geom_boxploth` from **ggstance**. The only difference is the aesthethics of x and y: it is flipped when we use `coord_flip()`.  
+
+```{r}
+library(ggstance)
+ggplot(data = mpg) +
+  geom_boxploth(
+    mapping = aes(
+      x = hwy,
+      y = reorder(class, hwy, FUN = median)
+  )
+)
+```
+
+<br>
+
+#### Jitter points using `geom_jitter`
+
+```{r}
+ggplot(data = mpg) +
+  geom_jitter(mapping = aes(x = reorder(class, hwy, FUN = median),
+                              y = hwy)
+                )
+```
+
+<br>
+
+##### Jitter + Violin plot using `geom_quasirandom`
+
+There are several methods available:
+
+* quasirandom
+* pseudorandom
+* tukey
+* tukeyDense
+* frowney
+* smiley
+
+
+```{r}
+library(ggbeeswarm)
+## Quasirandom default method -- quasirandom
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(x = reorder(class, hwy, FUN = median),
+                                 y = hwy))
+
+## Tukey
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(x = reorder(class, hwy, FUN = median),
+                                 y = hwy),
+                   method = "tukey")
+```
+
+<br>
+
+#### Offsetting (sideway) the violin plot using `geom_beeswarm`
+
+```{r}
+library(ggbeeswarm)
+ggplot(data = mpg) +
+  geom_beeswarm(mapping = aes(x = reorder(class, hwy, FUN = median),
+                              y = hwy)
+                )
+```
+
+<br>
+
+## Two Categorical Variables
+
+It's usually better to use the categorical variable with a larger number of categories or the longer labels on the y axis. If at all possible, labels should be horizontal because that is easier to read.
+
+<br>
+
+### Bubble Chart with `geom_count`  
+
+To visualize the covariation between categorical variables, you'll need to count the number of observations for each combination. One way to do that is to rely on the built-in `geom_count()`:  
+
+```{r}
+ggplot(data = diamonds) +
+  geom_count(mapping = aes(x = cut, y = color))
+```
+
+<br>
+
+### Heatmap Plotting with `geom_tile`
+Another approach is to compute the count with *dplyr*, then visualize with `geom_tile()` and the *fill* aesthetic:  
+
+```{r}
+diamonds %>%
+  count(color, cut) %>%  ## count(tbl, vars_to_group_by)
+  ggplot(mapping = aes(x = color, y = cut)) +
+    geom_tile(mapping = aes(fill = n))
+```
+
+You can also use `scale_fill_viridis` from the **viridis** package to fill the color of legend:
+
+```{r}
+library(viridis)
+diamonds %>%
+  count(color, cut) %>%
+  group_by(color) %>%
+  mutate(prop = n/ sum(n))%>%
+    ggplot(mapping = aes(x = color, y = cut)) +
+      geom_tile(mapping = aes(fill = prop)) +
+      scale_fill_viridis(limits = c(0,1)) +  
+      # using scale_fill_continuous(limits = c(0,1)) will not change the fill color
+      labs(x = "Diamond color", fill = "Proportion")
+```
+
+If the categorical variables are unordered, you might want to use the **seriation** package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns. For larger plots, you might want to try the **d3heatmap** or **heatmaply** packages, which create interactive plots.  
+
+<br>
+
+## Two Continuous Variables  
+
+### Scatterplot using `geom_point`
+
+```{r}
+ggplot(data = diamonds) +
+  geom_point(mapping = aes(x = carat, y = price))
+```
+
+<br>
+
+### Large dataset problems and solutions
+
+Scatterplots become less useful as the size of your dataset grows, because points begin to overplot, and pile up into areas of uniform black (as in the preceding scatterplot).
+
+<br>
+
+#### Using **alpha** aesthethics in `geom_point`
+
+```{r}
+ggplot(data = diamonds) +
+  geom_point(
+    mapping = aes(x = carat, y = price),
+    alpha = 1 / 100
+  )
+```
+
+<br>
+
+#### Using Bins
+
+`geom_bin2d()` and `geom_hex()` divide the coordinate plane into 2D bins and then use a fill color to display how many points fall into each bin. `geom_bin2d()` creates rectangular bins. `geom_hex()` creates hexagonal bins.
+
+
+<br>
+
+##### Using bin with `geom_bin2d()`
+
+```{r}
+ggplot(data = smaller) +
+  geom_bin2d(mapping = aes(x = carat, y = price))
+```
+
+##### Using bin with `geom_hex()`
+
+```{r}
+# install.packages("hexbin") # this is needed for geom_hex()
+library (hexbin)
+ggplot(data = smaller) +
+  geom_hex(mapping = aes(x = carat, y = price))
+```
+
+<br>
+
+##### Bin by breaking continuous into categorical variable
+
+###### Using `cutwidth` to bin
+
+Use `cutwidth(x, width)` to break `x` into bins of width `width`. Then use visualization technique of a continuous and categorical variable combination.  
+
+```{r}
+ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)),varwidth = TRUE)
+```
+
+The problem of using `cutwidth` appears when the data is not uniformly distributed. Setting `varwidth = TRUE` ensures that the size of boxplot reflects the amount of points in a particular bin.
+
+###### Using `cutnumber` to bin  
+
+`cut_number(x, n)` makes `n` groups with (approximately) equal numbers of observations. This displays a same amount of points in each bin.  
+
+```{r}
+ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_number(carat, 20)))
+```
+
+<br>
+
+# Patterns and Models
+
+Patterns can reveal covariation while models are tools for extracting patterns out of data.
+
+If you spot a pattern in your data, ask yourself:  
+ 
+* Could this pattern be due to coincidence (i.e., random chance)?
+* How can you describe the relationship implied by the pattern?
+* How strong is the relationship implied by the pattern?
+* What other variables might affect the relationship?
+* Does the relationship change if you look at individual subgroups of the data?  
+
+
+
+

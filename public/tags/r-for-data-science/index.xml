@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Sun, 15 Apr 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/r-for-data-science/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Exploratory Data Analysis (EDA)</title>
+      <link>/readings/exploratory-data-analysis/</link>
+      <pubDate>Sat, 30 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/exploratory-data-analysis/</guid>
+      <description>VariationVisualizationsCategorical Variable – Bar chart with geom_barContinuous VariableHistogram with geom_histogramOverlapping Histograms using geom_freqpolyTypical valuesUnusual ValuesZoom in into plot without resetting xlim and ylim with coord_cartesianMissing ValuesRowwise Deletion vs Replacing with NAsSuppressing ggplot2 NAs removal warnings with na.rm = TRUEComparing missing vs non-missing values by creating new variable using is.na()CovariationA Categorical and Continuous VariableDensity Plot with geom_freqpolyLarge DatasetLetter-value plot (for large dataset|instead of boxplot) using geom_lvViolin plot (to show distributions) using geom_violinSmall DatasetBoxplot (for small dataset) using geom_boxplotReorder the levels of categorical variables using reorder()Horizontal boxplot using coord_flip or geom_boxplothJitter points using geom_jitterJitter + Violin plot using geom_quasirandomOffsetting (sideway) the violin plot using geom_beeswarmTwo Categorical VariablesBubble Chart with geom_countHeatmap Plotting with geom_tileTwo Continuous VariablesScatterplot using geom_pointLarge dataset problems and solutionsUsing alpha aesthethics in geom_pointUsing BinsUsing bin with geom_bin2d()Using bin with geom_hex()Bin by breaking continuous into categorical variableUsing cutwidth to binUsing cutnumber to binPatterns and Models** This post is heavily based on R for Data Science.</description>
+    </item>
     
     <item>
       <title>Data Visualization with ggplot2</title>

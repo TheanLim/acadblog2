@@ -11,6 +11,600 @@
     <atom:link href="/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Exploratory Data Analysis (EDA)</title>
+      <link>/readings/exploratory-data-analysis/</link>
+      <pubDate>Sat, 30 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/exploratory-data-analysis/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#variation&#34;&gt;Variation&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#visualizations&#34;&gt;Visualizations&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#categorical-variable-bar-chart-with-geom_bar&#34;&gt;Categorical Variable – Bar chart with &lt;code&gt;geom_bar&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#continuous-variable&#34;&gt;Continuous Variable&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#histogram-with-geom_histogram&#34;&gt;Histogram with &lt;code&gt;geom_histogram&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#overlapping-histograms-using-geom_freqpoly&#34;&gt;Overlapping Histograms using &lt;code&gt;geom_freqpoly&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#typical-values&#34;&gt;Typical values&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#unusual-values&#34;&gt;Unusual Values&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#zoom-in-into-plot-without-resetting-xlim-and-ylim-with-coord_cartesian&#34;&gt;Zoom in into plot without resetting xlim and ylim with &lt;code&gt;coord_cartesian&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#missing-values&#34;&gt;Missing Values&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#rowwise-deletion-vs-replacing-with-nas&#34;&gt;Rowwise Deletion vs Replacing with NAs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#suppressing-ggplot2-nas-removal-warnings-with-na.rm-true&#34;&gt;Suppressing ggplot2 NAs removal warnings with &lt;code&gt;na.rm = TRUE&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#comparing-missing-vs-non-missing-values-by-creating-new-variable-using-is.na&#34;&gt;Comparing missing vs non-missing values by creating new variable using &lt;code&gt;is.na()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#covariation&#34;&gt;Covariation&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#a-categorical-and-continuous-variable&#34;&gt;A Categorical and Continuous Variable&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#density-plot-with-geom_freqpoly&#34;&gt;Density Plot with &lt;code&gt;geom_freqpoly&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#large-dataset&#34;&gt;Large Dataset&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#letter-value-plot-for-large-datasetinstead-of-boxplot-using-geom_lv&#34;&gt;Letter-value plot (for large dataset|instead of boxplot) using &lt;code&gt;geom_lv&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#violin-plot-to-show-distributions-using-geom_violin&#34;&gt;Violin plot (to show distributions) using &lt;code&gt;geom_violin&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#small-dataset&#34;&gt;Small Dataset&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#boxplot-for-small-dataset-using-geom_boxplot&#34;&gt;Boxplot (for small dataset) using &lt;code&gt;geom_boxplot&lt;/code&gt;&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#reorder-the-levels-of-categorical-variables-using-reorder&#34;&gt;Reorder the levels of categorical variables using &lt;code&gt;reorder()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#horizontal-boxplot-using-coord_flip-or-geom_boxploth&#34;&gt;Horizontal boxplot using &lt;code&gt;coord_flip&lt;/code&gt; or &lt;code&gt;geom_boxploth&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#jitter-points-using-geom_jitter&#34;&gt;Jitter points using &lt;code&gt;geom_jitter&lt;/code&gt;&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#jitter-violin-plot-using-geom_quasirandom&#34;&gt;Jitter + Violin plot using &lt;code&gt;geom_quasirandom&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#offsetting-sideway-the-violin-plot-using-geom_beeswarm&#34;&gt;Offsetting (sideway) the violin plot using &lt;code&gt;geom_beeswarm&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#two-categorical-variables&#34;&gt;Two Categorical Variables&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#bubble-chart-with-geom_count&#34;&gt;Bubble Chart with &lt;code&gt;geom_count&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#heatmap-plotting-with-geom_tile&#34;&gt;Heatmap Plotting with &lt;code&gt;geom_tile&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#two-continuous-variables&#34;&gt;Two Continuous Variables&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#scatterplot-using-geom_point&#34;&gt;Scatterplot using &lt;code&gt;geom_point&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#large-dataset-problems-and-solutions&#34;&gt;Large dataset problems and solutions&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#using-alpha-aesthethics-in-geom_point&#34;&gt;Using &lt;strong&gt;alpha&lt;/strong&gt; aesthethics in &lt;code&gt;geom_point&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-bins&#34;&gt;Using Bins&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#using-bin-with-geom_bin2d&#34;&gt;Using bin with &lt;code&gt;geom_bin2d()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-bin-with-geom_hex&#34;&gt;Using bin with &lt;code&gt;geom_hex()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#bin-by-breaking-continuous-into-categorical-variable&#34;&gt;Bin by breaking continuous into categorical variable&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#using-cutwidth-to-bin&#34;&gt;Using &lt;code&gt;cutwidth&lt;/code&gt; to bin&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-cutnumber-to-bin&#34;&gt;Using &lt;code&gt;cutnumber&lt;/code&gt; to bin&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#patterns-and-models&#34;&gt;Patterns and Models&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;** This post is heavily based on &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt;. Please consider to buy that book if you find this post useful.**&lt;/p&gt;
+&lt;p&gt;We always look for variations and covariations of variables during EDA.&lt;/p&gt;
+&lt;div id=&#34;variation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Variation&lt;/h1&gt;
+&lt;div id=&#34;visualizations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualizations&lt;/h2&gt;
+&lt;div id=&#34;categorical-variable-bar-chart-with-geom_bar&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Categorical Variable – Bar chart with &lt;code&gt;geom_bar&lt;/code&gt;&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(ggplot2)
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;continuous-variable&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Continuous Variable&lt;/h3&gt;
+&lt;div id=&#34;histogram-with-geom_histogram&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Histogram with &lt;code&gt;geom_histogram&lt;/code&gt;&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = carat), binwidth = 0.5)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;overlapping-histograms-using-geom_freqpoly&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Overlapping Histograms using &lt;code&gt;geom_freqpoly&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;Problem: unable to compare directly between categories since they are not having the same number of instances within a category. Add in &lt;code&gt;y = ..density..&lt;/code&gt; in the aes() to create density plot.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = smaller, mapping = aes(x = carat, color = cut)) +
+  geom_freqpoly(binwidth = 0.1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-4-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;typical-values&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Typical values&lt;/h2&gt;
+&lt;p&gt;Look for anything unexpected:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Which values are the most common? Why?&lt;/li&gt;
+&lt;li&gt;Which values are rare? Why? Does that match your expectations?&lt;/li&gt;
+&lt;li&gt;Can you see any unusual patterns? What might explain them?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In general, clusters of similar values suggest that subgroups exist in your data. To understand the subgroups, ask:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How are the observations within each cluster similar to each other?&lt;/li&gt;
+&lt;li&gt;How are the observations in separate clusters different from each other?&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;How can you explain or describe the clusters?&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Why might the appearance of clusters be misleading?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;unusual-values&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Unusual Values&lt;/h2&gt;
+&lt;p&gt;Outliers are observations that are unusual; data points that don’t seem to fit the pattern.&lt;/p&gt;
+&lt;p&gt;Repeat your analysis with and without the outliers:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If they have minimal effect on the results, and you can’t figure out why they’re there, replace them with missing values and move on.&lt;/li&gt;
+&lt;li&gt;If they have a substantial effect, you shouldn’t drop them without justification. You’ll need to figure out what caused them (e.g., a data entry error) and disclose that you removed them in your write-up.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;zoom-in-into-plot-without-resetting-xlim-and-ylim-with-coord_cartesian&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Zoom in into plot without resetting xlim and ylim with &lt;code&gt;coord_cartesian&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;coord_cartesian&lt;/code&gt; simply zooms in on the area specified by the limits. The calculation of the histogram is unaffected. However, the xlim and ylim functions first drop any values outside the limits, then calculates the histogram, and draws the graph with the given limits.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(diamonds) +
+  geom_histogram(mapping = aes(x = y), binwidth = 0.5) + ## y is one of the vars
+  coord_cartesian(ylim = c(0, 50)) ## vs ylim(c(0, 50))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;missing-values&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Missing Values&lt;/h1&gt;
+&lt;p&gt;The missing values in a histogram are removed with warnings while NAs in bar chart are treated as another bar (i.e., another category). The NAs are removed prior to performing calulation (i.e., mean, sum,…). May na.rm is not TRUE, the functions return NA.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;rowwise-deletion-vs-replacing-with-nas&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Rowwise Deletion vs Replacing with NAs&lt;/h2&gt;
+&lt;p&gt;Two options when you encountered missing values in your data:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Drop the entire row with the strange values. This is not recommended because one it is a waste to remove other variables’ measurements because of one invalid variable value. Besides, a large number of data removal will handicap your analyses when you have a low quality data.&lt;/li&gt;
+&lt;li&gt;Instead, I recommend replacing the unusual values with missing values. The easiest way to do this is to use mutate() to replace the variable with a modified copy. You can use the ifelse() function to replace unusual values with NA.The arguments for &lt;code&gt;ifelse&lt;/code&gt; are &lt;code&gt;ifelse(test, value if true, value if false)&lt;/code&gt;:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Replace with NA
+diamonds2 &amp;lt;- diamonds %&amp;gt;%
+    mutate(y = ifelse(y &amp;lt; 3 | y &amp;gt; 20, NA, y))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;suppressing-ggplot2-nas-removal-warnings-with-na.rm-true&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Suppressing ggplot2 NAs removal warnings with &lt;code&gt;na.rm = TRUE&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;ggplot2&lt;/strong&gt; always warns the NA values that it removes prior to plotting,&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = diamonds2, mapping = aes(x = x, y = y)) +
+  geom_point(na.rm = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comparing-missing-vs-non-missing-values-by-creating-new-variable-using-is.na&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Comparing missing vs non-missing values by creating new variable using &lt;code&gt;is.na()&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;Ex: compare the scheduled departure times for cancelled and noncancelled times.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nycflights13::flights %&amp;gt;%
+  mutate(
+    cancelled = is.na(dep_time),
+    sched_hour = sched_dep_time %/% 100,
+    sched_min = sched_dep_time %% 100,
+    sched_dep_time = sched_hour + sched_min / 60
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 336,776 x 22
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;int&amp;gt;          &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt;    &amp;lt;int&amp;gt;
+##  1  2013     1     1      517           5.25        2.      830
+##  2  2013     1     1      533           5.48        4.      850
+##  3  2013     1     1      542           5.67        2.      923
+##  4  2013     1     1      544           5.75       -1.     1004
+##  5  2013     1     1      554           6.00       -6.      812
+##  6  2013     1     1      554           5.97       -4.      740
+##  7  2013     1     1      555           6.00       -5.      913
+##  8  2013     1     1      557           6.00       -3.      709
+##  9  2013     1     1      557           6.00       -3.      838
+## 10  2013     1     1      558           6.00       -2.      753
+## # ... with 336,766 more rows, and 15 more variables: sched_arr_time &amp;lt;int&amp;gt;,
+## #   arr_delay &amp;lt;dbl&amp;gt;, carrier &amp;lt;chr&amp;gt;, flight &amp;lt;int&amp;gt;, tailnum &amp;lt;chr&amp;gt;,
+## #   origin &amp;lt;chr&amp;gt;, dest &amp;lt;chr&amp;gt;, air_time &amp;lt;dbl&amp;gt;, distance &amp;lt;dbl&amp;gt;, hour &amp;lt;dbl&amp;gt;,
+## #   minute &amp;lt;dbl&amp;gt;, time_hour &amp;lt;dttm&amp;gt;, cancelled &amp;lt;lgl&amp;gt;, sched_hour &amp;lt;dbl&amp;gt;,
+## #   sched_min &amp;lt;dbl&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;covariation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Covariation&lt;/h1&gt;
+&lt;p&gt;It is the tendency for the values of two or more variables to vary together in a related way.&lt;/p&gt;
+&lt;div id=&#34;a-categorical-and-continuous-variable&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A Categorical and Continuous Variable&lt;/h2&gt;
+&lt;p&gt;It is used to explore the distribution of a continuous variable broken down by a categorical variable.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;density-plot-with-geom_freqpoly&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Density Plot with &lt;code&gt;geom_freqpoly&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Problem of faceted histogram: unable to compare directly between categories since they are not having the same number of instances within a category. Density plot ensures that we are comparing categories in a same scale – density.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(
+  data = diamonds,
+    mapping = aes(x = price, y = ..density..)
+  ) +
+  geom_freqpoly(mapping = aes(color = cut), binwidth = 500)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-9-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;large-dataset&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Large Dataset&lt;/h3&gt;
+&lt;div id=&#34;letter-value-plot-for-large-datasetinstead-of-boxplot-using-geom_lv&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Letter-value plot (for large dataset|instead of boxplot) using &lt;code&gt;geom_lv&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;The boxes of the letter-value plot (lvplot) correspond to many more quantiles. They are useful for larger datasets because&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;larger datasets can give precise estimates of quantiles beyond the quartiles, and&lt;/li&gt;
+&lt;li&gt;in expectation, larger datasets should have more outliers (in absolute numbers).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(lvplot)
+ggplot(diamonds, aes(x = cut, y = price)) +
+  geom_lv()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;violin-plot-to-show-distributions-using-geom_violin&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Violin plot (to show distributions) using &lt;code&gt;geom_violin&lt;/code&gt;&lt;/h4&gt;
+&lt;p&gt;A violin plot is a hybrid of a box plot and a kernel density plot, which shows peaks in the data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_violin() +
+  coord_flip()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;small-dataset&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Small Dataset&lt;/h3&gt;
+&lt;div id=&#34;boxplot-for-small-dataset-using-geom_boxplot&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Boxplot (for small dataset) using &lt;code&gt;geom_boxplot&lt;/code&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Interquantile range (IQR) = 25 to 75th percentile. These are the two lines of the box in a boxplot.&lt;/li&gt;
+&lt;li&gt;Median is the 50th percentile.&lt;/li&gt;
+&lt;li&gt;Visual points are outliers. They fall beyond 1.5 x IQR.&lt;/li&gt;
+&lt;li&gt;The whisker (or a line) is the range of the non-outliers.&lt;/li&gt;
+&lt;li&gt;Problem 1: tend to display a prohibitively large number of “outlying values” and is more suitable for small dataset. Use letter-value plot for large dataset.&lt;/li&gt;
+&lt;li&gt;Problem 2: Limiting for multimodal distributions (those with multiple peaks).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
+  geom_boxplot()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;reorder-the-levels-of-categorical-variables-using-reorder&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Reorder the levels of categorical variables using &lt;code&gt;reorder()&lt;/code&gt;&lt;/h5&gt;
+&lt;p&gt;&lt;code&gt;reorder(factor_to_be_ordered, values_that_decide_the order, FUN)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To make the trend easier to see, we can reorder class based on the median value of &lt;code&gt;hwy&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) +
+  geom_boxplot(
+    mapping = aes(
+      x = reorder(class, hwy, FUN = median),
+      y = hwy
+  )
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-13-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;horizontal-boxplot-using-coord_flip-or-geom_boxploth&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Horizontal boxplot using &lt;code&gt;coord_flip&lt;/code&gt; or &lt;code&gt;geom_boxploth&lt;/code&gt;&lt;/h5&gt;
+&lt;p&gt;The first one using &lt;code&gt;coord_flip&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) +
+  geom_boxplot(
+    mapping = aes(
+      x = reorder(class, hwy, FUN = median),
+      y = hwy
+  )
+) +
+  coord_flip()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The second uses &lt;code&gt;geom_boxploth&lt;/code&gt; from &lt;strong&gt;ggstance&lt;/strong&gt;. The only difference is the aesthethics of x and y: it is flipped when we use &lt;code&gt;coord_flip()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggstance)
+ggplot(data = mpg) +
+  geom_boxploth(
+    mapping = aes(
+      x = hwy,
+      y = reorder(class, hwy, FUN = median)
+  )
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;jitter-points-using-geom_jitter&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Jitter points using &lt;code&gt;geom_jitter&lt;/code&gt;&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = mpg) +
+  geom_jitter(mapping = aes(x = reorder(class, hwy, FUN = median),
+                              y = hwy)
+                )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-16-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;jitter-violin-plot-using-geom_quasirandom&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Jitter + Violin plot using &lt;code&gt;geom_quasirandom&lt;/code&gt;&lt;/h5&gt;
+&lt;p&gt;There are several methods available:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;quasirandom&lt;/li&gt;
+&lt;li&gt;pseudorandom&lt;/li&gt;
+&lt;li&gt;tukey&lt;/li&gt;
+&lt;li&gt;tukeyDense&lt;/li&gt;
+&lt;li&gt;frowney&lt;/li&gt;
+&lt;li&gt;smiley&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggbeeswarm)
+## Quasirandom default method -- quasirandom
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(x = reorder(class, hwy, FUN = median),
+                                 y = hwy))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-17-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Tukey
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(x = reorder(class, hwy, FUN = median),
+                                 y = hwy),
+                   method = &amp;quot;tukey&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-17-2.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;offsetting-sideway-the-violin-plot-using-geom_beeswarm&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Offsetting (sideway) the violin plot using &lt;code&gt;geom_beeswarm&lt;/code&gt;&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggbeeswarm)
+ggplot(data = mpg) +
+  geom_beeswarm(mapping = aes(x = reorder(class, hwy, FUN = median),
+                              y = hwy)
+                )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-18-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;two-categorical-variables&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Two Categorical Variables&lt;/h2&gt;
+&lt;p&gt;It’s usually better to use the categorical variable with a larger number of categories or the longer labels on the y axis. If at all possible, labels should be horizontal because that is easier to read.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;bubble-chart-with-geom_count&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Bubble Chart with &lt;code&gt;geom_count&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;To visualize the covariation between categorical variables, you’ll need to count the number of observations for each combination. One way to do that is to rely on the built-in &lt;code&gt;geom_count()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = diamonds) +
+  geom_count(mapping = aes(x = cut, y = color))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-19-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;heatmap-plotting-with-geom_tile&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Heatmap Plotting with &lt;code&gt;geom_tile&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Another approach is to compute the count with &lt;em&gt;dplyr&lt;/em&gt;, then visualize with &lt;code&gt;geom_tile()&lt;/code&gt; and the &lt;em&gt;fill&lt;/em&gt; aesthetic:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;diamonds %&amp;gt;%
+  count(color, cut) %&amp;gt;%  ## count(tbl, vars_to_group_by)
+  ggplot(mapping = aes(x = color, y = cut)) +
+    geom_tile(mapping = aes(fill = n))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-20-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;You can also use &lt;code&gt;scale_fill_viridis&lt;/code&gt; from the &lt;strong&gt;viridis&lt;/strong&gt; package to fill the color of legend:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(viridis)
+diamonds %&amp;gt;%
+  count(color, cut) %&amp;gt;%
+  group_by(color) %&amp;gt;%
+  mutate(prop = n/ sum(n))%&amp;gt;%
+    ggplot(mapping = aes(x = color, y = cut)) +
+      geom_tile(mapping = aes(fill = prop)) +
+      scale_fill_viridis(limits = c(0,1)) +  
+      # using scale_fill_continuous(limits = c(0,1)) will not change the fill color
+      labs(x = &amp;quot;Diamond color&amp;quot;, fill = &amp;quot;Proportion&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-21-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;If the categorical variables are unordered, you might want to use the &lt;strong&gt;seriation&lt;/strong&gt; package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns. For larger plots, you might want to try the &lt;strong&gt;d3heatmap&lt;/strong&gt; or &lt;strong&gt;heatmaply&lt;/strong&gt; packages, which create interactive plots.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;two-continuous-variables&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Two Continuous Variables&lt;/h2&gt;
+&lt;div id=&#34;scatterplot-using-geom_point&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Scatterplot using &lt;code&gt;geom_point&lt;/code&gt;&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = diamonds) +
+  geom_point(mapping = aes(x = carat, y = price))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-22-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;large-dataset-problems-and-solutions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Large dataset problems and solutions&lt;/h3&gt;
+&lt;p&gt;Scatterplots become less useful as the size of your dataset grows, because points begin to overplot, and pile up into areas of uniform black (as in the preceding scatterplot).&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;using-alpha-aesthethics-in-geom_point&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Using &lt;strong&gt;alpha&lt;/strong&gt; aesthethics in &lt;code&gt;geom_point&lt;/code&gt;&lt;/h4&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = diamonds) +
+  geom_point(
+    mapping = aes(x = carat, y = price),
+    alpha = 1 / 100
+  )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-23-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-bins&#34; class=&#34;section level4&#34;&gt;
+&lt;h4&gt;Using Bins&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;geom_bin2d()&lt;/code&gt; and &lt;code&gt;geom_hex()&lt;/code&gt; divide the coordinate plane into 2D bins and then use a fill color to display how many points fall into each bin. &lt;code&gt;geom_bin2d()&lt;/code&gt; creates rectangular bins. &lt;code&gt;geom_hex()&lt;/code&gt; creates hexagonal bins.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;using-bin-with-geom_bin2d&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Using bin with &lt;code&gt;geom_bin2d()&lt;/code&gt;&lt;/h5&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = smaller) +
+  geom_bin2d(mapping = aes(x = carat, y = price))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-24-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-bin-with-geom_hex&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Using bin with &lt;code&gt;geom_hex()&lt;/code&gt;&lt;/h5&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# install.packages(&amp;quot;hexbin&amp;quot;) # this is needed for geom_hex()
+library (hexbin)
+ggplot(data = smaller) +
+  geom_hex(mapping = aes(x = carat, y = price))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-25-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bin-by-breaking-continuous-into-categorical-variable&#34; class=&#34;section level5&#34;&gt;
+&lt;h5&gt;Bin by breaking continuous into categorical variable&lt;/h5&gt;
+&lt;div id=&#34;using-cutwidth-to-bin&#34; class=&#34;section level6&#34;&gt;
+&lt;h6&gt;Using &lt;code&gt;cutwidth&lt;/code&gt; to bin&lt;/h6&gt;
+&lt;p&gt;Use &lt;code&gt;cutwidth(x, width)&lt;/code&gt; to break &lt;code&gt;x&lt;/code&gt; into bins of width &lt;code&gt;width&lt;/code&gt;. Then use visualization technique of a continuous and categorical variable combination.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)),varwidth = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-26-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The problem of using &lt;code&gt;cutwidth&lt;/code&gt; appears when the data is not uniformly distributed. Setting &lt;code&gt;varwidth = TRUE&lt;/code&gt; ensures that the size of boxplot reflects the amount of points in a particular bin.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-cutnumber-to-bin&#34; class=&#34;section level6&#34;&gt;
+&lt;h6&gt;Using &lt;code&gt;cutnumber&lt;/code&gt; to bin&lt;/h6&gt;
+&lt;p&gt;&lt;code&gt;cut_number(x, n)&lt;/code&gt; makes &lt;code&gt;n&lt;/code&gt; groups with (approximately) equal numbers of observations. This displays a same amount of points in each bin.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_number(carat, 20)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-27-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;patterns-and-models&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Patterns and Models&lt;/h1&gt;
+&lt;p&gt;Patterns can reveal covariation while models are tools for extracting patterns out of data.&lt;/p&gt;
+&lt;p&gt;If you spot a pattern in your data, ask yourself:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Could this pattern be due to coincidence (i.e., random chance)?&lt;/li&gt;
+&lt;li&gt;How can you describe the relationship implied by the pattern?&lt;/li&gt;
+&lt;li&gt;How strong is the relationship implied by the pattern?&lt;/li&gt;
+&lt;li&gt;What other variables might affect the relationship?&lt;/li&gt;
+&lt;li&gt;Does the relationship change if you look at individual subgroups of the data?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction to SQL: 5.Advanced Data Filtering</title>
+      <link>/readings/introduction-to-sql-advanced-data-filtering/</link>
+      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-advanced-data-filtering/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#combining-where-clauses&#34;&gt;Combining &lt;code&gt;WHERE&lt;/code&gt; Clauses&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#using-the-and-operator&#34;&gt;Using the &lt;code&gt;AND&lt;/code&gt; Operator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-the-or-operator&#34;&gt;Using the &lt;code&gt;OR&lt;/code&gt; Operator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#understanding-order-of-evaluation&#34;&gt;Understanding Order of Evaluation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-the-in-operator&#34;&gt;Using the &lt;code&gt;IN&lt;/code&gt; Operator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#using-the-not-operator&#34;&gt;Using the NOT Operator&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;This post is heavily based on &lt;a href=&#34;https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073&#34;&gt;Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)&lt;/a&gt;. Please consider to buy the book if you find this post useful.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;combining-where-clauses&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Combining &lt;code&gt;WHERE&lt;/code&gt; Clauses&lt;/h1&gt;
+&lt;p&gt;We can specify multiple &lt;code&gt;WHERE&lt;/code&gt; clauses. These clauses may be used in two ways: as &lt;code&gt;AND&lt;/code&gt; clauses or as &lt;code&gt;OR&lt;/code&gt; clauses.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;using-the-and-operator&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Using the &lt;code&gt;AND&lt;/code&gt; Operator&lt;/h2&gt;
+&lt;p&gt;This is used to filter by more than one column.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_id, prod_price, prod_name
+FROM Products
+WHERE vend_id = &amp;#39;DLL01&amp;#39; AND prod_price &amp;lt;= 4;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;AND&lt;/code&gt; instructs the database management system software to return only rows that meet all the conditions specified. If a product is made by vendor DLL01, but it costs more than $4, it is not retrieved. Additional filter conditions could be used as well, each separated by an &lt;code&gt;AND&lt;/code&gt; keyword.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-the-or-operator&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Using the &lt;code&gt;OR&lt;/code&gt; Operator&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;OR&lt;/code&gt; operator instructs the database management system software to retrieve rows that match either condition. It is the opposite to &lt;code&gt;AND&lt;/code&gt;. For example:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id = &amp;#39;DLL01&amp;#39; OR vend_id = &amp;#39;BRS01&amp;#39;;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The above SQL statement retrieves the product name and price for any products made by either of the two specified vendors.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;understanding-order-of-evaluation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Understanding Order of Evaluation&lt;/h2&gt;
+&lt;p&gt;Let’s list of all products costing $10 or more made by vendors &lt;em&gt;DLL01&lt;/em&gt; and &lt;em&gt;BRS01&lt;/em&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id = &amp;#39;DLL01&amp;#39; OR vend_id = &amp;#39;BRS01&amp;#39;
+AND prod_price &amp;gt;= 10;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The output is shown below:&lt;/p&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/tysql/05.Adv_Filter/eval_order_1.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;One can observe that four of the rows returned have prices less than $10. Why is that so?&lt;br /&gt;
+This is caused by the orede of evaluation. SQL (like most languages) processes &lt;code&gt;AND&lt;/code&gt; operators before OR operators. Thus, it was read as &lt;em&gt;any products costing $10 or more made by vendor BRS01, and any products made by vendor DLL01 regardless of price.&lt;/em&gt;&lt;br /&gt;
+The solution is to add in parentheses to explicitly group related operators because parentheses have a higher order of evaluation.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE (vend_id = &amp;#39;DLL01&amp;#39; OR vend_id = &amp;#39;BRS01&amp;#39;)
+AND prod_price &amp;gt;= 10;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;/img/tysql/05.Adv_Filter/eval_order_2.jpg&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-the-in-operator&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Using the &lt;code&gt;IN&lt;/code&gt; Operator&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;IN&lt;/code&gt; is a keyword used in a &lt;code&gt;WHERE&lt;/code&gt; clause to specify a list of values to be matched using an &lt;code&gt;OR&lt;/code&gt; comparison. However, it has several advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cleaner and easier to read syntax.&lt;/li&gt;
+&lt;li&gt;The order of evaluation is easier to manage when &lt;code&gt;IN&lt;/code&gt; is used in conjunction with other &lt;code&gt;AND&lt;/code&gt; and &lt;code&gt;OR&lt;/code&gt; operators.&lt;/li&gt;
+&lt;li&gt;Execute faster.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;IN&lt;/code&gt; operator can contain another &lt;code&gt;SELECT&lt;/code&gt; statement (known as subqueries).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id IN (&amp;#39;DLL01&amp;#39;,&amp;#39;BRS01&amp;#39;)
+ORDER BY prod_name;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;using-the-not-operator&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Using the NOT Operator&lt;/h1&gt;
+&lt;p&gt;&lt;code&gt;NOT&lt;/code&gt; is a keyword used in a &lt;code&gt;WHERE&lt;/code&gt; clause to negate a condition. It can be used before the column to filter on, not just after it.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products
+WHERE NOT vend_id = &amp;#39;DLL01&amp;#39;
+ORDER BY prod_name;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The same thing can be accomplished by using &lt;code&gt;&amp;lt; &amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT prod_name
+FROM Products
+WHERE vend_id &amp;lt;&amp;gt; &amp;#39;DLL01&amp;#39;
+ORDER BY prod_name;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;NOT&lt;/code&gt; is useful in more complex clauses. For example, using &lt;code&gt;NOT&lt;/code&gt; in conjunction with an &lt;code&gt;IN&lt;/code&gt; operator makes it simple to find all rows that do not match a list of criteria.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introduction to SQL: 6.Using Wildcard Filtering</title>
+      <link>/readings/introduction-to-sql-using-wildcard-filtering/</link>
+      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/introduction-to-sql-using-wildcard-filtering/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#using-the-like-operator&#34;&gt;Using the LIKE Operator&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#the-percent-sign-wildcard&#34;&gt;The Percent Sign (%) Wildcard&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-underscore-_-wildcard&#34;&gt;The Underscore (_) Wildcard&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#the-brackets-wildcard&#34;&gt;The Brackets ([]) Wildcard&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#tips-for-using-wildcards&#34;&gt;Tips for Using Wildcards&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;This post is heavily based on &lt;a href=&#34;https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073&#34;&gt;Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)&lt;/a&gt;. Please consider to buy the book if you find this post useful.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;using-the-like-operator&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Using the LIKE Operator&lt;/h1&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;div id=&#34;the-percent-sign-wildcard&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Percent Sign (%) Wildcard&lt;/h2&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-underscore-_-wildcard&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Underscore (_) Wildcard&lt;/h2&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-brackets-wildcard&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The Brackets ([]) Wildcard&lt;/h2&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tips-for-using-wildcards&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Tips for Using Wildcards&lt;/h1&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Introduction to SQL: 1.Understanding SQL</title>
       <link>/readings/introduction-to-sql-understanding-sql/</link>
       <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
@@ -2256,89 +2850,6 @@ Figure 5: Compressing a non-related image using previously extracted PC loadings
 &lt;h1&gt;Summary&lt;/h1&gt;
 &lt;p&gt;Principal Component Analysis is a great tool for dimension reduction (thus, sinze reduction in this case), extracting important insights, and uncover underlying message of a dataset.&lt;/p&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Hello World: Blogging using Rmd</title>
-      <link>/post/hello-world-blogging-using-rmd/</link>
-      <pubDate>Thu, 12 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/post/hello-world-blogging-using-rmd/</guid>
-      <description>&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#header-1&#34;&gt;Header 1&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#header-2&#34;&gt;Header 2&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#header-3&#34;&gt;Header 3&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#new-header-1&#34;&gt;New Header 1&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This is the Hello World blog post using Rmd…&lt;/p&gt;
-&lt;div id=&#34;header-1&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Header 1&lt;/h1&gt;
-&lt;div id=&#34;header-2&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Header 2&lt;/h2&gt;
-&lt;div id=&#34;header-3&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;Header 3&lt;/h3&gt;
-&lt;p&gt;Let’s try some math:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\beta = \alpha\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;How about inline math such as &lt;span class=&#34;math inline&#34;&gt;\(b + \alpha\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;How about some R code?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot(1:10, 41:50, col = &amp;quot;blue&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:unnamed-chunk-1&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/post/2018-04-12-hello-world-blogging-using-rmd_files/figure-html/unnamed-chunk-1-1.png&#34; alt=&#34;This is a simple plot&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 1: This is a simple plot
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Let’s try mentioning r function.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;plot()&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;How about using the alert note?&lt;/p&gt;
-&lt;div class=&#34;alert alert-note&#34;&gt;
-  &lt;p&gt;This is an alert. R function within the alert: &lt;code&gt;sum()&lt;/code&gt;&lt;/p&gt;
-
-&lt;/div&gt;
-
-&lt;p&gt;Let’s try alert warning:&lt;/p&gt;
-&lt;div class=&#34;alert alert-warning&#34;&gt;
-  &lt;p&gt;Do &lt;em&gt;not&lt;/em&gt; get serious with &lt;code&gt;arrange()&lt;/code&gt;&lt;/p&gt;
-
-&lt;/div&gt;
-
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;new-header-1&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;New Header 1&lt;/h1&gt;
-&lt;p&gt;Just pure chunk of code (not evaluating)&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;blogdown::install_hugo()
-# or
-library(blogdown)
-install_hugo()&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Example Talk</title>
-      <link>/talk/example-talk/</link>
-      <pubDate>Sun, 01 Jan 2017 00:00:00 +0800</pubDate>
-      
-      <guid>/talk/example-talk/</guid>
-      <description>&lt;p&gt;Embed your slides or video here using &lt;a href=&#34;https://sourcethemes.com/academic/post/writing-markdown-latex/&#34; target=&#34;_blank&#34;&gt;shortcodes&lt;/a&gt;. Further details can easily be added using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>A Person Re-Identification System For Mobile Devices</title>
-      <link>/publication/person-re-identification/</link>
-      <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
-      
-      <guid>/publication/person-re-identification/</guid>
-      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     

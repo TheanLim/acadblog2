@@ -1,0 +1,112 @@
+---
+title: 'Introduction to SQL: 5.Advanced Data Filtering'
+author: Thean Lim
+date: '2018-05-24'
+slug: introduction-to-sql-advanced-data-filtering
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to combine WHERE clauses to create sophisticated search conditions. Also learn how to use the NOT and IN operators.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#combining-where-clauses">Combining <code>WHERE</code> Clauses</a><ul>
+<li><a href="#using-the-and-operator">Using the <code>AND</code> Operator</a></li>
+<li><a href="#using-the-or-operator">Using the <code>OR</code> Operator</a></li>
+<li><a href="#understanding-order-of-evaluation">Understanding Order of Evaluation</a></li>
+</ul></li>
+<li><a href="#using-the-in-operator">Using the <code>IN</code> Operator</a></li>
+<li><a href="#using-the-not-operator">Using the NOT Operator</a></li>
+</ul>
+</div>
+
+<p><strong>This post is heavily based on <a href="https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073">Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)</a>. Please consider to buy the book if you find this post useful.</strong></p>
+<div id="combining-where-clauses" class="section level1">
+<h1>Combining <code>WHERE</code> Clauses</h1>
+<p>We can specify multiple <code>WHERE</code> clauses. These clauses may be used in two ways: as <code>AND</code> clauses or as <code>OR</code> clauses.</p>
+<p><br></p>
+<div id="using-the-and-operator" class="section level2">
+<h2>Using the <code>AND</code> Operator</h2>
+<p>This is used to filter by more than one column.</p>
+<pre><code>SELECT prod_id, prod_price, prod_name
+FROM Products
+WHERE vend_id = &#39;DLL01&#39; AND prod_price &lt;= 4;</code></pre>
+<p><code>AND</code> instructs the database management system software to return only rows that meet all the conditions specified. If a product is made by vendor DLL01, but it costs more than $4, it is not retrieved. Additional filter conditions could be used as well, each separated by an <code>AND</code> keyword.</p>
+<p><br></p>
+</div>
+<div id="using-the-or-operator" class="section level2">
+<h2>Using the <code>OR</code> Operator</h2>
+<p>The <code>OR</code> operator instructs the database management system software to retrieve rows that match either condition. It is the opposite to <code>AND</code>. For example:</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id = &#39;DLL01&#39; OR vend_id = &#39;BRS01&#39;;</code></pre>
+<p>The above SQL statement retrieves the product name and price for any products made by either of the two specified vendors.</p>
+<p><br></p>
+</div>
+<div id="understanding-order-of-evaluation" class="section level2">
+<h2>Understanding Order of Evaluation</h2>
+<p>Let’s list of all products costing $10 or more made by vendors <em>DLL01</em> and <em>BRS01</em>.</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id = &#39;DLL01&#39; OR vend_id = &#39;BRS01&#39;
+AND prod_price &gt;= 10;</code></pre>
+<p>The output is shown below:</p>
+<div class="figure">
+<img src="/img/tysql/05.Adv_Filter/eval_order_1.jpg" />
+
+</div>
+<p>One can observe that four of the rows returned have prices less than $10. Why is that so?<br />
+This is caused by the orede of evaluation. SQL (like most languages) processes <code>AND</code> operators before OR operators. Thus, it was read as <em>any products costing $10 or more made by vendor BRS01, and any products made by vendor DLL01 regardless of price.</em><br />
+The solution is to add in parentheses to explicitly group related operators because parentheses have a higher order of evaluation.</p>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE (vend_id = &#39;DLL01&#39; OR vend_id = &#39;BRS01&#39;)
+AND prod_price &gt;= 10;</code></pre>
+<div class="figure">
+<img src="/img/tysql/05.Adv_Filter/eval_order_2.jpg" />
+
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="using-the-in-operator" class="section level1">
+<h1>Using the <code>IN</code> Operator</h1>
+<p><code>IN</code> is a keyword used in a <code>WHERE</code> clause to specify a list of values to be matched using an <code>OR</code> comparison. However, it has several advantages:</p>
+<ul>
+<li>Cleaner and easier to read syntax.</li>
+<li>The order of evaluation is easier to manage when <code>IN</code> is used in conjunction with other <code>AND</code> and <code>OR</code> operators.</li>
+<li>Execute faster.</li>
+<li>The <code>IN</code> operator can contain another <code>SELECT</code> statement (known as subqueries).</li>
+</ul>
+<pre><code>SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id IN (&#39;DLL01&#39;,&#39;BRS01&#39;)
+ORDER BY prod_name;</code></pre>
+<p><br></p>
+</div>
+<div id="using-the-not-operator" class="section level1">
+<h1>Using the NOT Operator</h1>
+<p><code>NOT</code> is a keyword used in a <code>WHERE</code> clause to negate a condition. It can be used before the column to filter on, not just after it.</p>
+<pre><code>SELECT prod_name
+FROM Products
+WHERE NOT vend_id = &#39;DLL01&#39;
+ORDER BY prod_name;</code></pre>
+<p>The same thing can be accomplished by using <code>&lt; &gt;</code>.</p>
+<pre><code>SELECT prod_name
+FROM Products
+WHERE vend_id &lt;&gt; &#39;DLL01&#39;
+ORDER BY prod_name;</code></pre>
+<p><code>NOT</code> is useful in more complex clauses. For example, using <code>NOT</code> in conjunction with an <code>IN</code> operator makes it simple to find all rows that do not match a list of criteria.</p>
+</div>

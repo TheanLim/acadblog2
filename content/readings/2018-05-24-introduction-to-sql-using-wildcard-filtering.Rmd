@@ -1,0 +1,42 @@
+---
+title: 'Introduction to SQL: 6.Using Wildcard Filtering'
+author: Thean Lim
+date: '2018-05-24'
+slug: introduction-to-sql-using-wildcard-filtering
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn what wildcards are, how they are used, and how to perform wildcard searches using the LIKE operator for sophisticated filtering.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+**This post is heavily based on [Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)](https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073). Please consider to buy the book if you find this post useful.** 
+
+# Using the LIKE Operator 
+
+
+<br> 
+
+## The Percent Sign (%) Wildcard
+
+
+<br> 
+
+## The Underscore (_) Wildcard
+
+<br> 
+
+## The Brackets ([]) Wildcard 
+
+<br>
+
+# Tips for Using Wildcards

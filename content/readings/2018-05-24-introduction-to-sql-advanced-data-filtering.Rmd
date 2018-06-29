@@ -1,0 +1,125 @@
+---
+title: 'Introduction to SQL: 5.Advanced Data Filtering'
+author: Thean Lim
+date: '2018-05-24'
+slug: introduction-to-sql-advanced-data-filtering
+categories:
+  - SQL
+tags:
+  - SQL
+  - TYSQL
+header:
+  caption: ''
+  image: ''
+summary: Learn how to combine WHERE clauses to create sophisticated search conditions. Also learn how to use the NOT and IN operators.
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+---
+
+**This post is heavily based on [Sams Teach Yourself SQL in 10 Minutes (Fourth Edition)](https://www.amazon.com/SQL-Minutes-Sams-Teach-Yourself/dp/0672336073). Please consider to buy the book if you find this post useful.** 
+
+# Combining `WHERE` Clauses
+
+We can specify multiple `WHERE` clauses. These clauses may be used in two ways: as `AND` clauses or as `OR` clauses.  
+
+<br> 
+
+## Using the `AND` Operator
+
+This is used to filter by more than one column.  
+
+```
+SELECT prod_id, prod_price, prod_name
+FROM Products
+WHERE vend_id = 'DLL01' AND prod_price <= 4;
+```
+`AND` instructs the database management system software to return only rows that meet all the conditions specified. If a product is made by vendor DLL01, but it costs more than $4, it is not retrieved. Additional filter conditions could be used as well, each separated by an `AND` keyword.  
+
+<br> 
+
+## Using the `OR` Operator
+
+The `OR` operator instructs the database management system software to retrieve rows that match either condition. It is the opposite to `AND`. For example:  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id = 'DLL01' OR vend_id = 'BRS01';
+```
+The above SQL statement retrieves the product name and price for any products made by either of the two specified vendors.  
+
+<br>
+
+## Understanding Order of Evaluation
+
+Let's list of all products costing $10 or more made by vendors *DLL01* and *BRS01*.  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id = 'DLL01' OR vend_id = 'BRS01'
+AND prod_price >= 10;
+```
+The output is shown below:  
+
+![](/img/tysql/05.Adv_Filter/eval_order_1.jpg) 
+
+One can observe that four of the rows returned have prices less than $10. Why is that so?  
+This is caused by the orede of evaluation. SQL (like most languages) processes `AND` operators before OR operators. Thus, it was read as *any products costing $10 or more made by vendor BRS01, and any products made by vendor DLL01 regardless of price.*  
+The solution is to add in parentheses to explicitly group related operators because parentheses have a higher order of evaluation.  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE (vend_id = 'DLL01' OR vend_id = 'BRS01')
+AND prod_price >= 10;
+```
+
+![](/img/tysql/05.Adv_Filter/eval_order_2.jpg) 
+
+<br>
+
+# Using the `IN` Operator 
+
+`IN` is a keyword used in a `WHERE` clause to specify a list of values to be matched using an `OR` comparison. However, it has several advantages:  
+
+- Cleaner and easier to read syntax.
+- The order of evaluation is easier to manage when `IN` is used in conjunction with other `AND` and `OR` operators.
+- Execute faster.
+- The `IN` operator can contain another `SELECT` statement (known as subqueries).  
+
+```
+SELECT prod_name, prod_price
+FROM Products
+WHERE vend_id IN ('DLL01','BRS01')
+ORDER BY prod_name;
+```
+
+<br>
+
+# Using the NOT Operator  
+
+`NOT` is a keyword used in a `WHERE` clause to negate a condition. It can be used before the column to filter on, not just after it.  
+
+```
+SELECT prod_name
+FROM Products
+WHERE NOT vend_id = 'DLL01'
+ORDER BY prod_name;
+```
+
+The same thing can be accomplished by using `< >`.  
+
+```
+SELECT prod_name
+FROM Products
+WHERE vend_id <> 'DLL01'
+ORDER BY prod_name;
+```
+`NOT` is useful in more complex clauses. For example, using `NOT` in conjunction with an `IN` operator makes it simple to find all rows that do not match a list of criteria.  
+
+
+

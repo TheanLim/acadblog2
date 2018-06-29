@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="VariationVisualizationsCategorical Variable – Bar chart with geom_barContinuous VariableHistogram with geom_histogramOverlapping Histograms using geom_freqpolyTypical valuesUnusual ValuesZoom in into plot without resetting xlim and ylim with coord_cartesianMissing ValuesRowwise Deletion vs Replacing with NAsSuppressing ggplot2 NAs removal warnings with na.rm = TRUEComparing missing vs non-missing values by creating new variable using is.na()CovariationA Categorical and Continuous VariableDensity Plot with geom_freqpolyLarge DatasetLetter-value plot (for large dataset|instead of boxplot) using geom_lvViolin plot (to show distributions) using geom_violinSmall DatasetBoxplot (for small dataset) using geom_boxplotReorder the levels of categorical variables using reorder()Horizontal boxplot using coord_flip or geom_boxplothJitter points using geom_jitterJitter &#43; Violin plot using geom_quasirandomOffsetting (sideway) the violin plot using geom_beeswarmTwo Categorical VariablesBubble Chart with geom_countHeatmap Plotting with geom_tileTwo Continuous VariablesScatterplot using geom_pointLarge dataset problems and solutionsUsing alpha aesthethics in geom_pointUsing BinsUsing bin with geom_bin2d()Using bin with geom_hex()Bin by breaking continuous into categorical variableUsing cutwidth to binUsing cutnumber to binPatterns and Models** This post is heavily based on R for Data Science.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/readings/exploratory-data-analysis/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/readings/exploratory-data-analysis/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/readings/exploratory-data-analysis/">
+  <meta property="og:title" content="Exploratory Data Analysis (EDA) | Thean C. Lim">
+  <meta property="og:description" content="VariationVisualizationsCategorical Variable – Bar chart with geom_barContinuous VariableHistogram with geom_histogramOverlapping Histograms using geom_freqpolyTypical valuesUnusual ValuesZoom in into plot without resetting xlim and ylim with coord_cartesianMissing ValuesRowwise Deletion vs Replacing with NAsSuppressing ggplot2 NAs removal warnings with na.rm = TRUEComparing missing vs non-missing values by creating new variable using is.na()CovariationA Categorical and Continuous VariableDensity Plot with geom_freqpolyLarge DatasetLetter-value plot (for large dataset|instead of boxplot) using geom_lvViolin plot (to show distributions) using geom_violinSmall DatasetBoxplot (for small dataset) using geom_boxplotReorder the levels of categorical variables using reorder()Horizontal boxplot using coord_flip or geom_boxplothJitter points using geom_jitterJitter &#43; Violin plot using geom_quasirandomOffsetting (sideway) the violin plot using geom_beeswarmTwo Categorical VariablesBubble Chart with geom_countHeatmap Plotting with geom_tileTwo Continuous VariablesScatterplot using geom_pointLarge dataset problems and solutionsUsing alpha aesthethics in geom_pointUsing BinsUsing bin with geom_bin2d()Using bin with geom_hex()Bin by breaking continuous into categorical variableUsing cutwidth to binUsing cutnumber to binPatterns and Models** This post is heavily based on R for Data Science.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-06-30T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-06-30T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>Exploratory Data Analysis (EDA) | Thean C. Lim</title>
+
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "/"
+    },
+    "articleSection" : "readings",
+    "name" : "Exploratory Data Analysis (EDA)",
+    "headline" : "Exploratory Data Analysis (EDA)",
+    "description" : "VariationVisualizationsCategorical Variable – Bar chart with geom_barContinuous VariableHistogram with geom_histogramOverlapping Histograms using geom_freqpolyTypical valuesUnusual ValuesZoom in into plot without resetting xlim and ylim with coord_cartesianMissing ValuesRowwise Deletion vs Replacing with NAsSuppressing ggplot2 NAs removal warnings with na.rm = TRUEComparing missing vs non-missing values by creating new variable using is.na()CovariationA Categorical and Continuous VariableDensity Plot with geom_freqpolyLarge DatasetLetter-value plot (for large dataset|instead of boxplot) using geom_lvViolin plot (to show distributions) using geom_violinSmall DatasetBoxplot (for small dataset) using geom_boxplotReorder the levels of categorical variables using reorder()Horizontal boxplot using coord_flip or geom_boxplothJitter points using geom_jitterJitter + Violin plot using geom_quasirandomOffsetting (sideway) the violin plot using geom_beeswarmTwo Categorical VariablesBubble Chart with geom_countHeatmap Plotting with geom_tileTwo Continuous VariablesScatterplot using geom_pointLarge dataset problems and solutionsUsing alpha aesthethics in geom_pointUsing BinsUsing bin with geom_bin2d()Using bin with geom_hex()Bin by breaking continuous into categorical variableUsing cutwidth to binUsing cutnumber to binPatterns and Models** This post is heavily based on R for Data Science.",
+    "inLanguage" : "en-US",
+    "author" : "",
+    "creator" : "",
+    "publisher": "",
+    "accountablePerson" : "",
+    "copyrightHolder" : "",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-06-30 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-06-30 00:00:00 &#43;0000 UTC",
+    "url" : "/readings/exploratory-data-analysis/",
+    "wordCount" : "2120",
+    "keywords" : [ "R for Data Science","r4ds","visualization","Blog" ]
+}
+</script>
+  <title>Exploratory Data Analysis (EDA) | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Exploratory Data Analysis (EDA)</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-06-30 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Sat, Jun 30, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Thean Lim">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    10 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Exploratory%20Data%20Analysis%20%28EDA%29&amp;url=%2freadings%2fexploratory-data-analysis%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2freadings%2fexploratory-data-analysis%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2freadings%2fexploratory-data-analysis%2f&amp;title=Exploratory%20Data%20Analysis%20%28EDA%29"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2freadings%2fexploratory-data-analysis%2f&amp;title=Exploratory%20Data%20Analysis%20%28EDA%29"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Exploratory%20Data%20Analysis%20%28EDA%29&amp;body=%2freadings%2fexploratory-data-analysis%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#variation">Variation</a><ul>
+<li><a href="#visualizations">Visualizations</a><ul>
+<li><a href="#categorical-variable-bar-chart-with-geom_bar">Categorical Variable – Bar chart with <code>geom_bar</code></a></li>
+<li><a href="#continuous-variable">Continuous Variable</a><ul>
+<li><a href="#histogram-with-geom_histogram">Histogram with <code>geom_histogram</code></a></li>
+<li><a href="#overlapping-histograms-using-geom_freqpoly">Overlapping Histograms using <code>geom_freqpoly</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#typical-values">Typical values</a></li>
+<li><a href="#unusual-values">Unusual Values</a><ul>
+<li><a href="#zoom-in-into-plot-without-resetting-xlim-and-ylim-with-coord_cartesian">Zoom in into plot without resetting xlim and ylim with <code>coord_cartesian</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#missing-values">Missing Values</a><ul>
+<li><a href="#rowwise-deletion-vs-replacing-with-nas">Rowwise Deletion vs Replacing with NAs</a></li>
+<li><a href="#suppressing-ggplot2-nas-removal-warnings-with-na.rm-true">Suppressing ggplot2 NAs removal warnings with <code>na.rm = TRUE</code></a></li>
+<li><a href="#comparing-missing-vs-non-missing-values-by-creating-new-variable-using-is.na">Comparing missing vs non-missing values by creating new variable using <code>is.na()</code></a></li>
+</ul></li>
+<li><a href="#covariation">Covariation</a><ul>
+<li><a href="#a-categorical-and-continuous-variable">A Categorical and Continuous Variable</a><ul>
+<li><a href="#density-plot-with-geom_freqpoly">Density Plot with <code>geom_freqpoly</code></a></li>
+<li><a href="#large-dataset">Large Dataset</a><ul>
+<li><a href="#letter-value-plot-for-large-datasetinstead-of-boxplot-using-geom_lv">Letter-value plot (for large dataset|instead of boxplot) using <code>geom_lv</code></a></li>
+<li><a href="#violin-plot-to-show-distributions-using-geom_violin">Violin plot (to show distributions) using <code>geom_violin</code></a></li>
+</ul></li>
+<li><a href="#small-dataset">Small Dataset</a><ul>
+<li><a href="#boxplot-for-small-dataset-using-geom_boxplot">Boxplot (for small dataset) using <code>geom_boxplot</code></a><ul>
+<li><a href="#reorder-the-levels-of-categorical-variables-using-reorder">Reorder the levels of categorical variables using <code>reorder()</code></a></li>
+<li><a href="#horizontal-boxplot-using-coord_flip-or-geom_boxploth">Horizontal boxplot using <code>coord_flip</code> or <code>geom_boxploth</code></a></li>
+</ul></li>
+<li><a href="#jitter-points-using-geom_jitter">Jitter points using <code>geom_jitter</code></a><ul>
+<li><a href="#jitter-violin-plot-using-geom_quasirandom">Jitter + Violin plot using <code>geom_quasirandom</code></a></li>
+</ul></li>
+<li><a href="#offsetting-sideway-the-violin-plot-using-geom_beeswarm">Offsetting (sideway) the violin plot using <code>geom_beeswarm</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#two-categorical-variables">Two Categorical Variables</a><ul>
+<li><a href="#bubble-chart-with-geom_count">Bubble Chart with <code>geom_count</code></a></li>
+<li><a href="#heatmap-plotting-with-geom_tile">Heatmap Plotting with <code>geom_tile</code></a></li>
+</ul></li>
+<li><a href="#two-continuous-variables">Two Continuous Variables</a><ul>
+<li><a href="#scatterplot-using-geom_point">Scatterplot using <code>geom_point</code></a></li>
+<li><a href="#large-dataset-problems-and-solutions">Large dataset problems and solutions</a><ul>
+<li><a href="#using-alpha-aesthethics-in-geom_point">Using <strong>alpha</strong> aesthethics in <code>geom_point</code></a></li>
+<li><a href="#using-bins">Using Bins</a><ul>
+<li><a href="#using-bin-with-geom_bin2d">Using bin with <code>geom_bin2d()</code></a></li>
+<li><a href="#using-bin-with-geom_hex">Using bin with <code>geom_hex()</code></a></li>
+<li><a href="#bin-by-breaking-continuous-into-categorical-variable">Bin by breaking continuous into categorical variable</a><ul>
+<li><a href="#using-cutwidth-to-bin">Using <code>cutwidth</code> to bin</a></li>
+<li><a href="#using-cutnumber-to-bin">Using <code>cutnumber</code> to bin</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#patterns-and-models">Patterns and Models</a></li>
+</ul>
+</div>
+
+<p>** This post is heavily based on <a href="http://r4ds.had.co.nz/">R for Data Science</a>. Please consider to buy that book if you find this post useful.**</p>
+<p>We always look for variations and covariations of variables during EDA.</p>
+<div id="variation" class="section level1">
+<h1>Variation</h1>
+<div id="visualizations" class="section level2">
+<h2>Visualizations</h2>
+<div id="categorical-variable-bar-chart-with-geom_bar" class="section level3">
+<h3>Categorical Variable – Bar chart with <code>geom_bar</code></h3>
+<pre class="r"><code>library(tidyverse)
+library(ggplot2)
+
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = cut))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="continuous-variable" class="section level3">
+<h3>Continuous Variable</h3>
+<div id="histogram-with-geom_histogram" class="section level4">
+<h4>Histogram with <code>geom_histogram</code></h4>
+<pre class="r"><code>ggplot(data = diamonds) +
+  geom_histogram(mapping = aes(x = carat), binwidth = 0.5)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="overlapping-histograms-using-geom_freqpoly" class="section level4">
+<h4>Overlapping Histograms using <code>geom_freqpoly</code></h4>
+<p>Problem: unable to compare directly between categories since they are not having the same number of instances within a category. Add in <code>y = ..density..</code> in the aes() to create density plot.</p>
+<pre class="r"><code>ggplot(data = smaller, mapping = aes(x = carat, color = cut)) +
+  geom_freqpoly(binwidth = 0.1)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="typical-values" class="section level2">
+<h2>Typical values</h2>
+<p>Look for anything unexpected:</p>
+<ul>
+<li>Which values are the most common? Why?</li>
+<li>Which values are rare? Why? Does that match your expectations?</li>
+<li>Can you see any unusual patterns? What might explain them?</li>
+</ul>
+<p>In general, clusters of similar values suggest that subgroups exist in your data. To understand the subgroups, ask:</p>
+<ul>
+<li>How are the observations within each cluster similar to each other?</li>
+<li>How are the observations in separate clusters different from each other?<br />
+</li>
+<li>How can you explain or describe the clusters?<br />
+</li>
+<li>Why might the appearance of clusters be misleading?</li>
+</ul>
+<p><br></p>
+</div>
+<div id="unusual-values" class="section level2">
+<h2>Unusual Values</h2>
+<p>Outliers are observations that are unusual; data points that don’t seem to fit the pattern.</p>
+<p>Repeat your analysis with and without the outliers:</p>
+<ul>
+<li>If they have minimal effect on the results, and you can’t figure out why they’re there, replace them with missing values and move on.</li>
+<li>If they have a substantial effect, you shouldn’t drop them without justification. You’ll need to figure out what caused them (e.g., a data entry error) and disclose that you removed them in your write-up.</li>
+</ul>
+<p><br></p>
+<div id="zoom-in-into-plot-without-resetting-xlim-and-ylim-with-coord_cartesian" class="section level3">
+<h3>Zoom in into plot without resetting xlim and ylim with <code>coord_cartesian</code></h3>
+<p><code>coord_cartesian</code> simply zooms in on the area specified by the limits. The calculation of the histogram is unaffected. However, the xlim and ylim functions first drop any values outside the limits, then calculates the histogram, and draws the graph with the given limits.</p>
+<pre class="r"><code>ggplot(diamonds) +
+  geom_histogram(mapping = aes(x = y), binwidth = 0.5) + ## y is one of the vars
+  coord_cartesian(ylim = c(0, 50)) ## vs ylim(c(0, 50))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="missing-values" class="section level1">
+<h1>Missing Values</h1>
+<p>The missing values in a histogram are removed with warnings while NAs in bar chart are treated as another bar (i.e., another category). The NAs are removed prior to performing calulation (i.e., mean, sum,…). May na.rm is not TRUE, the functions return NA.</p>
+<p><br></p>
+<div id="rowwise-deletion-vs-replacing-with-nas" class="section level2">
+<h2>Rowwise Deletion vs Replacing with NAs</h2>
+<p>Two options when you encountered missing values in your data:</p>
+<ul>
+<li>Drop the entire row with the strange values. This is not recommended because one it is a waste to remove other variables’ measurements because of one invalid variable value. Besides, a large number of data removal will handicap your analyses when you have a low quality data.</li>
+<li>Instead, I recommend replacing the unusual values with missing values. The easiest way to do this is to use mutate() to replace the variable with a modified copy. You can use the ifelse() function to replace unusual values with NA.The arguments for <code>ifelse</code> are <code>ifelse(test, value if true, value if false)</code>:</li>
+</ul>
+<pre class="r"><code># Replace with NA
+diamonds2 &lt;- diamonds %&gt;%
+    mutate(y = ifelse(y &lt; 3 | y &gt; 20, NA, y))</code></pre>
+<p><br></p>
+</div>
+<div id="suppressing-ggplot2-nas-removal-warnings-with-na.rm-true" class="section level2">
+<h2>Suppressing ggplot2 NAs removal warnings with <code>na.rm = TRUE</code></h2>
+<p><strong>ggplot2</strong> always warns the NA values that it removes prior to plotting,</p>
+<pre class="r"><code>ggplot(data = diamonds2, mapping = aes(x = x, y = y)) +
+  geom_point(na.rm = TRUE)</code></pre>
+<p><br></p>
+</div>
+<div id="comparing-missing-vs-non-missing-values-by-creating-new-variable-using-is.na" class="section level2">
+<h2>Comparing missing vs non-missing values by creating new variable using <code>is.na()</code></h2>
+<p>Ex: compare the scheduled departure times for cancelled and noncancelled times.</p>
+<pre class="r"><code>nycflights13::flights %&gt;%
+  mutate(
+    cancelled = is.na(dep_time),
+    sched_hour = sched_dep_time %/% 100,
+    sched_min = sched_dep_time %% 100,
+    sched_dep_time = sched_hour + sched_min / 60
+  )</code></pre>
+<pre><code>## # A tibble: 336,776 x 22
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517           5.25        2.      830
+##  2  2013     1     1      533           5.48        4.      850
+##  3  2013     1     1      542           5.67        2.      923
+##  4  2013     1     1      544           5.75       -1.     1004
+##  5  2013     1     1      554           6.00       -6.      812
+##  6  2013     1     1      554           5.97       -4.      740
+##  7  2013     1     1      555           6.00       -5.      913
+##  8  2013     1     1      557           6.00       -3.      709
+##  9  2013     1     1      557           6.00       -3.      838
+## 10  2013     1     1      558           6.00       -2.      753
+## # ... with 336,766 more rows, and 15 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, cancelled &lt;lgl&gt;, sched_hour &lt;dbl&gt;,
+## #   sched_min &lt;dbl&gt;</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="covariation" class="section level1">
+<h1>Covariation</h1>
+<p>It is the tendency for the values of two or more variables to vary together in a related way.</p>
+<div id="a-categorical-and-continuous-variable" class="section level2">
+<h2>A Categorical and Continuous Variable</h2>
+<p>It is used to explore the distribution of a continuous variable broken down by a categorical variable.</p>
+<p><br></p>
+<div id="density-plot-with-geom_freqpoly" class="section level3">
+<h3>Density Plot with <code>geom_freqpoly</code></h3>
+<p>Problem of faceted histogram: unable to compare directly between categories since they are not having the same number of instances within a category. Density plot ensures that we are comparing categories in a same scale – density.</p>
+<pre class="r"><code>ggplot(
+  data = diamonds,
+    mapping = aes(x = price, y = ..density..)
+  ) +
+  geom_freqpoly(mapping = aes(color = cut), binwidth = 500)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="large-dataset" class="section level3">
+<h3>Large Dataset</h3>
+<div id="letter-value-plot-for-large-datasetinstead-of-boxplot-using-geom_lv" class="section level4">
+<h4>Letter-value plot (for large dataset|instead of boxplot) using <code>geom_lv</code></h4>
+<p>The boxes of the letter-value plot (lvplot) correspond to many more quantiles. They are useful for larger datasets because</p>
+<ol style="list-style-type: decimal">
+<li>larger datasets can give precise estimates of quantiles beyond the quartiles, and</li>
+<li>in expectation, larger datasets should have more outliers (in absolute numbers).</li>
+</ol>
+<pre class="r"><code>library(lvplot)
+ggplot(diamonds, aes(x = cut, y = price)) +
+  geom_lv()</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="violin-plot-to-show-distributions-using-geom_violin" class="section level4">
+<h4>Violin plot (to show distributions) using <code>geom_violin</code></h4>
+<p>A violin plot is a hybrid of a box plot and a kernel density plot, which shows peaks in the data.</p>
+<pre class="r"><code>ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_violin() +
+  coord_flip()</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+<div id="small-dataset" class="section level3">
+<h3>Small Dataset</h3>
+<div id="boxplot-for-small-dataset-using-geom_boxplot" class="section level4">
+<h4>Boxplot (for small dataset) using <code>geom_boxplot</code></h4>
+<ul>
+<li>Interquantile range (IQR) = 25 to 75th percentile. These are the two lines of the box in a boxplot.</li>
+<li>Median is the 50th percentile.</li>
+<li>Visual points are outliers. They fall beyond 1.5 x IQR.</li>
+<li>The whisker (or a line) is the range of the non-outliers.</li>
+<li>Problem 1: tend to display a prohibitively large number of “outlying values” and is more suitable for small dataset. Use letter-value plot for large dataset.</li>
+<li>Problem 2: Limiting for multimodal distributions (those with multiple peaks).</li>
+</ul>
+<pre class="r"><code>ggplot(data = mpg, mapping = aes(x = class, y = hwy)) +
+  geom_boxplot()</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><br></p>
+<div id="reorder-the-levels-of-categorical-variables-using-reorder" class="section level5">
+<h5>Reorder the levels of categorical variables using <code>reorder()</code></h5>
+<p><code>reorder(factor_to_be_ordered, values_that_decide_the order, FUN)</code></p>
+<p>To make the trend easier to see, we can reorder class based on the median value of <code>hwy</code>:</p>
+<pre class="r"><code>ggplot(data = mpg) +
+  geom_boxplot(
+    mapping = aes(
+      x = reorder(class, hwy, FUN = median),
+      y = hwy
+  )
+)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="horizontal-boxplot-using-coord_flip-or-geom_boxploth" class="section level5">
+<h5>Horizontal boxplot using <code>coord_flip</code> or <code>geom_boxploth</code></h5>
+<p>The first one using <code>coord_flip</code>.</p>
+<pre class="r"><code>ggplot(data = mpg) +
+  geom_boxplot(
+    mapping = aes(
+      x = reorder(class, hwy, FUN = median),
+      y = hwy
+  )
+) +
+  coord_flip()</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>The second uses <code>geom_boxploth</code> from <strong>ggstance</strong>. The only difference is the aesthethics of x and y: it is flipped when we use <code>coord_flip()</code>.</p>
+<pre class="r"><code>library(ggstance)
+ggplot(data = mpg) +
+  geom_boxploth(
+    mapping = aes(
+      x = hwy,
+      y = reorder(class, hwy, FUN = median)
+  )
+)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+<div id="jitter-points-using-geom_jitter" class="section level4">
+<h4>Jitter points using <code>geom_jitter</code></h4>
+<pre class="r"><code>ggplot(data = mpg) +
+  geom_jitter(mapping = aes(x = reorder(class, hwy, FUN = median),
+                              y = hwy)
+                )</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><br></p>
+<div id="jitter-violin-plot-using-geom_quasirandom" class="section level5">
+<h5>Jitter + Violin plot using <code>geom_quasirandom</code></h5>
+<p>There are several methods available:</p>
+<ul>
+<li>quasirandom</li>
+<li>pseudorandom</li>
+<li>tukey</li>
+<li>tukeyDense</li>
+<li>frowney</li>
+<li>smiley</li>
+</ul>
+<pre class="r"><code>library(ggbeeswarm)
+## Quasirandom default method -- quasirandom
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(x = reorder(class, hwy, FUN = median),
+                                 y = hwy))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre class="r"><code>## Tukey
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(x = reorder(class, hwy, FUN = median),
+                                 y = hwy),
+                   method = &quot;tukey&quot;)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-17-2.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+<div id="offsetting-sideway-the-violin-plot-using-geom_beeswarm" class="section level4">
+<h4>Offsetting (sideway) the violin plot using <code>geom_beeswarm</code></h4>
+<pre class="r"><code>library(ggbeeswarm)
+ggplot(data = mpg) +
+  geom_beeswarm(mapping = aes(x = reorder(class, hwy, FUN = median),
+                              y = hwy)
+                )</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="two-categorical-variables" class="section level2">
+<h2>Two Categorical Variables</h2>
+<p>It’s usually better to use the categorical variable with a larger number of categories or the longer labels on the y axis. If at all possible, labels should be horizontal because that is easier to read.</p>
+<p><br></p>
+<div id="bubble-chart-with-geom_count" class="section level3">
+<h3>Bubble Chart with <code>geom_count</code></h3>
+<p>To visualize the covariation between categorical variables, you’ll need to count the number of observations for each combination. One way to do that is to rely on the built-in <code>geom_count()</code>:</p>
+<pre class="r"><code>ggplot(data = diamonds) +
+  geom_count(mapping = aes(x = cut, y = color))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="heatmap-plotting-with-geom_tile" class="section level3">
+<h3>Heatmap Plotting with <code>geom_tile</code></h3>
+<p>Another approach is to compute the count with <em>dplyr</em>, then visualize with <code>geom_tile()</code> and the <em>fill</em> aesthetic:</p>
+<pre class="r"><code>diamonds %&gt;%
+  count(color, cut) %&gt;%  ## count(tbl, vars_to_group_by)
+  ggplot(mapping = aes(x = color, y = cut)) +
+    geom_tile(mapping = aes(fill = n))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>You can also use <code>scale_fill_viridis</code> from the <strong>viridis</strong> package to fill the color of legend:</p>
+<pre class="r"><code>library(viridis)
+diamonds %&gt;%
+  count(color, cut) %&gt;%
+  group_by(color) %&gt;%
+  mutate(prop = n/ sum(n))%&gt;%
+    ggplot(mapping = aes(x = color, y = cut)) +
+      geom_tile(mapping = aes(fill = prop)) +
+      scale_fill_viridis(limits = c(0,1)) +  
+      # using scale_fill_continuous(limits = c(0,1)) will not change the fill color
+      labs(x = &quot;Diamond color&quot;, fill = &quot;Proportion&quot;)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>If the categorical variables are unordered, you might want to use the <strong>seriation</strong> package to simultaneously reorder the rows and columns in order to more clearly reveal interesting patterns. For larger plots, you might want to try the <strong>d3heatmap</strong> or <strong>heatmaply</strong> packages, which create interactive plots.</p>
+<p><br></p>
+</div>
+</div>
+<div id="two-continuous-variables" class="section level2">
+<h2>Two Continuous Variables</h2>
+<div id="scatterplot-using-geom_point" class="section level3">
+<h3>Scatterplot using <code>geom_point</code></h3>
+<pre class="r"><code>ggplot(data = diamonds) +
+  geom_point(mapping = aes(x = carat, y = price))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="large-dataset-problems-and-solutions" class="section level3">
+<h3>Large dataset problems and solutions</h3>
+<p>Scatterplots become less useful as the size of your dataset grows, because points begin to overplot, and pile up into areas of uniform black (as in the preceding scatterplot).</p>
+<p><br></p>
+<div id="using-alpha-aesthethics-in-geom_point" class="section level4">
+<h4>Using <strong>alpha</strong> aesthethics in <code>geom_point</code></h4>
+<pre class="r"><code>ggplot(data = diamonds) +
+  geom_point(
+    mapping = aes(x = carat, y = price),
+    alpha = 1 / 100
+  )</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="using-bins" class="section level4">
+<h4>Using Bins</h4>
+<p><code>geom_bin2d()</code> and <code>geom_hex()</code> divide the coordinate plane into 2D bins and then use a fill color to display how many points fall into each bin. <code>geom_bin2d()</code> creates rectangular bins. <code>geom_hex()</code> creates hexagonal bins.</p>
+<p><br></p>
+<div id="using-bin-with-geom_bin2d" class="section level5">
+<h5>Using bin with <code>geom_bin2d()</code></h5>
+<pre class="r"><code>ggplot(data = smaller) +
+  geom_bin2d(mapping = aes(x = carat, y = price))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+</div>
+<div id="using-bin-with-geom_hex" class="section level5">
+<h5>Using bin with <code>geom_hex()</code></h5>
+<pre class="r"><code># install.packages(&quot;hexbin&quot;) # this is needed for geom_hex()
+library (hexbin)
+ggplot(data = smaller) +
+  geom_hex(mapping = aes(x = carat, y = price))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="bin-by-breaking-continuous-into-categorical-variable" class="section level5">
+<h5>Bin by breaking continuous into categorical variable</h5>
+<div id="using-cutwidth-to-bin" class="section level6">
+<h6>Using <code>cutwidth</code> to bin</h6>
+<p>Use <code>cutwidth(x, width)</code> to break <code>x</code> into bins of width <code>width</code>. Then use visualization technique of a continuous and categorical variable combination.</p>
+<pre class="r"><code>ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_width(carat, 0.1)),varwidth = TRUE)</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p>The problem of using <code>cutwidth</code> appears when the data is not uniformly distributed. Setting <code>varwidth = TRUE</code> ensures that the size of boxplot reflects the amount of points in a particular bin.</p>
+</div>
+<div id="using-cutnumber-to-bin" class="section level6">
+<h6>Using <code>cutnumber</code> to bin</h6>
+<p><code>cut_number(x, n)</code> makes <code>n</code> groups with (approximately) equal numbers of observations. This displays a same amount of points in each bin.</p>
+<pre class="r"><code>ggplot(data = smaller, mapping = aes(x = carat, y = price)) +
+  geom_boxplot(mapping = aes(group = cut_number(carat, 20)))</code></pre>
+<p><img src="/readings/2018-06-30-exploratory-data-analysis_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><br></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="patterns-and-models" class="section level1">
+<h1>Patterns and Models</h1>
+<p>Patterns can reveal covariation while models are tools for extracting patterns out of data.</p>
+<p>If you spot a pattern in your data, ask yourself:</p>
+<ul>
+<li>Could this pattern be due to coincidence (i.e., random chance)?</li>
+<li>How can you describe the relationship implied by the pattern?</li>
+<li>How strong is the relationship implied by the pattern?</li>
+<li>What other variables might affect the relationship?</li>
+<li>Does the relationship change if you look at individual subgroups of the data?</li>
+</ul>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r-for-data-science">R for Data Science</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r4ds">r4ds</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/visualization">visualization</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>Related</h3>
+      <ul>
+        
+        <li><a href="/readings/data-visualization-with-ggplot2/">Data Visualization with ggplot2</a></li>
+        
+        <li><a href="/post/gganimate-animations-with-ggplot2/">gganimate: Animations with ggplot2</a></li>
+        
+        <li><a href="/post/clustering-k-means-k-means-and-gganimate/">Clustering: k-means, k-means &#43;&#43; and gganimate</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+    <div class="article-widget">
+      <div class="post-nav">
+  
+  
+  <div class="post-nav-item">
+    <div class="meta-nav">Previous</div>
+    <a href="/readings/introduction-to-sql-advanced-data-filtering/" rel="prev">Introduction to SQL: 5.Advanced Data Filtering</a>
+  </div>
+  
+</div>
+
+    </div>
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
