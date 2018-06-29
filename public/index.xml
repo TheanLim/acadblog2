@@ -65,10 +65,7 @@
 &lt;li&gt;&lt;a href=&#34;#using-bins&#34;&gt;Using Bins&lt;/a&gt;&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#using-bin-with-geom_bin2d&#34;&gt;Using bin with &lt;code&gt;geom_bin2d()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#using-bin-with-geom_hex&#34;&gt;Using bin with &lt;code&gt;geom_hex()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#bin-by-breaking-continuous-into-categorical-variable&#34;&gt;Bin by breaking continuous into categorical variable&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#using-cutwidth-to-bin&#34;&gt;Using &lt;code&gt;cutwidth&lt;/code&gt; to bin&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#using-cutnumber-to-bin&#34;&gt;Using &lt;code&gt;cutnumber&lt;/code&gt; to bin&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#bin-by-breaking-continuous-into-categorical-variable&#34;&gt;Bin by breaking continuous into categorical variable&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;

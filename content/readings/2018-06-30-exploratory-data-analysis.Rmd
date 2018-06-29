@@ -7,7 +7,7 @@ output:
   blogdown::html_page:
     toc: true
     number_sections: false
-    toc_depth: 6
+    toc_depth: 5
 summary: Learn how to use various plots to unearth the hidden pattern of data during Exploratory Data Analysis.
 categories:
   - R
