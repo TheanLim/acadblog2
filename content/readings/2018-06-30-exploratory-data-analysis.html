@@ -7,7 +7,7 @@ output:
   blogdown::html_page:
     toc: true
     number_sections: false
-    toc_depth: 5
+    toc_depth: 3
 summary: Learn how to use various plots to unearth the hidden pattern of data during Exploratory Data Analysis.
 categories:
   - R
@@ -26,10 +26,7 @@ header:
 <li><a href="#variation">Variation</a><ul>
 <li><a href="#visualizations">Visualizations</a><ul>
 <li><a href="#categorical-variable-bar-chart-with-geom_bar">Categorical Variable – Bar chart with <code>geom_bar</code></a></li>
-<li><a href="#continuous-variable">Continuous Variable</a><ul>
-<li><a href="#histogram-with-geom_histogram">Histogram with <code>geom_histogram</code></a></li>
-<li><a href="#overlapping-histograms-using-geom_freqpoly">Overlapping Histograms using <code>geom_freqpoly</code></a></li>
-</ul></li>
+<li><a href="#continuous-variable">Continuous Variable</a></li>
 </ul></li>
 <li><a href="#typical-values">Typical values</a></li>
 <li><a href="#unusual-values">Unusual Values</a><ul>
@@ -44,20 +41,8 @@ header:
 <li><a href="#covariation">Covariation</a><ul>
 <li><a href="#a-categorical-and-continuous-variable">A Categorical and Continuous Variable</a><ul>
 <li><a href="#density-plot-with-geom_freqpoly">Density Plot with <code>geom_freqpoly</code></a></li>
-<li><a href="#large-dataset">Large Dataset</a><ul>
-<li><a href="#letter-value-plot-for-large-datasetinstead-of-boxplot-using-geom_lv">Letter-value plot (for large dataset|instead of boxplot) using <code>geom_lv</code></a></li>
-<li><a href="#violin-plot-to-show-distributions-using-geom_violin">Violin plot (to show distributions) using <code>geom_violin</code></a></li>
-</ul></li>
-<li><a href="#small-dataset">Small Dataset</a><ul>
-<li><a href="#boxplot-for-small-dataset-using-geom_boxplot">Boxplot (for small dataset) using <code>geom_boxplot</code></a><ul>
-<li><a href="#reorder-the-levels-of-categorical-variables-using-reorder">Reorder the levels of categorical variables using <code>reorder()</code></a></li>
-<li><a href="#horizontal-boxplot-using-coord_flip-or-geom_boxploth">Horizontal boxplot using <code>coord_flip</code> or <code>geom_boxploth</code></a></li>
-</ul></li>
-<li><a href="#jitter-points-using-geom_jitter">Jitter points using <code>geom_jitter</code></a><ul>
-<li><a href="#jitter-violin-plot-using-geom_quasirandom">Jitter + Violin plot using <code>geom_quasirandom</code></a></li>
-</ul></li>
-<li><a href="#offsetting-sideway-the-violin-plot-using-geom_beeswarm">Offsetting (sideway) the violin plot using <code>geom_beeswarm</code></a></li>
-</ul></li>
+<li><a href="#large-dataset">Large Dataset</a></li>
+<li><a href="#small-dataset">Small Dataset</a></li>
 </ul></li>
 <li><a href="#two-categorical-variables">Two Categorical Variables</a><ul>
 <li><a href="#bubble-chart-with-geom_count">Bubble Chart with <code>geom_count</code></a></li>
@@ -65,14 +50,7 @@ header:
 </ul></li>
 <li><a href="#two-continuous-variables">Two Continuous Variables</a><ul>
 <li><a href="#scatterplot-using-geom_point">Scatterplot using <code>geom_point</code></a></li>
-<li><a href="#large-dataset-problems-and-solutions">Large dataset problems and solutions</a><ul>
-<li><a href="#using-alpha-aesthethics-in-geom_point">Using <strong>alpha</strong> aesthethics in <code>geom_point</code></a></li>
-<li><a href="#using-bins">Using Bins</a><ul>
-<li><a href="#using-bin-with-geom_bin2d">Using bin with <code>geom_bin2d()</code></a></li>
-<li><a href="#using-bin-with-geom_hex">Using bin with <code>geom_hex()</code></a></li>
-<li><a href="#bin-by-breaking-continuous-into-categorical-variable">Bin by breaking continuous into categorical variable</a></li>
-</ul></li>
-</ul></li>
+<li><a href="#large-dataset-problems-and-solutions">Large dataset problems and solutions</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#patterns-and-models">Patterns and Models</a></li>
