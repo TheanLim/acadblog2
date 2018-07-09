@@ -44,5 +44,8 @@ filter_default = 0
   name = "Other"
   tag = ".Other"
 
+# Number of posts to list.
+count = 5
+
 +++
 
