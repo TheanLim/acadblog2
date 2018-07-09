@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Thu, 12 Apr 2018 00:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Apr 2018 00:00:00 -0500</lastBuildDate>
     
 	<atom:link href="/home/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>Academic</title>
       <link>/home/hero/</link>
-      <pubDate>Thu, 12 Apr 2018 00:00:00 +0800</pubDate>
+      <pubDate>Thu, 12 Apr 2018 00:00:00 -0500</pubDate>
       
       <guid>/home/hero/</guid>
       <description>The highly flexible website framework for Hugo with an extensible plugin mechanism. Create a beautifully simple site in under 10 minutes 🚀</description>
@@ -33,7 +33,7 @@
     <item>
       <title>Selected Publications</title>
       <link>/home/publications_selected/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <pubDate>Wed, 20 Apr 2016 00:00:00 -0500</pubDate>
       
       <guid>/home/publications_selected/</guid>
       <description></description>
@@ -42,7 +42,7 @@
     <item>
       <title>Recent Publications</title>
       <link>/home/publications/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <pubDate>Wed, 20 Apr 2016 00:00:00 -0500</pubDate>
       
       <guid>/home/publications/</guid>
       <description></description>
@@ -97,7 +97,7 @@
     <item>
       <title>Tags</title>
       <link>/home/tags/</link>
-      <pubDate>Fri, 20 Apr 2018 00:00:00 +0800</pubDate>
+      <pubDate>Fri, 20 Apr 2018 00:00:00 -0500</pubDate>
       
       <guid>/home/tags/</guid>
       <description></description>

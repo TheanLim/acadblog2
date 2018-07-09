@@ -7,8 +7,422 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Thu, 12 Apr 2018 00:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Apr 2018 00:00:00 -0500</lastBuildDate>
     <atom:link href="/" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Tibbles</title>
+      <link>/readings/tibbles/</link>
+      <pubDate>Mon, 02 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/tibbles/</guid>
+      <description>&lt;div id=&#34;TOC&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#creating-tibbles&#34;&gt;Creating Tibbles&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#coerce-into-tibble-using-as.tibble&#34;&gt;Coerce into tibble using &lt;code&gt;as.tibble&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#new-tibble-from-individual-vectors-using-tibble&#34;&gt;New tibble from individual vectors using &lt;code&gt;tibble()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nonsyntactic-column-names-in-tibble&#34;&gt;Nonsyntactic column names in tibble&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#rename-column-names-using-rename&#34;&gt;Rename column names using &lt;code&gt;rename()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#data-entry-with-transposed-tibble-tribble&#34;&gt;Data Entry with transposed tibble: &lt;code&gt;tribble()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#convert-vectors-or-lists-to-two-column-data-frames-using-enframe&#34;&gt;Convert vectors or lists to two-column data frames using &lt;code&gt;enframe&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#tibbles-versus-data.frame&#34;&gt;Tibbles Versus data.frame&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#printing&#34;&gt;Printing&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#display-n-rows-and-all-columns-using-print&#34;&gt;Display &lt;strong&gt;n&lt;/strong&gt; rows and all columns using &lt;code&gt;print()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#control-default-printing-behaviours-by-setting-options&#34;&gt;Control default printing behaviours by setting &lt;code&gt;options()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#use-rstudios-viewer&#34;&gt;Use RStudios Viewer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#control-number-of-column-names-printed-at-the-footer-of-a-tibble-using-print&#34;&gt;Control number of column names printed at the footer of a tibble using &lt;code&gt;print&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#subsetting-tibble-using-and-.&#34;&gt;Subsetting tibble using $ and [[.]]&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#extract-reference-variables-for-subsetting-tibbles&#34;&gt;Extract reference variables for subsetting tibbles&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#subsetting-in-a-pipe-using-.&#34;&gt;Subsetting in a pipe using &lt;strong&gt;.&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#subset-tibbles-with-nonsyntactic-column-names&#34;&gt;Subset tibbles with nonsyntactic column names&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#check-if-an-object-is-a-tibble-using-class&#34;&gt;Check if an object is a tibble using &lt;code&gt;class()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#interacting-with-older-code&#34;&gt;Interacting with Older Code&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#turn-a-tibble-into-dataframe-using-as.data.frame&#34;&gt;Turn a tibble into dataframe using &lt;code&gt;as.data.frame()&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#frustrations-caused-by-subsetting-default-data.frame&#34;&gt;Frustrations caused by subsetting default &lt;code&gt;data.frame&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;p&gt;** This post is heavily based on &lt;a href=&#34;http://r4ds.had.co.nz/&#34;&gt;R for Data Science&lt;/a&gt;. Please consider to buy that book if you find this post useful.**&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;tibble&lt;/strong&gt; package is part of the &lt;strong&gt;tidyverse&lt;/strong&gt; package.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library (tidyverse)&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;creating-tibbles&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Creating Tibbles&lt;/h1&gt;
+&lt;div id=&#34;coerce-into-tibble-using-as.tibble&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Coerce into tibble using &lt;code&gt;as.tibble&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;Most other R packages use regular data frames, so you might want to coerce a data frame to a tibble. You can do that with &lt;code&gt;as.tibble()&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;as.tibble(iris)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 150 x 5
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##           &amp;lt;dbl&amp;gt;       &amp;lt;dbl&amp;gt;        &amp;lt;dbl&amp;gt;       &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;  
+##  1         5.10        3.50         1.40       0.200 setosa 
+##  2         4.90        3.00         1.40       0.200 setosa 
+##  3         4.70        3.20         1.30       0.200 setosa 
+##  4         4.60        3.10         1.50       0.200 setosa 
+##  5         5.00        3.60         1.40       0.200 setosa 
+##  6         5.40        3.90         1.70       0.400 setosa 
+##  7         4.60        3.40         1.40       0.300 setosa 
+##  8         5.00        3.40         1.50       0.200 setosa 
+##  9         4.40        2.90         1.40       0.200 setosa 
+## 10         4.90        3.10         1.50       0.100 setosa 
+## # ... with 140 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;new-tibble-from-individual-vectors-using-tibble&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;New tibble from individual vectors using &lt;code&gt;tibble()&lt;/code&gt;&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tibble(
+  x = 1:5,
+  y = 1,
+  z = x ^ 2 + y
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 5 x 3
+##       x     y     z
+##   &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+## 1     1    1.    2.
+## 2     2    1.    5.
+## 3     3    1.   10.
+## 4     4    1.   17.
+## 5     5    1.   26.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Observe that the input 1 in column &lt;code&gt;y&lt;/code&gt; is repeated.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;tibble()&lt;/code&gt; never changes the type of inputs (i.e, changes strings into factors), never changes the names of the variables, and never create row names, as compared to &lt;code&gt;data.frame&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nonsyntactic-column-names-in-tibble&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Nonsyntactic column names in tibble&lt;/h2&gt;
+&lt;p&gt;It’s possible for a tibble to have column names that are not valid R variable names, aka nonsyntactic names. To refer to these variables, you need to surround them with backticks, `:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tb &amp;lt;- tibble(
+  `:)` = &amp;quot;smile&amp;quot;,
+  ` ` = &amp;quot;space&amp;quot;,
+  `2000` = &amp;quot;number&amp;quot;
+)
+tb&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 3
+##   `:)`  ` `   `2000`
+##   &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; 
+## 1 smile space number&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You’ll also need the backticks when working with these variables in other packages, like &lt;strong&gt;ggplot2&lt;/strong&gt;,&lt;strong&gt;dplyr&lt;/strong&gt;, and &lt;strong&gt;tidyr&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rename-column-names-using-rename&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Rename column names using &lt;code&gt;rename()&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;new_tb = rename(tibble, new_col_name = old_col_name, ...)&lt;/code&gt;. For example,&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tb_new &amp;lt;- rename(tb, smile = `:)`, space = ` `)
+tb_new&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 3
+##   smile space `2000`
+##   &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; &amp;lt;chr&amp;gt; 
+## 1 smile space number&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-entry-with-transposed-tibble-tribble&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Data Entry with transposed tibble: &lt;code&gt;tribble()&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;tribble()` is customized for data entry in code: column headings are defined by formulas (i.e., they start with ~), and entries are separated by commas. This makes it possible to lay out small amounts of data in easy-to-read form:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tribble(
+  ~x, ~y, ~z,
+  #--|--|----
+  &amp;quot;a&amp;quot;, 2, 3.6,
+  &amp;quot;b&amp;quot;, 1, 8.5
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 3
+##   x         y     z
+##   &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+## 1 a        2.  3.60
+## 2 b        1.  8.50&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A comment is added to make it clear where the column header is.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;convert-vectors-or-lists-to-two-column-data-frames-using-enframe&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Convert vectors or lists to two-column data frames using &lt;code&gt;enframe&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;enframe(x, name = &amp;quot;name&amp;quot;, value = &amp;quot;value&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# natural sequence, unnamed vectors
+enframe(1:3)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3 x 2
+##    name value
+##   &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;
+## 1     1     1
+## 2     2     2
+## 3     3     3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## named sequence
+enframe(c(a = 5, b = 7))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 2
+##   name  value
+##   &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;
+## 1 a        5.
+## 2 b        7.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;enframe(c(a = 1, b = 2, c = 3))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3 x 2
+##   name  value
+##   &amp;lt;chr&amp;gt; &amp;lt;dbl&amp;gt;
+## 1 a        1.
+## 2 b        2.
+## 3 c        3.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tibbles-versus-data.frame&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Tibbles Versus data.frame&lt;/h1&gt;
+&lt;p&gt;There are two main differences in the usage of a &lt;code&gt;tibble&lt;/code&gt; versus a classic &lt;code&gt;data.frame&lt;/code&gt;: printing and subsetting.&lt;/p&gt;
+&lt;div id=&#34;printing&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Printing&lt;/h2&gt;
+&lt;p&gt;Tibbles are designed so that you don’t accidentally overwhelm your console when you print large data frames. It only shows the first 10 rows, and all the columns that fit on screen. In addition to its name, each column reports its &lt;strong&gt;type&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tibble(
+  a = lubridate::now() + runif(1e3) * 86400,
+  b = lubridate::today() + runif(1e3) * 30,
+  c = 1:1e3,
+  d = runif(1e3),
+  e = sample(letters, 1e3, replace = TRUE)
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1,000 x 5
+##    a                   b              c     d e    
+##    &amp;lt;dttm&amp;gt;              &amp;lt;date&amp;gt;     &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;
+##  1 2018-07-10 01:58:26 2018-08-07     1 0.751 m    
+##  2 2018-07-09 14:09:06 2018-07-17     2 0.503 c    
+##  3 2018-07-10 05:34:49 2018-07-27     3 0.388 z    
+##  4 2018-07-09 20:07:05 2018-08-01     4 0.520 n    
+##  5 2018-07-10 04:54:28 2018-07-24     5 0.351 g    
+##  6 2018-07-09 21:16:36 2018-08-04     6 0.504 r    
+##  7 2018-07-09 10:23:43 2018-07-13     7 0.419 i    
+##  8 2018-07-09 10:19:01 2018-07-23     8 0.260 c    
+##  9 2018-07-09 19:16:31 2018-08-02     9 0.216 v    
+## 10 2018-07-10 07:01:25 2018-07-19    10 0.341 e    
+## # ... with 990 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;display-n-rows-and-all-columns-using-print&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Display &lt;strong&gt;n&lt;/strong&gt; rows and all columns using &lt;code&gt;print()&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Use &lt;code&gt;print(n = , width = Inf)&lt;/code&gt; to display &lt;code&gt;n&lt;/code&gt; rows and display all columns.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;nycflights13::flights %&amp;gt;%
+  print(n = 10, width = Inf)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt;    &amp;lt;int&amp;gt;          &amp;lt;int&amp;gt;     &amp;lt;dbl&amp;gt;    &amp;lt;int&amp;gt;
+##  1  2013     1     1      517            515        2.      830
+##  2  2013     1     1      533            529        4.      850
+##  3  2013     1     1      542            540        2.      923
+##  4  2013     1     1      544            545       -1.     1004
+##  5  2013     1     1      554            600       -6.      812
+##  6  2013     1     1      554            558       -4.      740
+##  7  2013     1     1      555            600       -5.      913
+##  8  2013     1     1      557            600       -3.      709
+##  9  2013     1     1      557            600       -3.      838
+## 10  2013     1     1      558            600       -2.      753
+##    sched_arr_time arr_delay carrier flight tailnum origin dest  air_time
+##             &amp;lt;int&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;  &amp;lt;chr&amp;gt;    &amp;lt;dbl&amp;gt;
+##  1            819       11. UA        1545 N14228  EWR    IAH       227.
+##  2            830       20. UA        1714 N24211  LGA    IAH       227.
+##  3            850       33. AA        1141 N619AA  JFK    MIA       160.
+##  4           1022      -18. B6         725 N804JB  JFK    BQN       183.
+##  5            837      -25. DL         461 N668DN  LGA    ATL       116.
+##  6            728       12. UA        1696 N39463  EWR    ORD       150.
+##  7            854       19. B6         507 N516JB  EWR    FLL       158.
+##  8            723      -14. EV        5708 N829AS  LGA    IAD        53.
+##  9            846       -8. B6          79 N593JB  JFK    MCO       140.
+## 10            745        8. AA         301 N3ALAA  LGA    ORD       138.
+##    distance  hour minute time_hour          
+##       &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;  &amp;lt;dbl&amp;gt; &amp;lt;dttm&amp;gt;             
+##  1    1400.    5.    15. 2013-01-01 05:00:00
+##  2    1416.    5.    29. 2013-01-01 05:00:00
+##  3    1089.    5.    40. 2013-01-01 05:00:00
+##  4    1576.    5.    45. 2013-01-01 05:00:00
+##  5     762.    6.     0. 2013-01-01 06:00:00
+##  6     719.    5.    58. 2013-01-01 05:00:00
+##  7    1065.    6.     0. 2013-01-01 06:00:00
+##  8     229.    6.     0. 2013-01-01 06:00:00
+##  9     944.    6.     0. 2013-01-01 06:00:00
+## 10     733.    6.     0. 2013-01-01 06:00:00
+## # ... with 3.368e+05 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;control-default-printing-behaviours-by-setting-options&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Control default printing behaviours by setting &lt;code&gt;options()&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;You can also control the default print behavior by setting options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;options&lt;code&gt;(tibble.print_max = n, tibble.print_min = m)&lt;/code&gt;: print a maximun of &lt;code&gt;m&lt;/code&gt; rows, and a mininum of &lt;code&gt;n&lt;/code&gt; rows. Use &lt;code&gt;options(dplyr.print_min = Inf)&lt;/code&gt; to always show all rows.&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;options(tibble.width = Inf)&lt;/code&gt; to always print all columns, regardless of the width of the screen.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;use-rstudios-viewer&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Use RStudios Viewer&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;nycflights13::flights %&amp;gt;%
+  View()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;control-number-of-column-names-printed-at-the-footer-of-a-tibble-using-print&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Control number of column names printed at the footer of a tibble using &lt;code&gt;print&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Looking up &lt;code&gt;?print&lt;/code&gt; tells that &lt;code&gt;n_extra&lt;/code&gt; argument tells the number of extra columns to print abbreviated information for, if the width is too small for the entire tibble.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;print(as_tibble(mtcars), n_extra = 5, width = 20)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 32 x 11
+##      mpg   cyl
+##  * &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+##  1  21.0    6.
+##  2  21.0    6.
+##  3  22.8    4.
+##  4  21.4    6.
+##  5  18.7    8.
+##  6  18.1    6.
+##  7  14.3    8.
+##  8  24.4    4.
+##  9  22.8    4.
+## 10  19.2    6.
+## # ... with 22 more
+## #   rows, and 9
+## #   more variables:
+## #   disp &amp;lt;dbl&amp;gt;,
+## #   hp &amp;lt;dbl&amp;gt;,
+## #   drat &amp;lt;dbl&amp;gt;,
+## #   wt &amp;lt;dbl&amp;gt;,
+## #   qsec &amp;lt;dbl&amp;gt;, ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;width&lt;/code&gt; is set so that it limits the number of columns displayed (so that we can see the footer with column names).&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;subsetting-tibble-using-and-.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Subsetting tibble using $ and [[.]]&lt;/h2&gt;
+&lt;p&gt;Use $ and [[.]] to pull out a single variable.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- tibble(
+  x = runif(5),
+  y = rnorm(5)
+)
+# Extract by name
+df$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df[[&amp;quot;x&amp;quot;]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Extract by position
+df[[1]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;extract-reference-variables-for-subsetting-tibbles&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Extract reference variables for subsetting tibbles&lt;/h3&gt;
+&lt;p&gt;If you have the name of a variable stored in an object, e.g. &lt;code&gt;var &amp;lt;- &amp;quot;mpg&amp;quot;&lt;/code&gt;, you can extract the reference variable from a tibble by using the double bracket, like &lt;code&gt;df[[var]]&lt;/code&gt; (instead of df[[“var”]]). You cannot use the dollar sign, because &lt;code&gt;df$var&lt;/code&gt; would look for a column named &lt;code&gt;var&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;subsetting-in-a-pipe-using-.&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Subsetting in a pipe using &lt;strong&gt;.&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;To use these in a pipe, you’ll need to use the special placeholder &lt;strong&gt;.&lt;/strong&gt; :&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;% .$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;% .[[&amp;quot;x&amp;quot;]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;subset-tibbles-with-nonsyntactic-column-names&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Subset tibbles with nonsyntactic column names&lt;/h3&gt;
+&lt;p&gt;An &lt;strong&gt;annoying&lt;/strong&gt; tibble is defined below:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;annoying &amp;lt;- tibble(
+  `1` = 1:10,
+  `2` = `1` * 2 + rnorm(length(`1`))
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Extracting the variable called 1.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;annoying$`1` # or&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1]  1  2  3  4  5  6  7  8  9 10&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;annoying[[&amp;quot;1&amp;quot;]]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1]  1  2  3  4  5  6  7  8  9 10&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that the backtick is not used in the tb [[.]].&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Plotting a scatterplot of 1 vs 2.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ggplot(data = annoying) +
+  geom_point(mapping = aes(x = `1`, y = `2`))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;/readings/2018-07-02-tibbles_files/figure-html/unnamed-chunk-15-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;A new column 3 which is 2 divided by 1:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;annoying3 = annoying %&amp;gt;%
+  mutate(`3` = .[[&amp;quot;2&amp;quot;]]/.[[&amp;quot;1&amp;quot;]])
+
+## or an easier way: insert straight away
+
+annoying4 = annoying
+annoying4[[&amp;quot;3&amp;quot;]] = annoying4[[&amp;quot;2&amp;quot;]]/ annoying4[[&amp;quot;1&amp;quot;]]
+annoying4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 3
+##      `1`   `2`   `3`
+##    &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+##  1     1  3.97  3.97
+##  2     2  5.72  2.86
+##  3     3  8.75  2.92
+##  4     4 10.5   2.63
+##  5     5  9.77  1.95
+##  6     6 11.6   1.93
+##  7     7 15.1   2.16
+##  8     8 15.0   1.88
+##  9     9 17.3   1.92
+## 10    10 19.7   1.97&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## or
+
+annoying5 = annoying
+annoying5$`3`= annoying4[[&amp;quot;2&amp;quot;]]/ annoying4[[&amp;quot;1&amp;quot;]]
+annoying5&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 3
+##      `1`   `2`   `3`
+##    &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+##  1     1  3.97  3.97
+##  2     2  5.72  2.86
+##  3     3  8.75  2.92
+##  4     4 10.5   2.63
+##  5     5  9.77  1.95
+##  6     6 11.6   1.93
+##  7     7 15.1   2.16
+##  8     8 15.0   1.88
+##  9     9 17.3   1.92
+## 10    10 19.7   1.97&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;check-if-an-object-is-a-tibble-using-class&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Check if an object is a tibble using &lt;code&gt;class()&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;mtcars&lt;/code&gt; is a &lt;code&gt;data.frame&lt;/code&gt; object:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;class(mtcars)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;data.frame&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A &lt;code&gt;tibble&lt;/code&gt; object would only show 10 rows and show the type of data in each column. In addition, &lt;code&gt;class(mtcars)&lt;/code&gt; shows that it is a dataframe. Additionally, tibbles have class &lt;code&gt;&amp;quot;tbl_df&amp;quot;&lt;/code&gt; and &lt;code&gt;&amp;quot;tbl&amp;quot;&lt;/code&gt; in addition to &lt;code&gt;&amp;quot;data.frame&amp;quot;&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;class(as.tibble(mtcars))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;tbl_df&amp;quot;     &amp;quot;tbl&amp;quot;        &amp;quot;data.frame&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interacting-with-older-code&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Interacting with Older Code&lt;/h1&gt;
+&lt;div id=&#34;turn-a-tibble-into-dataframe-using-as.data.frame&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Turn a tibble into dataframe using &lt;code&gt;as.data.frame()&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;Some older functions don’t work with tibbles due to the [ function. [ is not used because &lt;code&gt;dplyr::filter()&lt;/code&gt; and &lt;code&gt;dplyr::select()&lt;/code&gt; allow you to solve the same problems with clearer code. If you encounter one of these functions, use &lt;code&gt;as.data.frame()&lt;/code&gt; to turn a tibble back to a data.frame:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;class(as.data.frame(tb))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;data.frame&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;frustrations-caused-by-subsetting-default-data.frame&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Frustrations caused by subsetting default &lt;code&gt;data.frame&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;Let’s define a &lt;code&gt;df&lt;/code&gt; dataframe and perform subsetting operations on it.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df &amp;lt;- data.frame(abc = 1, xyz = &amp;quot;a&amp;quot;)
+df$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] a
+## Levels: a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df[, &amp;quot;xyz&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] a
+## Levels: a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df[, c(&amp;quot;abc&amp;quot;, &amp;quot;xyz&amp;quot;)]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   abc xyz
+## 1   1   a&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;First of all, &lt;code&gt;dataframe&lt;/code&gt; partially complete a column name such that &lt;code&gt;df$x&lt;/code&gt; is the same as &lt;code&gt;df$xyz&lt;/code&gt;, posing the possible disaster of calling unintended variables.&lt;/p&gt;
+&lt;p&gt;Secondly, the &lt;code&gt;[&lt;/code&gt; object returns a vector when there is one colomn but it returns a dataframe if more than one (&lt;code&gt;tibble&lt;/code&gt; always return tibbles). These is problematic if you are passing &lt;code&gt;df[, vars]&lt;/code&gt;, where the number of variables is unknown. You’d have to write codes to account those situations.&lt;/p&gt;
+&lt;p&gt;Let’s compare the similar code but using a tibble instead:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tb = as.tibble(df)
+tb$x&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## NULL&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tb[, &amp;quot;xyz&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 1
+##   xyz  
+##   &amp;lt;fct&amp;gt;
+## 1 a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tb[, c(&amp;quot;abc&amp;quot;, &amp;quot;xyz&amp;quot;)]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 1 x 2
+##     abc xyz  
+##   &amp;lt;dbl&amp;gt; &amp;lt;fct&amp;gt;
+## 1    1. a&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
     
     <item>
       <title>Exploratory Data Analysis (EDA)</title>
@@ -2594,236 +3008,6 @@ Figure 6: Visualization of decision tree.
 &lt;div id=&#34;next&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Next&lt;/h1&gt;
 &lt;p&gt;Bagging and Random Forest were used to fit the data as well. Would the performance increase substantially? However, these two models would not provide the same interpretability of the data anymore.&lt;/p&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Image Compression with Principal Component Analysis</title>
-      <link>/project/image-compression-with-principal-component-analysis/</link>
-      <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>
-      
-      <guid>/project/image-compression-with-principal-component-analysis/</guid>
-      <description>&lt;div id=&#34;TOC&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#loading-pictures-and-standardizing-the-sizes&#34;&gt;Loading pictures and standardizing the sizes&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#the-tour-image.&#34;&gt;The &lt;code&gt;tour&lt;/code&gt; Image.&lt;/a&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#pca&#34;&gt;PCA&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#scree-plot-and-cumulative-variation-plot&#34;&gt;Scree Plot and Cumulative Variation Plot&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#image-reconstruction&#34;&gt;Image Reconstruction&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#image-size-compression&#34;&gt;Image Size Compression&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#the-no_tour-image&#34;&gt;The &lt;code&gt;no_tour&lt;/code&gt; Image&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#the-new-image.&#34;&gt;The &lt;code&gt;new&lt;/code&gt; Image.&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#summary&#34;&gt;Summary&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The following images are taken from &lt;a href=&#34;https://blog.designcrowd.com/article/549/famous-landmarks-of-the-world-without-people&#34;&gt;DesignCrowd&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imagecompression/paris_tourist.jpg&#34; alt=&#34;Image with tourist aka tour&#34; /&gt; &lt;img src=&#34;/img/paris_no_tourist.jpg&#34; alt=&#34;Image with NO tourist aka no_tour&#34; /&gt;&lt;/p&gt;
-&lt;p&gt;This first image is an image with tourists ( I call it as &lt;code&gt;tour&lt;/code&gt;) while the second one has no tourist – &lt;code&gt;no_tour&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/img/rome.jpg&#34; alt=&#34;Rome&#34; /&gt; This is another &lt;code&gt;new&lt;/code&gt; image that is different from the above two.&lt;/p&gt;
-&lt;p&gt;The goals are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Use PCA to compress the &lt;code&gt;tour&lt;/code&gt; image&lt;/li&gt;
-&lt;li&gt;Test the generalizability of the PC loadings obtained from &lt;code&gt;tour&lt;/code&gt; image to other similar image (i.e., the &lt;code&gt;no_tour&lt;/code&gt; image) and a very different image (i.e. &lt;code&gt;new&lt;/code&gt; image).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div id=&#34;loading-pictures-and-standardizing-the-sizes&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Loading pictures and standardizing the sizes&lt;/h1&gt;
-&lt;p&gt;First, let’s load the pictures and look at the dimensions.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(jpeg)
-path = &amp;quot;C:/Users/mirac/Desktop/Work/acadblog2/static/img/imagecompression&amp;quot;
-tour = readJPEG(paste(path,&amp;quot;paris_tourist.jpg&amp;quot;, sep = &amp;quot;/&amp;quot;))
-no_tour = readJPEG(paste(path,&amp;quot;paris_no_tourist.jpg&amp;quot;, sep = &amp;quot;/&amp;quot;))
-new = readJPEG(paste(path,&amp;quot;rome.jpg&amp;quot;, sep = &amp;quot;/&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dim(tour); dim(no_tour); dim(new)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 459 715   3&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 458 715   3&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 500 750   3&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The three pistures do not have the same dimensions so let’s resize them to &lt;code&gt;458, 715, 3.&lt;/code&gt; The &lt;code&gt;3&lt;/code&gt; represents &lt;code&gt;R&lt;/code&gt;, &lt;code&gt;G&lt;/code&gt;, and &lt;code&gt;B&lt;/code&gt;, the three color schemes from the images.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(&amp;quot;EBImage&amp;quot;)
-# scale to a specific width and height
-tour &amp;lt;- resize(tour, w = 458, h = 715)
-new &amp;lt;- resize(new, w = 458, h = 715)
-
-# extract the pixel array
-tour &amp;lt;- as.array(tour)
-new &amp;lt;- as.array(new)&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-tour-image.&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;The &lt;code&gt;tour&lt;/code&gt; Image.&lt;/h1&gt;
-&lt;div id=&#34;pca&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;PCA&lt;/h2&gt;
-&lt;p&gt;Break down each color scheme into three dataframe and perform PCA.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rtour = tour[, ,1]
-gtour = tour[, ,2]
-btour = tour[, ,3]&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prtour = prcomp(rtour, center = FALSE)
-pgtour = prcomp(gtour, center = FALSE)
-pbtour = prcomp(btour, center = FALSE)
-
-tour.pca = list(prtour, pgtour, pbtour)&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;scree-plot-and-cumulative-variation-plot&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Scree Plot and Cumulative Variation Plot&lt;/h2&gt;
-&lt;p&gt;Take a look at the Scree plot of the PCA.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)
-# Create a dataframe for easier plotting
-df = data.frame(scheme = rep(c(&amp;quot;R&amp;quot;, &amp;quot;G&amp;quot;, &amp;quot;B&amp;quot;),each =458), 
-                index = rep(1:458,  3),
-                var = c(prtour$sdev^2,
-                        pgtour$sdev^2, 
-                        pbtour$sdev^2))
-
-df %&amp;lt;&amp;gt;% group_by(scheme) %&amp;gt;%
-  mutate(propvar =100*var/sum(var)) %&amp;gt;%
-  mutate(cumsum = cumsum(propvar)) %&amp;gt;%
-  ungroup()
-
-#plot
-library(ggplot2)
-#relevel to make it look nicer
-df$scheme = factor(df$scheme,levels(df$scheme)[c(3,2,1)])
-
-df %&amp;gt;% ggplot(aes( x = index, y = propvar, fill = scheme)) + 
-    geom_bar(stat=&amp;quot;identity&amp;quot;) + 
-    labs(title=&amp;quot;Screeplot of Principal Component&amp;quot;, x =&amp;quot;Principal Component&amp;quot;, 
-         y=&amp;quot;% of Variance&amp;quot;) + geom_line()  + 
-    scale_x_continuous(limits = c(0,30)) +
-    facet_wrap(~scheme)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:screeplot&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/project/2018-04-13-image-compression-with-principal-component-analysis_files/figure-html/screeplot-1.png&#34; alt=&#34;The **elbow** of the screeplot is between the fourth and the fifth PC&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 1: The &lt;strong&gt;elbow&lt;/strong&gt; of the screeplot is between the fourth and the fifth PC
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;% ggplot(aes( x = index, y = cumsum, fill = scheme)) + 
-    geom_bar(stat=&amp;quot;identity&amp;quot;) + 
-    labs(title=&amp;quot;Cumulative Proportion of Variance Explained Principal Component&amp;quot;, x=&amp;quot;Principal Component&amp;quot;, 
-         y=&amp;quot;Cumulative % of Variance&amp;quot;) + geom_line() + 
-    scale_x_continuous(limits = c(0,30)) +
-    facet_wrap(~scheme)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:cumprop&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/project/2018-04-13-image-compression-with-principal-component-analysis_files/figure-html/cumprop-1.png&#34; alt=&#34;Thirty PCs appear to be good enough to explain most of the variations&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 2: Thirty PCs appear to be good enough to explain most of the variations
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;It seems like the first 30 PCs have enough proportion of variance covered because the proportion of variance explained is close to 100%.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;image-reconstruction&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Image Reconstruction&lt;/h2&gt;
-&lt;p&gt;Let’s reconstruct the first image. I choose to look at the images constructed from 2, 30, 200, and 300 Prinicipal Components.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# This is the number of desired PCs
-pcnum = c(2,30,200, 300)
-
-for(i in pcnum){
-    pca.img &amp;lt;- sapply(tour.pca, function(j) {
-      compressed.img &amp;lt;- j$x[,1:i] %*% t(j$rotation[,1:i])
-    }, simplify = &amp;#39;array&amp;#39;)
-  writeJPEG(pca.img, paste(path,&amp;quot;/tour/tour_compressed_&amp;quot;, round(i,0), &amp;#39;_components.jpg&amp;#39;, sep = &amp;#39;&amp;#39;))
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imagecompression/tour/tour_compressed_2_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;img src=&#34;/img/imagecompression/tour/tour_compressed_30_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;img src=&#34;/img/imagecompression/tour/tour_compressed_200_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:unnamed-chunk-2&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/img/imagecompression/tour/tour_compressed_300_components.jpg&#34; alt=&#34;Compress images using 2, 30, 200 and 300 PCs respectively.&#34; width=&#34;50%&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 3: Compress images using 2, 30, 200 and 300 PCs respectively.
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;It appears that using 200 PCs is enough to compress the image while maintaining a good quality.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;image-size-compression&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Image Size Compression&lt;/h2&gt;
-&lt;p&gt;But how about the sizes of these images?&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;original &amp;lt;- file.info(paste(path,&amp;quot;paris_tourist.jpg&amp;quot;, sep =&amp;quot;/&amp;quot;))$size / 1000
-
-for(i in pcnum){
-  filename = paste(&amp;quot;tour_compressed_&amp;quot;,i,&amp;#39;_components.jpg&amp;#39;, sep = &amp;#39;&amp;#39;)
-  full.path = paste(path,&amp;quot;tour&amp;quot;,filename,sep = &amp;quot;/&amp;quot;)
-  size = file.info(full.path)$size/1000
-  cat(filename, &amp;#39;size:&amp;#39;,size,&amp;quot;\n&amp;quot;,
-      &amp;quot;Reduction from the original image: &amp;quot;,(original-size)/original*100,&amp;quot;% \n\n&amp;quot; )
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## tour_compressed_2_components.jpg size: 30.258 
-##  Reduction from the original image:  53.07237 % 
-## 
-## tour_compressed_30_components.jpg size: 55.743 
-##  Reduction from the original image:  13.54726 % 
-## 
-## tour_compressed_200_components.jpg size: 43.244 
-##  Reduction from the original image:  32.93216 % 
-## 
-## tour_compressed_300_components.jpg size: 39.435 
-##  Reduction from the original image:  38.8396 %&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Surprisingly, the compressed image that uses 30 PCs has the lowest reduction of image size.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-no_tour-image&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;The &lt;code&gt;no_tour&lt;/code&gt; Image&lt;/h1&gt;
-&lt;p&gt;Now, let’s use a similar image (&lt;code&gt;no_tour&lt;/code&gt;) and use the Principal Loadings obtained from the previous step to execute image compression.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;compress ()&lt;/code&gt; function is meant for compressing a new image (i.e., image not used in the previous step to obtain Principal Loadings).&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rno_tour = no_tour[, ,1]
-gno_tour = no_tour[, ,2]
-bno_tour = no_tour[, ,3]
-
-no_tour_rgb = list(rno_tour,gno_tour,bno_tour)
-
-compress &amp;lt;- function(trained_rgb_pca, newrgb, pcnum, dims){
-   r_rotate = trained_rgb_pca[[1]]$rotation
-   g_rotate = trained_rgb_pca[[2]]$rotation
-   b_rotate = trained_rgb_pca[[3]]$rotation
-   
-   r = newrgb[[1]]
-   g = newrgb[[2]]
-   b = newrgb[[3]]
-   
-  pred_r = (r %*% r_rotate)[,1:pcnum] %*% t(r_rotate[,1:pcnum])
-  pred_g = (g %*% g_rotate)[,1:pcnum] %*% t(g_rotate[,1:pcnum])
-  pred_b = (b %*% b_rotate)[,1:pcnum] %*% t(b_rotate[,1:pcnum])
-  
-  pred.pca = list(pred_r, pred_g, pred_b)
-  pred.array = array(as.numeric(unlist(pred.pca)),dim = dims)
-  return(pred.array)
-}
-
-for(i in pcnum){
-    pca.img = compress(tour.pca, no_tour_rgb, pcnum = i, dims = c( 458, 715,3))
-    writeJPEG(pca.img, paste(path,&amp;quot;/no_tour&amp;quot;,&amp;quot;/no_tour_compressed_&amp;quot;, round(i,0), &amp;#39;_components.jpg&amp;#39;, sep = &amp;#39;&amp;#39;))
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imagecompression/no_tour/no_tour_compressed_2_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;img src=&#34;/img/imagecompression/no_tour/no_tour_compressed_30_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;img src=&#34;/img/imagecompression/no_tour/no_tour_compressed_200_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:unnamed-chunk-6&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/img/imagecompression/no_tour/no_tour_compressed_300_components.jpg&#34; alt=&#34;Compress simialr images to test the generalizability of PCs&#34; width=&#34;50%&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 4: Compress simialr images to test the generalizability of PCs
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;One can observe that the last image’s quality is the best out of four (since it uses the most PCs) but it is not even close to a high quality image.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-new-image.&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;The &lt;code&gt;new&lt;/code&gt; Image.&lt;/h1&gt;
-&lt;p&gt;We now know that the performance of PCA in image compression is highly useful to its original image but not for a similar image. It’s natural to ask whether it will be worst if a totally unrelated image (such as &lt;code&gt;new&lt;/code&gt; image) was used instead. Let’s check it out.&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;rnew = new[, ,1]
-gnew = new[, ,2]
-bnew = new[, ,3]
-
-new_rgb = list(rnew,gnew,bnew)
-
-for (i in pcnum){
-    pca.img = compress(tour.pca, new_rgb, pcnum = i, dims = c(458,715, 3))
-    writeJPEG(pca.img, paste(path,&amp;quot;/new&amp;quot;,&amp;quot;/new_compressed_&amp;quot;, round(i,0), &amp;#39;_components.jpg&amp;#39;, sep = &amp;#39;&amp;#39;))
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;img src=&#34;/img/imagecompression/new/new_compressed_2_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;img src=&#34;/img/imagecompression/new/new_compressed_30_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;img src=&#34;/img/imagecompression/new/new_compressed_200_components.jpg&#34; width=&#34;50%&#34; /&gt;&lt;/p&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:unnamed-chunk-9&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/img/imagecompression/new/new_compressed_300_components.jpg&#34; alt=&#34;Compressing a non-related image using previously extracted PC loadings&#34; width=&#34;50%&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 5: Compressing a non-related image using previously extracted PC loadings
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;While the image output does not look exactly like the original image, the main features of the image is clearly shown on it. This is pretty impressive because the machine learns the rules of extracting important information based on only one image &lt;code&gt;tour&lt;/code&gt;. One can experiment increase the number of PCs to get a higher resolution image too.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;summary&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Summary&lt;/h1&gt;
-&lt;p&gt;Principal Component Analysis is a great tool for dimension reduction (thus, sinze reduction in this case), extracting important insights, and uncover underlying message of a dataset.&lt;/p&gt;
 &lt;/div&gt;
 </description>
     </item>

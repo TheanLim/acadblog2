@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Creating TibblesCoerce into tibble using as.tibbleNew tibble from individual vectors using tibble()Nonsyntactic column names in tibbleRename column names using rename()Data Entry with transposed tibble: tribble()Convert vectors or lists to two-column data frames using enframeTibbles Versus data.framePrintingDisplay n rows and all columns using print()Control default printing behaviours by setting options()Use RStudios ViewerControl number of column names printed at the footer of a tibble using printSubsetting tibble using $ and [[.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/readings/tibbles/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/readings/tibbles/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/readings/tibbles/">
+  <meta property="og:title" content="Tibbles | Thean C. Lim">
+  <meta property="og:description" content="Creating TibblesCoerce into tibble using as.tibbleNew tibble from individual vectors using tibble()Nonsyntactic column names in tibbleRename column names using rename()Data Entry with transposed tibble: tribble()Convert vectors or lists to two-column data frames using enframeTibbles Versus data.framePrintingDisplay n rows and all columns using print()Control default printing behaviours by setting options()Use RStudios ViewerControl number of column names printed at the footer of a tibble using printSubsetting tibble using $ and [[.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-07-02T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-07-02T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>Tibbles | Thean C. Lim</title>
+
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "/"
+    },
+    "articleSection" : "readings",
+    "name" : "Tibbles",
+    "headline" : "Tibbles",
+    "description" : "Creating TibblesCoerce into tibble using as.tibbleNew tibble from individual vectors using tibble()Nonsyntactic column names in tibbleRename column names using rename()Data Entry with transposed tibble: tribble()Convert vectors or lists to two-column data frames using enframeTibbles Versus data.framePrintingDisplay n rows and all columns using print()Control default printing behaviours by setting options()Use RStudios ViewerControl number of column names printed at the footer of a tibble using printSubsetting tibble using $ and [[.",
+    "inLanguage" : "en-US",
+    "author" : "",
+    "creator" : "",
+    "publisher": "",
+    "accountablePerson" : "",
+    "copyrightHolder" : "",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-07-02 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-07-02 00:00:00 &#43;0000 UTC",
+    "url" : "/readings/tibbles/",
+    "wordCount" : "2226",
+    "keywords" : [ "r4ds","R for Data Science","Blog" ]
+}
+</script>
+  <title>Tibbles | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Tibbles</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-07-02 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Mon, Jul 2, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Thean Lim">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    11 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Tibbles&amp;url=%2freadings%2ftibbles%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2freadings%2ftibbles%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2freadings%2ftibbles%2f&amp;title=Tibbles"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2freadings%2ftibbles%2f&amp;title=Tibbles"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Tibbles&amp;body=%2freadings%2ftibbles%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#creating-tibbles">Creating Tibbles</a><ul>
+<li><a href="#coerce-into-tibble-using-as.tibble">Coerce into tibble using <code>as.tibble</code></a></li>
+<li><a href="#new-tibble-from-individual-vectors-using-tibble">New tibble from individual vectors using <code>tibble()</code></a></li>
+<li><a href="#nonsyntactic-column-names-in-tibble">Nonsyntactic column names in tibble</a></li>
+<li><a href="#rename-column-names-using-rename">Rename column names using <code>rename()</code></a></li>
+<li><a href="#data-entry-with-transposed-tibble-tribble">Data Entry with transposed tibble: <code>tribble()</code></a></li>
+<li><a href="#convert-vectors-or-lists-to-two-column-data-frames-using-enframe">Convert vectors or lists to two-column data frames using <code>enframe</code></a></li>
+</ul></li>
+<li><a href="#tibbles-versus-data.frame">Tibbles Versus data.frame</a><ul>
+<li><a href="#printing">Printing</a><ul>
+<li><a href="#display-n-rows-and-all-columns-using-print">Display <strong>n</strong> rows and all columns using <code>print()</code></a></li>
+<li><a href="#control-default-printing-behaviours-by-setting-options">Control default printing behaviours by setting <code>options()</code></a></li>
+<li><a href="#use-rstudios-viewer">Use RStudios Viewer</a></li>
+<li><a href="#control-number-of-column-names-printed-at-the-footer-of-a-tibble-using-print">Control number of column names printed at the footer of a tibble using <code>print</code></a></li>
+</ul></li>
+<li><a href="#subsetting-tibble-using-and-.">Subsetting tibble using $ and [[.]]</a><ul>
+<li><a href="#extract-reference-variables-for-subsetting-tibbles">Extract reference variables for subsetting tibbles</a></li>
+<li><a href="#subsetting-in-a-pipe-using-.">Subsetting in a pipe using <strong>.</strong></a></li>
+<li><a href="#subset-tibbles-with-nonsyntactic-column-names">Subset tibbles with nonsyntactic column names</a></li>
+</ul></li>
+<li><a href="#check-if-an-object-is-a-tibble-using-class">Check if an object is a tibble using <code>class()</code></a></li>
+</ul></li>
+<li><a href="#interacting-with-older-code">Interacting with Older Code</a><ul>
+<li><a href="#turn-a-tibble-into-dataframe-using-as.data.frame">Turn a tibble into dataframe using <code>as.data.frame()</code></a></li>
+<li><a href="#frustrations-caused-by-subsetting-default-data.frame">Frustrations caused by subsetting default <code>data.frame</code></a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>** This post is heavily based on <a href="http://r4ds.had.co.nz/">R for Data Science</a>. Please consider to buy that book if you find this post useful.**</p>
+<p>The <strong>tibble</strong> package is part of the <strong>tidyverse</strong> package.</p>
+<pre class="r"><code>library (tidyverse)</code></pre>
+<div id="creating-tibbles" class="section level1">
+<h1>Creating Tibbles</h1>
+<div id="coerce-into-tibble-using-as.tibble" class="section level2">
+<h2>Coerce into tibble using <code>as.tibble</code></h2>
+<p>Most other R packages use regular data frames, so you might want to coerce a data frame to a tibble. You can do that with <code>as.tibble()</code>:</p>
+<pre class="r"><code>as.tibble(iris)</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
+##  1         5.10        3.50         1.40       0.200 setosa 
+##  2         4.90        3.00         1.40       0.200 setosa 
+##  3         4.70        3.20         1.30       0.200 setosa 
+##  4         4.60        3.10         1.50       0.200 setosa 
+##  5         5.00        3.60         1.40       0.200 setosa 
+##  6         5.40        3.90         1.70       0.400 setosa 
+##  7         4.60        3.40         1.40       0.300 setosa 
+##  8         5.00        3.40         1.50       0.200 setosa 
+##  9         4.40        2.90         1.40       0.200 setosa 
+## 10         4.90        3.10         1.50       0.100 setosa 
+## # ... with 140 more rows</code></pre>
+<p><br></p>
+</div>
+<div id="new-tibble-from-individual-vectors-using-tibble" class="section level2">
+<h2>New tibble from individual vectors using <code>tibble()</code></h2>
+<pre class="r"><code>tibble(
+  x = 1:5,
+  y = 1,
+  z = x ^ 2 + y
+)</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##       x     y     z
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1    1.    2.
+## 2     2    1.    5.
+## 3     3    1.   10.
+## 4     4    1.   17.
+## 5     5    1.   26.</code></pre>
+<p>Observe that the input 1 in column <code>y</code> is repeated.</p>
+<p><code>tibble()</code> never changes the type of inputs (i.e, changes strings into factors), never changes the names of the variables, and never create row names, as compared to <code>data.frame</code>.</p>
+<p><br></p>
+</div>
+<div id="nonsyntactic-column-names-in-tibble" class="section level2">
+<h2>Nonsyntactic column names in tibble</h2>
+<p>It’s possible for a tibble to have column names that are not valid R variable names, aka nonsyntactic names. To refer to these variables, you need to surround them with backticks, `:</p>
+<pre class="r"><code>tb &lt;- tibble(
+  `:)` = &quot;smile&quot;,
+  ` ` = &quot;space&quot;,
+  `2000` = &quot;number&quot;
+)
+tb</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   `:)`  ` `   `2000`
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; 
+## 1 smile space number</code></pre>
+<p>You’ll also need the backticks when working with these variables in other packages, like <strong>ggplot2</strong>,<strong>dplyr</strong>, and <strong>tidyr</strong>.</p>
+<p><br></p>
+</div>
+<div id="rename-column-names-using-rename" class="section level2">
+<h2>Rename column names using <code>rename()</code></h2>
+<p><code>new_tb = rename(tibble, new_col_name = old_col_name, ...)</code>. For example,</p>
+<pre class="r"><code>tb_new &lt;- rename(tb, smile = `:)`, space = ` `)
+tb_new</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   smile space `2000`
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; 
+## 1 smile space number</code></pre>
+<p><br></p>
+</div>
+<div id="data-entry-with-transposed-tibble-tribble" class="section level2">
+<h2>Data Entry with transposed tibble: <code>tribble()</code></h2>
+<p>tribble()` is customized for data entry in code: column headings are defined by formulas (i.e., they start with ~), and entries are separated by commas. This makes it possible to lay out small amounts of data in easy-to-read form:</p>
+<pre class="r"><code>tribble(
+  ~x, ~y, ~z,
+  #--|--|----
+  &quot;a&quot;, 2, 3.6,
+  &quot;b&quot;, 1, 8.5
+)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   x         y     z
+##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 a        2.  3.60
+## 2 b        1.  8.50</code></pre>
+<p>A comment is added to make it clear where the column header is.</p>
+<p><br></p>
+</div>
+<div id="convert-vectors-or-lists-to-two-column-data-frames-using-enframe" class="section level2">
+<h2>Convert vectors or lists to two-column data frames using <code>enframe</code></h2>
+<p><code>enframe(x, name = &quot;name&quot;, value = &quot;value&quot;)</code></p>
+<p>Example:</p>
+<pre class="r"><code># natural sequence, unnamed vectors
+enframe(1:3)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##    name value
+##   &lt;int&gt; &lt;int&gt;
+## 1     1     1
+## 2     2     2
+## 3     3     3</code></pre>
+<pre class="r"><code>## named sequence
+enframe(c(a = 5, b = 7))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   name  value
+##   &lt;chr&gt; &lt;dbl&gt;
+## 1 a        5.
+## 2 b        7.</code></pre>
+<pre class="r"><code>enframe(c(a = 1, b = 2, c = 3))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   name  value
+##   &lt;chr&gt; &lt;dbl&gt;
+## 1 a        1.
+## 2 b        2.
+## 3 c        3.</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="tibbles-versus-data.frame" class="section level1">
+<h1>Tibbles Versus data.frame</h1>
+<p>There are two main differences in the usage of a <code>tibble</code> versus a classic <code>data.frame</code>: printing and subsetting.</p>
+<div id="printing" class="section level2">
+<h2>Printing</h2>
+<p>Tibbles are designed so that you don’t accidentally overwhelm your console when you print large data frames. It only shows the first 10 rows, and all the columns that fit on screen. In addition to its name, each column reports its <strong>type</strong>.</p>
+<pre class="r"><code>tibble(
+  a = lubridate::now() + runif(1e3) * 86400,
+  b = lubridate::today() + runif(1e3) * 30,
+  c = 1:1e3,
+  d = runif(1e3),
+  e = sample(letters, 1e3, replace = TRUE)
+)</code></pre>
+<pre><code>## # A tibble: 1,000 x 5
+##    a                   b              c     d e    
+##    &lt;dttm&gt;              &lt;date&gt;     &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;
+##  1 2018-07-10 01:58:26 2018-08-07     1 0.751 m    
+##  2 2018-07-09 14:09:06 2018-07-17     2 0.503 c    
+##  3 2018-07-10 05:34:49 2018-07-27     3 0.388 z    
+##  4 2018-07-09 20:07:05 2018-08-01     4 0.520 n    
+##  5 2018-07-10 04:54:28 2018-07-24     5 0.351 g    
+##  6 2018-07-09 21:16:36 2018-08-04     6 0.504 r    
+##  7 2018-07-09 10:23:43 2018-07-13     7 0.419 i    
+##  8 2018-07-09 10:19:01 2018-07-23     8 0.260 c    
+##  9 2018-07-09 19:16:31 2018-08-02     9 0.216 v    
+## 10 2018-07-10 07:01:25 2018-07-19    10 0.341 e    
+## # ... with 990 more rows</code></pre>
+<div id="display-n-rows-and-all-columns-using-print" class="section level3">
+<h3>Display <strong>n</strong> rows and all columns using <code>print()</code></h3>
+<p>Use <code>print(n = , width = Inf)</code> to display <code>n</code> rows and display all columns.</p>
+<pre class="r"><code>nycflights13::flights %&gt;%
+  print(n = 10, width = Inf)</code></pre>
+<pre><code>## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515        2.      830
+##  2  2013     1     1      533            529        4.      850
+##  3  2013     1     1      542            540        2.      923
+##  4  2013     1     1      544            545       -1.     1004
+##  5  2013     1     1      554            600       -6.      812
+##  6  2013     1     1      554            558       -4.      740
+##  7  2013     1     1      555            600       -5.      913
+##  8  2013     1     1      557            600       -3.      709
+##  9  2013     1     1      557            600       -3.      838
+## 10  2013     1     1      558            600       -2.      753
+##    sched_arr_time arr_delay carrier flight tailnum origin dest  air_time
+##             &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;
+##  1            819       11. UA        1545 N14228  EWR    IAH       227.
+##  2            830       20. UA        1714 N24211  LGA    IAH       227.
+##  3            850       33. AA        1141 N619AA  JFK    MIA       160.
+##  4           1022      -18. B6         725 N804JB  JFK    BQN       183.
+##  5            837      -25. DL         461 N668DN  LGA    ATL       116.
+##  6            728       12. UA        1696 N39463  EWR    ORD       150.
+##  7            854       19. B6         507 N516JB  EWR    FLL       158.
+##  8            723      -14. EV        5708 N829AS  LGA    IAD        53.
+##  9            846       -8. B6          79 N593JB  JFK    MCO       140.
+## 10            745        8. AA         301 N3ALAA  LGA    ORD       138.
+##    distance  hour minute time_hour          
+##       &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dttm&gt;             
+##  1    1400.    5.    15. 2013-01-01 05:00:00
+##  2    1416.    5.    29. 2013-01-01 05:00:00
+##  3    1089.    5.    40. 2013-01-01 05:00:00
+##  4    1576.    5.    45. 2013-01-01 05:00:00
+##  5     762.    6.     0. 2013-01-01 06:00:00
+##  6     719.    5.    58. 2013-01-01 05:00:00
+##  7    1065.    6.     0. 2013-01-01 06:00:00
+##  8     229.    6.     0. 2013-01-01 06:00:00
+##  9     944.    6.     0. 2013-01-01 06:00:00
+## 10     733.    6.     0. 2013-01-01 06:00:00
+## # ... with 3.368e+05 more rows</code></pre>
+</div>
+<div id="control-default-printing-behaviours-by-setting-options" class="section level3">
+<h3>Control default printing behaviours by setting <code>options()</code></h3>
+<p>You can also control the default print behavior by setting options:</p>
+<ul>
+<li>options<code>(tibble.print_max = n, tibble.print_min = m)</code>: print a maximun of <code>m</code> rows, and a mininum of <code>n</code> rows. Use <code>options(dplyr.print_min = Inf)</code> to always show all rows.</li>
+<li>Use <code>options(tibble.width = Inf)</code> to always print all columns, regardless of the width of the screen.</li>
+</ul>
+</div>
+<div id="use-rstudios-viewer" class="section level3">
+<h3>Use RStudios Viewer</h3>
+<pre><code>nycflights13::flights %&gt;%
+  View()</code></pre>
+</div>
+<div id="control-number-of-column-names-printed-at-the-footer-of-a-tibble-using-print" class="section level3">
+<h3>Control number of column names printed at the footer of a tibble using <code>print</code></h3>
+<p>Looking up <code>?print</code> tells that <code>n_extra</code> argument tells the number of extra columns to print abbreviated information for, if the width is too small for the entire tibble.</p>
+<pre class="r"><code>print(as_tibble(mtcars), n_extra = 5, width = 20)</code></pre>
+<pre><code>## # A tibble: 32 x 11
+##      mpg   cyl
+##  * &lt;dbl&gt; &lt;dbl&gt;
+##  1  21.0    6.
+##  2  21.0    6.
+##  3  22.8    4.
+##  4  21.4    6.
+##  5  18.7    8.
+##  6  18.1    6.
+##  7  14.3    8.
+##  8  24.4    4.
+##  9  22.8    4.
+## 10  19.2    6.
+## # ... with 22 more
+## #   rows, and 9
+## #   more variables:
+## #   disp &lt;dbl&gt;,
+## #   hp &lt;dbl&gt;,
+## #   drat &lt;dbl&gt;,
+## #   wt &lt;dbl&gt;,
+## #   qsec &lt;dbl&gt;, ...</code></pre>
+<p>The <code>width</code> is set so that it limits the number of columns displayed (so that we can see the footer with column names).</p>
+<p><br></p>
+</div>
+</div>
+<div id="subsetting-tibble-using-and-." class="section level2">
+<h2>Subsetting tibble using $ and [[.]]</h2>
+<p>Use $ and [[.]] to pull out a single variable.</p>
+<pre class="r"><code>df &lt;- tibble(
+  x = runif(5),
+  y = rnorm(5)
+)
+# Extract by name
+df$x</code></pre>
+<pre><code>## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106</code></pre>
+<pre class="r"><code>df[[&quot;x&quot;]]</code></pre>
+<pre><code>## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106</code></pre>
+<pre class="r"><code># Extract by position
+df[[1]]</code></pre>
+<pre><code>## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106</code></pre>
+<div id="extract-reference-variables-for-subsetting-tibbles" class="section level3">
+<h3>Extract reference variables for subsetting tibbles</h3>
+<p>If you have the name of a variable stored in an object, e.g. <code>var &lt;- &quot;mpg&quot;</code>, you can extract the reference variable from a tibble by using the double bracket, like <code>df[[var]]</code> (instead of df[[“var”]]). You cannot use the dollar sign, because <code>df$var</code> would look for a column named <code>var</code>.</p>
+</div>
+<div id="subsetting-in-a-pipe-using-." class="section level3">
+<h3>Subsetting in a pipe using <strong>.</strong></h3>
+<p>To use these in a pipe, you’ll need to use the special placeholder <strong>.</strong> :</p>
+<pre class="r"><code>df %&gt;% .$x</code></pre>
+<pre><code>## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106</code></pre>
+<pre class="r"><code>df %&gt;% .[[&quot;x&quot;]]</code></pre>
+<pre><code>## [1] 0.51711995 0.05153991 0.63379396 0.58501986 0.65745106</code></pre>
+</div>
+<div id="subset-tibbles-with-nonsyntactic-column-names" class="section level3">
+<h3>Subset tibbles with nonsyntactic column names</h3>
+<p>An <strong>annoying</strong> tibble is defined below:</p>
+<pre class="r"><code>annoying &lt;- tibble(
+  `1` = 1:10,
+  `2` = `1` * 2 + rnorm(length(`1`))
+)</code></pre>
+<ol style="list-style-type: decimal">
+<li>Extracting the variable called 1.</li>
+</ol>
+<pre class="r"><code>annoying$`1` # or</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<pre class="r"><code>annoying[[&quot;1&quot;]]</code></pre>
+<pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10</code></pre>
+<p>Note that the backtick is not used in the tb [[.]].</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Plotting a scatterplot of 1 vs 2.</li>
+</ol>
+<pre class="r"><code>ggplot(data = annoying) +
+  geom_point(mapping = aes(x = `1`, y = `2`))</code></pre>
+<p><img src="/readings/2018-07-02-tibbles_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li>A new column 3 which is 2 divided by 1:</li>
+</ol>
+<pre class="r"><code>annoying3 = annoying %&gt;%
+  mutate(`3` = .[[&quot;2&quot;]]/.[[&quot;1&quot;]])
+
+## or an easier way: insert straight away
+
+annoying4 = annoying
+annoying4[[&quot;3&quot;]] = annoying4[[&quot;2&quot;]]/ annoying4[[&quot;1&quot;]]
+annoying4</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##      `1`   `2`   `3`
+##    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1     1  3.97  3.97
+##  2     2  5.72  2.86
+##  3     3  8.75  2.92
+##  4     4 10.5   2.63
+##  5     5  9.77  1.95
+##  6     6 11.6   1.93
+##  7     7 15.1   2.16
+##  8     8 15.0   1.88
+##  9     9 17.3   1.92
+## 10    10 19.7   1.97</code></pre>
+<pre class="r"><code>## or
+
+annoying5 = annoying
+annoying5$`3`= annoying4[[&quot;2&quot;]]/ annoying4[[&quot;1&quot;]]
+annoying5</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##      `1`   `2`   `3`
+##    &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1     1  3.97  3.97
+##  2     2  5.72  2.86
+##  3     3  8.75  2.92
+##  4     4 10.5   2.63
+##  5     5  9.77  1.95
+##  6     6 11.6   1.93
+##  7     7 15.1   2.16
+##  8     8 15.0   1.88
+##  9     9 17.3   1.92
+## 10    10 19.7   1.97</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="check-if-an-object-is-a-tibble-using-class" class="section level2">
+<h2>Check if an object is a tibble using <code>class()</code></h2>
+<p><code>mtcars</code> is a <code>data.frame</code> object:</p>
+<pre class="r"><code>class(mtcars)</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<p>A <code>tibble</code> object would only show 10 rows and show the type of data in each column. In addition, <code>class(mtcars)</code> shows that it is a dataframe. Additionally, tibbles have class <code>&quot;tbl_df&quot;</code> and <code>&quot;tbl&quot;</code> in addition to <code>&quot;data.frame&quot;</code>:</p>
+<pre class="r"><code>class(as.tibble(mtcars))</code></pre>
+<pre><code>## [1] &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="interacting-with-older-code" class="section level1">
+<h1>Interacting with Older Code</h1>
+<div id="turn-a-tibble-into-dataframe-using-as.data.frame" class="section level2">
+<h2>Turn a tibble into dataframe using <code>as.data.frame()</code></h2>
+<p>Some older functions don’t work with tibbles due to the [ function. [ is not used because <code>dplyr::filter()</code> and <code>dplyr::select()</code> allow you to solve the same problems with clearer code. If you encounter one of these functions, use <code>as.data.frame()</code> to turn a tibble back to a data.frame:</p>
+<pre class="r"><code>class(as.data.frame(tb))</code></pre>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<p><br></p>
+</div>
+<div id="frustrations-caused-by-subsetting-default-data.frame" class="section level2">
+<h2>Frustrations caused by subsetting default <code>data.frame</code></h2>
+<p>Let’s define a <code>df</code> dataframe and perform subsetting operations on it.</p>
+<pre class="r"><code>df &lt;- data.frame(abc = 1, xyz = &quot;a&quot;)
+df$x</code></pre>
+<pre><code>## [1] a
+## Levels: a</code></pre>
+<pre class="r"><code>df[, &quot;xyz&quot;]</code></pre>
+<pre><code>## [1] a
+## Levels: a</code></pre>
+<pre class="r"><code>df[, c(&quot;abc&quot;, &quot;xyz&quot;)]</code></pre>
+<pre><code>##   abc xyz
+## 1   1   a</code></pre>
+<p>First of all, <code>dataframe</code> partially complete a column name such that <code>df$x</code> is the same as <code>df$xyz</code>, posing the possible disaster of calling unintended variables.</p>
+<p>Secondly, the <code>[</code> object returns a vector when there is one colomn but it returns a dataframe if more than one (<code>tibble</code> always return tibbles). These is problematic if you are passing <code>df[, vars]</code>, where the number of variables is unknown. You’d have to write codes to account those situations.</p>
+<p>Let’s compare the similar code but using a tibble instead:</p>
+<pre class="r"><code>tb = as.tibble(df)
+tb$x</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>tb[, &quot;xyz&quot;]</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   xyz  
+##   &lt;fct&gt;
+## 1 a</code></pre>
+<pre class="r"><code>tb[, c(&quot;abc&quot;, &quot;xyz&quot;)]</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##     abc xyz  
+##   &lt;dbl&gt; &lt;fct&gt;
+## 1    1. a</code></pre>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r4ds">r4ds</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r-for-data-science">R for Data Science</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>Related</h3>
+      <ul>
+        
+        <li><a href="/readings/exploratory-data-analysis/">Exploratory Data Analysis (EDA)</a></li>
+        
+        <li><a href="/readings/data-visualization-with-ggplot2/">Data Visualization with ggplot2</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+    <div class="article-widget">
+      <div class="post-nav">
+  
+  
+  <div class="post-nav-item">
+    <div class="meta-nav">Previous</div>
+    <a href="/readings/exploratory-data-analysis/" rel="prev">Exploratory Data Analysis (EDA)</a>
+  </div>
+  
+</div>
+
+    </div>
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+

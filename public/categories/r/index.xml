@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Sat, 30 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 02 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tibbles</title>
+      <link>/readings/tibbles/</link>
+      <pubDate>Mon, 02 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/tibbles/</guid>
+      <description>Creating TibblesCoerce into tibble using as.tibbleNew tibble from individual vectors using tibble()Nonsyntactic column names in tibbleRename column names using rename()Data Entry with transposed tibble: tribble()Convert vectors or lists to two-column data frames using enframeTibbles Versus data.framePrintingDisplay n rows and all columns using print()Control default printing behaviours by setting options()Use RStudios ViewerControl number of column names printed at the footer of a tibble using printSubsetting tibble using $ and [[.</description>
+    </item>
     
     <item>
       <title>Exploratory Data Analysis (EDA)</title>

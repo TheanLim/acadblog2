@@ -1,0 +1,316 @@
+---
+title: Tibbles
+author: Thean Lim
+date: '2018-07-02'
+slug: tibbles
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+summary: Tibbles are tweaked data frames but it works better than the old data.frame. The tibble package will be discussed at here.
+categories:
+  - R
+tags:
+  - r4ds
+  - R for Data Science
+header:
+  caption: ''
+  image: ''
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE, warning = FALSE)
+library(methods)
+library(ggplot2)
+theme_set(theme_light())
+```
+
+** This post is heavily based on [R for Data Science](http://r4ds.had.co.nz/). Please consider to buy that book if you find this post useful.** 
+
+The **tibble** package is part of the **tidyverse** package.  
+
+```{r}
+library (tidyverse)
+```
+
+# Creating Tibbles
+
+## Coerce into tibble using `as.tibble`
+
+Most other R packages use regular data frames, so you might want to coerce a data frame to a tibble. You can do that with `as.tibble()`:  
+
+```{r}
+as.tibble(iris)
+```
+
+<br>
+
+## New tibble from individual vectors using `tibble()`
+
+
+```{r}
+tibble(
+  x = 1:5,
+  y = 1,
+  z = x ^ 2 + y
+)
+```
+
+Observe that the input 1 in column `y` is repeated.  
+
+`tibble()` never changes the type of inputs (i.e, changes strings into factors), never changes the names of the variables, and never create row names, as compared to `data.frame`.  
+
+<br>
+
+## Nonsyntactic column names in tibble
+
+It's possible for a tibble to have column names that are not valid R variable names, aka nonsyntactic names. To refer to these variables, you need to surround them with backticks, `:  
+
+```{r}
+tb <- tibble(
+  `:)` = "smile",
+  ` ` = "space",
+  `2000` = "number"
+)
+tb
+```
+
+
+You'll also need the backticks when working with these variables in other packages, like **ggplot2**,**dplyr**, and **tidyr**.  
+
+<br>
+
+## Rename column names using `rename()`
+
+`new_tb = rename(tibble, new_col_name = old_col_name, ...)`. For example, 
+
+```{r}
+tb_new <- rename(tb, smile = `:)`, space = ` `)
+tb_new
+```
+
+<br>
+
+## Data Entry with transposed tibble: `tribble()`
+
+tribble()` is customized for data entry in code: column headings are defined by formulas (i.e., they start with ~), and entries are separated by commas. This makes it possible to lay out small amounts of data in easy-to-read form:
+
+```{r}
+tribble(
+  ~x, ~y, ~z,
+  #--|--|----
+  "a", 2, 3.6,
+  "b", 1, 8.5
+)
+```
+
+A comment is added to make it clear where the column header is. 
+
+<br>
+
+## Convert vectors or lists to two-column data frames using `enframe`
+
+`enframe(x, name = "name", value = "value")`   
+  
+Example:  
+
+```{r}
+# natural sequence, unnamed vectors
+enframe(1:3)
+
+## named sequence
+enframe(c(a = 5, b = 7))
+enframe(c(a = 1, b = 2, c = 3))
+```
+
+<br>
+
+# Tibbles Versus data.frame
+
+There are two main differences in the usage of a `tibble` versus a classic `data.frame`: printing and subsetting.
+
+## Printing
+
+Tibbles are designed so that you don't accidentally overwhelm your console when you print large data frames. It only shows the first 10 rows, and all the columns that fit on screen. In addition to its name, each column reports its **type**.  
+
+```{r}
+tibble(
+  a = lubridate::now() + runif(1e3) * 86400,
+  b = lubridate::today() + runif(1e3) * 30,
+  c = 1:1e3,
+  d = runif(1e3),
+  e = sample(letters, 1e3, replace = TRUE)
+)
+```
+
+### Display **n** rows and all columns using `print()`
+
+Use `print(n = , width = Inf)` to display `n` rows and display all columns.  
+
+```{r}
+nycflights13::flights %>%
+  print(n = 10, width = Inf)
+```
+
+### Control default printing behaviours by setting `options()`
+
+You can also control the default print behavior by setting options:  
+
+* options`(tibble.print_max = n, tibble.print_min = m)`: print a maximun of `m` rows, and a mininum of `n` rows. Use `options(dplyr.print_min = Inf)` to always show all rows.
+* Use `options(tibble.width = Inf)` to always print all columns, regardless of the width of the screen.
+
+
+### Use RStudios Viewer
+
+```
+nycflights13::flights %>%
+  View()
+```
+
+### Control number of column names printed at the footer of a tibble using `print`
+
+Looking up `?print` tells that `n_extra` argument tells the number of extra columns to print abbreviated information for, if the width is too small for the entire tibble.
+
+```{r}
+print(as_tibble(mtcars), n_extra = 5, width = 20)
+```
+
+The `width` is set so that it limits the number of columns displayed (so that we can see the footer with column names).  
+
+<br>
+
+## Subsetting tibble using $ and [[.]] 
+
+Use $ and [[.]] to pull out a single variable.  
+
+```{r}
+df <- tibble(
+  x = runif(5),
+  y = rnorm(5)
+)
+# Extract by name
+df$x
+df[["x"]]
+
+# Extract by position
+df[[1]]
+```
+
+### Extract reference variables for subsetting tibbles
+
+If you have the name of a variable stored in an object, e.g. `var <- "mpg"`, you can extract the reference variable from a tibble by using the double bracket, like `df[[var]]` (instead of df[["var"]]). You cannot use the dollar sign, because `df$var` would look for a column named `var`.
+
+### Subsetting in a pipe using **.**
+
+To use these in a pipe, you'll need to use the special placeholder **.**  :  
+
+````{r}
+df %>% .$x
+df %>% .[["x"]]
+```
+
+### Subset tibbles with nonsyntactic column names
+
+An **annoying** tibble is defined below:
+
+```{r}
+annoying <- tibble(
+  `1` = 1:10,
+  `2` = `1` * 2 + rnorm(length(`1`))
+)
+```
+
+1. Extracting the variable called 1.
+
+```{r}
+annoying$`1` # or
+annoying[["1"]]
+```
+
+Note that the backtick is not used in the tb [[.]].  
+
+2. Plotting a scatterplot of 1 vs 2.
+
+```{r}
+ggplot(data = annoying) +
+  geom_point(mapping = aes(x = `1`, y = `2`))
+```
+
+3. A new column 3 which is 2 divided by 1:  
+
+```{r}
+annoying3 = annoying %>%
+  mutate(`3` = .[["2"]]/.[["1"]])
+
+## or an easier way: insert straight away
+
+annoying4 = annoying
+annoying4[["3"]] = annoying4[["2"]]/ annoying4[["1"]]
+annoying4
+
+## or
+
+annoying5 = annoying
+annoying5$`3`= annoying4[["2"]]/ annoying4[["1"]]
+annoying5
+```
+
+<br>
+
+## Check if an object is a tibble using `class()`
+
+`mtcars` is a `data.frame` object:
+
+```{r}
+class(mtcars)
+```
+
+A `tibble` object would only show 10 rows and show the type of data in each column. In addition, `class(mtcars)` shows that it is a dataframe. Additionally, tibbles have class `"tbl_df"` and `"tbl"` in addition to `"data.frame"`: 
+
+```{r}
+class(as.tibble(mtcars))
+```
+
+<br>
+
+# Interacting with Older Code
+
+## Turn a tibble into dataframe using `as.data.frame()` 
+
+Some older functions don't work with tibbles due to the [ function. [ is not used because `dplyr::filter()` and `dplyr::select()` allow you to solve the same problems with clearer code. If you encounter one of these functions, use `as.data.frame()` to turn a tibble back to a data.frame:
+
+```{r}
+class(as.data.frame(tb))
+```
+
+<br>
+
+## Frustrations caused by subsetting default `data.frame`
+
+Let's define a `df` dataframe and perform subsetting operations on it.
+
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+```
+
+First of all, `dataframe` partially complete a column name such that `df$x` is the same as `df$xyz`, posing the possible disaster of calling unintended variables.  
+
+Secondly, the `[` object returns a vector when there is one colomn but it returns a dataframe if more than one (`tibble` always return tibbles). These is problematic if you are passing `df[, vars]`, where the number of variables is unknown. You'd have to write codes to account those situations.  
+
+Let's compare the similar code but using a tibble instead:  
+
+```{r}
+tb = as.tibble(df)
+tb$x
+tb[, "xyz"]
+tb[, c("abc", "xyz")]
+```
+ 
+
+
+
