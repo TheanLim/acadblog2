@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Mon, 02 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 09 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Data Import with readr</title>
+      <link>/readings/data-import-with-readr/</link>
+      <pubDate>Mon, 09 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/data-import-with-readr/</guid>
+      <description>The BasicsReading a csv fileSupply inline csvDropping entries automaticallyInsert NA automaticallyNumeric vs Characters type prioritySkipping first n lines with skipSkipping comments using comment = &amp;quot;#&amp;quot; to drop all lines that start with (e.g.) #.Import data without column names using col_names = FALSEPassing a character vector as column namesSpecifying values for missing value using na =Changing quoting character in read_csv using quoteSimilar arguments between read_csv() and read_tsv()Compared to Base RParsing a VectorLocaleNumberUse locale (decimal_mark = ) to solve different decimal marksUse parse_number to ignore nonnumeric characters before and after the numberUse locale and parse_number() to remove grouping marksRelationship between decimal_mark and grouping_markStringSet string encoding using locale(encoding = )Guess text encoding using guess_encoding()Common encodings in Europe and AsiaFactorsDates, Date-Times, and TimesBasic parsing with parse_datetime, parse_date and parse_time,Own date-time formatBuilt-in Non-English month names with locale(date_names = )Customize date and month names using date_namesParsing a FileStrategy used by readrProblems of default file parsingOverwrite the default file parsing specificationOther Strategies to parse filesWriting to a FileWrite to csv fileAlternative file writing methods that preserve data typeOther Types of DataRectangular dataHierarchical Data** This post is heavily based on R for Data Science.</description>
+    </item>
     
     <item>
       <title>Tibbles</title>

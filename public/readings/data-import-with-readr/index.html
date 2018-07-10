@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.38.2" />
+  <meta name="author" content="Thean Lim">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="The BasicsReading a csv fileSupply inline csvDropping entries automaticallyInsert NA automaticallyNumeric vs Characters type prioritySkipping first n lines with skipSkipping comments using comment = &quot;#&quot; to drop all lines that start with (e.g.) #.Import data without column names using col_names = FALSEPassing a character vector as column namesSpecifying values for missing value using na =Changing quoting character in read_csv using quoteSimilar arguments between read_csv() and read_tsv()Compared to Base RParsing a VectorLocaleNumberUse locale (decimal_mark = ) to solve different decimal marksUse parse_number to ignore nonnumeric characters before and after the numberUse locale and parse_number() to remove grouping marksRelationship between decimal_mark and grouping_markStringSet string encoding using locale(encoding = )Guess text encoding using guess_encoding()Common encodings in Europe and AsiaFactorsDates, Date-Times, and TimesBasic parsing with parse_datetime, parse_date and parse_time,Own date-time formatBuilt-in Non-English month names with locale(date_names = )Customize date and month names using date_namesParsing a FileStrategy used by readrProblems of default file parsingOverwrite the default file parsing specificationOther Strategies to parse filesWriting to a FileWrite to csv fileAlternative file writing methods that preserve data typeOther Types of DataRectangular dataHierarchical Data** This post is heavily based on R for Data Science.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/readings/data-import-with-readr/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#0095eb">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css">
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.1/css/academicons.min.css" integrity="sha512-NThgw3XKQ1absAahW6to7Ey42uycrVvfNfyjqcFNgCmOCQ5AR4AO0SiXrN+8ZtYeappp56lk1WtvjVmEa+VR6A==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/styles.css">
+  
+  <link rel="stylesheet" href="/css/blue.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Thean C. Lim">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/readings/data-import-with-readr/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="og:site_name" content="Thean C. Lim">
+  <meta property="og:url" content="/readings/data-import-with-readr/">
+  <meta property="og:title" content="Data Import with readr | Thean C. Lim">
+  <meta property="og:description" content="The BasicsReading a csv fileSupply inline csvDropping entries automaticallyInsert NA automaticallyNumeric vs Characters type prioritySkipping first n lines with skipSkipping comments using comment = &quot;#&quot; to drop all lines that start with (e.g.) #.Import data without column names using col_names = FALSEPassing a character vector as column namesSpecifying values for missing value using na =Changing quoting character in read_csv using quoteSimilar arguments between read_csv() and read_tsv()Compared to Base RParsing a VectorLocaleNumberUse locale (decimal_mark = ) to solve different decimal marksUse parse_number to ignore nonnumeric characters before and after the numberUse locale and parse_number() to remove grouping marksRelationship between decimal_mark and grouping_markStringSet string encoding using locale(encoding = )Guess text encoding using guess_encoding()Common encodings in Europe and AsiaFactorsDates, Date-Times, and TimesBasic parsing with parse_datetime, parse_date and parse_time,Own date-time formatBuilt-in Non-English month names with locale(date_names = )Customize date and month names using date_namesParsing a FileStrategy used by readrProblems of default file parsingOverwrite the default file parsing specificationOther Strategies to parse filesWriting to a FileWrite to csv fileAlternative file writing methods that preserve data typeOther Types of DataRectangular dataHierarchical Data** This post is heavily based on R for Data Science.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-07-09T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-07-09T00:00:00&#43;00:00">
+  
+
+  
+
+  <title>Data Import with readr | Thean C. Lim</title>
+
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "/"
+    },
+    "articleSection" : "readings",
+    "name" : "Data Import with readr",
+    "headline" : "Data Import with readr",
+    "description" : "The BasicsReading a csv fileSupply inline csvDropping entries automaticallyInsert NA automaticallyNumeric vs Characters type prioritySkipping first n lines with skipSkipping comments using comment = &quot;#&quot; to drop all lines that start with (e.g.) #.Import data without column names using col_names = FALSEPassing a character vector as column namesSpecifying values for missing value using na =Changing quoting character in read_csv using quoteSimilar arguments between read_csv() and read_tsv()Compared to Base RParsing a VectorLocaleNumberUse locale (decimal_mark = ) to solve different decimal marksUse parse_number to ignore nonnumeric characters before and after the numberUse locale and parse_number() to remove grouping marksRelationship between decimal_mark and grouping_markStringSet string encoding using locale(encoding = )Guess text encoding using guess_encoding()Common encodings in Europe and AsiaFactorsDates, Date-Times, and TimesBasic parsing with parse_datetime, parse_date and parse_time,Own date-time formatBuilt-in Non-English month names with locale(date_names = )Customize date and month names using date_namesParsing a FileStrategy used by readrProblems of default file parsingOverwrite the default file parsing specificationOther Strategies to parse filesWriting to a FileWrite to csv fileAlternative file writing methods that preserve data typeOther Types of DataRectangular dataHierarchical Data** This post is heavily based on R for Data Science.",
+    "inLanguage" : "en-US",
+    "author" : "",
+    "creator" : "",
+    "publisher": "",
+    "accountablePerson" : "",
+    "copyrightHolder" : "",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-07-09 00:00:00 &#43;0000 UTC",
+    "dateModified" : "2018-07-09 00:00:00 &#43;0000 UTC",
+    "url" : "/readings/data-import-with-readr/",
+    "wordCount" : "4468",
+    "keywords" : [ "R for Data Science","r4ds","Blog" ]
+}
+</script>
+  <title>Data Import with readr | Thean C. Lim</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/">Thean C. Lim</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#projects">
+            
+            <span>Projects</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#readings">
+            
+            <span>Readings</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Data Import with readr</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-07-09 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Mon, Jul 9, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Thean Lim">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    21 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/categories/r">R</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Data%20Import%20with%20readr&amp;url=%2freadings%2fdata-import-with-readr%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2freadings%2fdata-import-with-readr%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2freadings%2fdata-import-with-readr%2f&amp;title=Data%20Import%20with%20readr"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2freadings%2fdata-import-with-readr%2f&amp;title=Data%20Import%20with%20readr"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Data%20Import%20with%20readr&amp;body=%2freadings%2fdata-import-with-readr%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="TOC">
+<ul>
+<li><a href="#the-basics">The Basics</a><ul>
+<li><a href="#reading-a-csv-file">Reading a csv file</a></li>
+<li><a href="#supply-inline-csv">Supply inline csv</a><ul>
+<li><a href="#dropping-entries-automatically">Dropping entries automatically</a></li>
+<li><a href="#insert-na-automatically">Insert NA automatically</a></li>
+<li><a href="#numeric-vs-characters-type-priority">Numeric vs Characters type priority</a></li>
+</ul></li>
+<li><a href="#skipping-first-n-lines-with-skip">Skipping first <code>n</code> lines with <code>skip</code></a></li>
+<li><a href="#skipping-comments-using-comment-to-drop-all-lines-that-start-with-e.g.-.">Skipping comments using <code>comment = &quot;#&quot;</code> to drop all lines that start with (e.g.) <code>#</code>.</a></li>
+<li><a href="#import-data-without-column-names-using-col_names-false">Import data without column names using <code>col_names = FALSE</code></a></li>
+<li><a href="#passing-a-character-vector-as-column-names">Passing a character vector as column names</a></li>
+<li><a href="#specifying-values-for-missing-value-using-na">Specifying values for missing value using <code>na =</code></a></li>
+<li><a href="#changing-quoting-character-in-read_csv-using-quote">Changing quoting character in <code>read_csv</code> using <code>quote</code></a></li>
+<li><a href="#similar-arguments-between-read_csv-and-read_tsv">Similar arguments between <code>read_csv()</code> and <code>read_tsv()</code></a></li>
+</ul></li>
+<li><a href="#compared-to-base-r">Compared to Base R</a></li>
+<li><a href="#parsing-a-vector">Parsing a Vector</a><ul>
+<li><a href="#locale">Locale</a></li>
+<li><a href="#number">Number</a><ul>
+<li><a href="#use-locale-decimal_mark-to-solve-different-decimal-marks">Use <code>locale (decimal_mark = )</code> to solve different decimal marks</a></li>
+<li><a href="#use-parse_number-to-ignore-nonnumeric-characters-before-and-after-the-number">Use <code>parse_number</code> to ignore nonnumeric characters before and after the number</a></li>
+<li><a href="#use-locale-and-parse_number-to-remove-grouping-marks">Use <code>locale</code> and <code>parse_number()</code> to remove grouping marks</a></li>
+<li><a href="#relationship-between-decimal_mark-and-grouping_mark">Relationship between <code>decimal_mark</code> and <code>grouping_mark</code></a></li>
+</ul></li>
+<li><a href="#string">String</a><ul>
+<li><a href="#set-string-encoding-using-localeencoding">Set string encoding using <code>locale(encoding = )</code></a></li>
+<li><a href="#guess-text-encoding-using-guess_encoding">Guess text encoding using <code>guess_encoding()</code></a></li>
+<li><a href="#common-encodings-in-europe-and-asia">Common encodings in Europe and Asia</a></li>
+</ul></li>
+<li><a href="#factors">Factors</a></li>
+<li><a href="#dates-date-times-and-times">Dates, Date-Times, and Times</a><ul>
+<li><a href="#basic-parsing-with-parse_datetime-parse_date-and-parse_time">Basic parsing with <code>parse_datetime</code>, <code>parse_date</code> and <code>parse_time</code>,</a></li>
+<li><a href="#own-date-time-format">Own date-time format</a></li>
+<li><a href="#built-in-non-english-month-names-with-localedate_names">Built-in Non-English month names with <code>locale(date_names =  )</code></a></li>
+<li><a href="#customize-date-and-month-names-using-date_names">Customize date and month names using <code>date_names</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#parsing-a-file">Parsing a File</a><ul>
+<li><a href="#strategy-used-by-readr">Strategy used by <strong>readr</strong></a></li>
+<li><a href="#problems-of-default-file-parsing">Problems of default file parsing</a><ul>
+<li><a href="#overwrite-the-default-file-parsing-specification">Overwrite the default file parsing specification</a></li>
+</ul></li>
+<li><a href="#other-strategies-to-parse-files">Other Strategies to parse files</a></li>
+</ul></li>
+<li><a href="#writing-to-a-file">Writing to a File</a><ul>
+<li><a href="#write-to-csv-file">Write to csv file</a></li>
+<li><a href="#alternative-file-writing-methods-that-preserve-data-type">Alternative file writing methods that preserve data type</a></li>
+</ul></li>
+<li><a href="#other-types-of-data">Other Types of Data</a><ul>
+<li><a href="#rectangular-data">Rectangular data</a></li>
+<li><a href="#hierarchical-data">Hierarchical Data</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>** This post is heavily based on <a href="http://r4ds.had.co.nz/">R for Data Science</a>. Please consider to buy that book if you find this post useful.**</p>
+<p>The <strong>readr</strong> package is part of the <strong>tidyverse</strong> package.</p>
+<div id="the-basics" class="section level1">
+<h1>The Basics</h1>
+<p>Most of <strong>readr</strong>’s functions are concerned with turning flat files into data frames:</p>
+<ul>
+<li><code>read_csv()</code> reads comma-delimited files, <code>read_csv2()</code> reads semicolon-separated files (common in countries where ; is used as the decimal place), <code>read_tsv()</code> reads tab-delimited files, and <code>read_delim()</code> reads in files with any delimiter.
+<ul>
+<li>For example, <code>read_delim(file, delim = &quot;|&quot;)</code> reads a file where fields are separated with “|”.</li>
+</ul></li>
+<li><code>read_fwf()</code> reads fixed-width files. You can specify fields either by their widths with <code>fwf_widths()</code> or their position with <code>fwf_positions()</code>. <code>read_table()</code> reads a common variation of fixed-width files where columns are separated by white space.
+<ul>
+<li>The most important argument to <code>read_fwf</code> which reads “fixed-width formats”, is <code>col_positions</code> which tells the function where data columns begin and end.</li>
+</ul></li>
+<li><code>read_log()</code> reads Apache style log files. (But also check out <strong>webreadr</strong>, which is built on top of <code>read_log()</code> and provides many more helpful tools.)</li>
+</ul>
+<p>These functions all have similar syntax: once you’ve mastered one, you can use the others with ease.</p>
+<div id="reading-a-csv-file" class="section level2">
+<h2>Reading a csv file</h2>
+<p>The <code>read_csv()</code> function will be used as examples. The first argument to read_csv() is the most important; it’s the path to the file to read:</p>
+<pre class="r"><code>heights &lt;- read_csv(&quot;data/heights.csv&quot;)</code></pre>
+<pre><code>## Error: &#39;data/heights.csv&#39; does not exist in current working directory (&#39;C:/Users/mirac/Desktop/Work/acadblog2/content/readings&#39;).</code></pre>
+</div>
+<div id="supply-inline-csv" class="section level2">
+<h2>Supply inline csv</h2>
+<p>You can also supply an inline CSV file.</p>
+<pre class="r"><code>read_csv(&quot;a,b,c
+  1,2,3
+  4,5,6&quot;)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##       a     b     c
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     1     2     3
+## 2     4     5     6</code></pre>
+<p>Pay attention that the entries start and end with <code>&quot;  &quot;</code>. In both cases <code>read_csv()</code> uses the first line of the data for the column names, which is a very common convention.</p>
+<div id="dropping-entries-automatically" class="section level3">
+<h3>Dropping entries automatically</h3>
+<p>Besides, <code>read_csv</code> automatically drops entries that do not have a column name.</p>
+<pre class="r"><code>read_csv(&quot;a,b\n1,2,3\n4,5,6&quot;)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##       a     b
+##   &lt;int&gt; &lt;int&gt;
+## 1     1     2
+## 2     4     5</code></pre>
+</div>
+<div id="insert-na-automatically" class="section level3">
+<h3>Insert NA automatically</h3>
+<p>It also insert NA (missing values) to cell where an expected entry wasn’t entered.</p>
+<pre class="r"><code>read_csv(&quot;a,b,c\n1,2\n1,2,3,4&quot;)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##       a     b     c
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     1     2    NA
+## 2     1     2     3</code></pre>
+<p>The numbers of columns in the data do not match the number of columns in the header (three). In row one, there are only two values, so column <code>c</code> is set to missing. In row two, there is an extra value, and that value is dropped.</p>
+</div>
+<div id="numeric-vs-characters-type-priority" class="section level3">
+<h3>Numeric vs Characters type priority</h3>
+<pre class="r"><code>read_csv(&quot;a,b\n1,2\na,b&quot;)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   a     b    
+##   &lt;chr&gt; &lt;chr&gt;
+## 1 1     2    
+## 2 a     b</code></pre>
+<p>Both “a” and “b” are treated as character vectors since they contain non-numeric strings.</p>
+</div>
+</div>
+<div id="skipping-first-n-lines-with-skip" class="section level2">
+<h2>Skipping first <code>n</code> lines with <code>skip</code></h2>
+<p>Sometimes there are a few lines of metadata at the top of the file. You can use <code>skip = n</code> to skip the first <code>n</code> lines.</p>
+<pre class="r"><code>read_csv(&quot;The first line of metadata
+  The second line of metadata
+  x,y,z
+  1,2,3&quot;, skip = 2)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##       x     y     z
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     1     2     3</code></pre>
+</div>
+<div id="skipping-comments-using-comment-to-drop-all-lines-that-start-with-e.g.-." class="section level2">
+<h2>Skipping comments using <code>comment = &quot;#&quot;</code> to drop all lines that start with (e.g.) <code>#</code>.</h2>
+<pre class="r"><code>read_csv(&quot;# A comment I want to skip
+  x,y,z
+  1,2,3&quot;, comment = &quot;#&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##       x     y     z
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     1     2     3</code></pre>
+</div>
+<div id="import-data-without-column-names-using-col_names-false" class="section level2">
+<h2>Import data without column names using <code>col_names = FALSE</code></h2>
+<p>The data might not have column names. You can use <code>col_names = FALSE</code> to tell <code>read_csv()</code> not to treat the first row as headings, and instead label them sequentially from <code>X1</code> to <code>Xn</code>:</p>
+<pre class="r"><code>read_csv(&quot;1,2,3\n4,5,6&quot;, col_names = FALSE)  ## \n is newline</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##      X1    X2    X3
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     1     2     3
+## 2     4     5     6</code></pre>
+</div>
+<div id="passing-a-character-vector-as-column-names" class="section level2">
+<h2>Passing a character vector as column names</h2>
+<p>Note that the column names are passed as characters or strings:</p>
+<pre class="r"><code>read_csv(&quot;1,2,3\n4,5,6&quot;, col_names = c(&quot;x&quot;, &quot;y&quot;, &quot;z&quot;))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##       x     y     z
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     1     2     3
+## 2     4     5     6</code></pre>
+</div>
+<div id="specifying-values-for-missing-value-using-na" class="section level2">
+<h2>Specifying values for missing value using <code>na =</code></h2>
+<pre class="r"><code>read_csv(&quot;a,b,c\n1,2,.&quot;, na = &quot;.&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##       a     b c    
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;
+## 1     1     2 &lt;NA&gt;</code></pre>
+</div>
+<div id="changing-quoting-character-in-read_csv-using-quote" class="section level2">
+<h2>Changing quoting character in <code>read_csv</code> using <code>quote</code></h2>
+<p>Sometimes strings in a CSV file contain commas. To prevent them from causing problems they need to be surrounded by a quoting character, like &quot; or ’. By convention, <code>read_csv()</code> assumes that the quoting character will be “, and if you want to change it you’ll need to use <code>read_delim()</code> instead. You need to specify the <code>quote</code> argument to read the following text in variable <strong>x</strong> into a data frame using <code>read_csv</code>.</p>
+<pre class="r"><code>x &lt;- &quot;x,y\n1,&#39;a,b&#39;&quot;
+
+read_delim(file = x, delim = &quot;,&quot;, quote = &quot;&#39;&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##       x y    
+##   &lt;int&gt; &lt;chr&gt;
+## 1     1 a,b</code></pre>
+</div>
+<div id="similar-arguments-between-read_csv-and-read_tsv" class="section level2">
+<h2>Similar arguments between <code>read_csv()</code> and <code>read_tsv()</code></h2>
+<p>They have the following arguments in common:</p>
+<pre class="r"><code>union(names(formals(read_csv)), names(formals(read_tsv)))</code></pre>
+<pre><code>##  [1] &quot;file&quot;      &quot;col_names&quot; &quot;col_types&quot; &quot;locale&quot;    &quot;na&quot;       
+##  [6] &quot;quoted_na&quot; &quot;quote&quot;     &quot;comment&quot;   &quot;trim_ws&quot;   &quot;skip&quot;     
+## [11] &quot;n_max&quot;     &quot;guess_max&quot; &quot;progress&quot;</code></pre>
+<ul>
+<li><code>col_names</code> and <code>col_types</code> are used to specify the column names and how to parse the columns</li>
+<li><code>locale</code> is important for determining things like the encoding and whether “.” or “,” is used as a decimal mark.</li>
+<li><code>na</code> and <code>quoted_na</code> control which strings are treated as missing values when parsing vectors</li>
+<li><code>trim_ws</code> trims whitespace before and after cells before parsing</li>
+<li><code>n_max</code> sets how many rows to read</li>
+<li><code>guess_max</code> sets how many rows to use when guessing the column type</li>
+<li><code>progress</code> determines whether a progress bar is shown.</li>
+</ul>
+<p><br></p>
+</div>
+</div>
+<div id="compared-to-base-r" class="section level1">
+<h1>Compared to Base R</h1>
+<p>The Base R provides <code>read.csv</code> instead of <code>read_csv</code>, which is from the <strong>readr</strong> package. There are a few good reasons to favor <strong>readr</strong> functions over the base equivalents:</p>
+<ul>
+<li>They are faster. Long-running jobs have a progress bar, so you can see what’s happening. <code>data.table::fread()</code> doesn’t fit quite so well into the tidyverse, but it can be quite a bit faster.<br />
+</li>
+<li>They produce tibbles, and they don’t convert character vectors to factors, use row names, or munge the column names.<br />
+</li>
+<li>They are more reproducible.</li>
+</ul>
+<p><br></p>
+</div>
+<div id="parsing-a-vector" class="section level1">
+<h1>Parsing a Vector</h1>
+<p><code>parse_*()</code> functions take a character vector and return a more specialized vector like a logical, integer, or date:</p>
+<pre class="r"><code>str(parse_logical(c(&quot;TRUE&quot;, &quot;FALSE&quot;, &quot;NA&quot;)))</code></pre>
+<pre><code>##  logi [1:3] TRUE FALSE NA</code></pre>
+<pre class="r"><code>str(parse_integer(c(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;)))</code></pre>
+<pre><code>##  int [1:3] 1 2 3</code></pre>
+<pre class="r"><code>str(parse_date(c(&quot;2010-01-01&quot;, &quot;1979-10-14&quot;)))</code></pre>
+<pre><code>##  Date[1:2], format: &quot;2010-01-01&quot; &quot;1979-10-14&quot;</code></pre>
+<pre class="r"><code>parse_integer(c(&quot;1&quot;, &quot;231&quot;, &quot;.&quot;, &quot;456&quot;), na = &quot;.&quot;)</code></pre>
+<pre><code>## [1]   1 231  NA 456</code></pre>
+<p><br></p>
+<p>If parsing fails, you’ll get a warning, and the failures will be missing in the output:</p>
+<pre class="r"><code>x &lt;- parse_integer(c(&quot;123&quot;, &quot;345&quot;, &quot;abc&quot;, &quot;123.45&quot;))</code></pre>
+<pre><code>## Warning in rbind(names(probs), probs_f): number of columns of result is not
+## a multiple of vector length (arg 1)</code></pre>
+<pre><code>## Warning: 2 parsing failures.
+## row # A tibble: 2 x 4 col     row   col expected               actual expected   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  &lt;chr&gt;  actual 1     3    NA an integer             abc    row 2     4    NA no trailing characters .45</code></pre>
+<pre class="r"><code>x</code></pre>
+<pre><code>## [1] 123 345  NA  NA
+## attr(,&quot;problems&quot;)
+## # A tibble: 2 x 4
+##     row   col expected               actual
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  &lt;chr&gt; 
+## 1     3    NA an integer             abc   
+## 2     4    NA no trailing characters .45</code></pre>
+<p>If there are many parsing failures, you’ll need to use <code>problems()</code> to get the complete set. This returns a tibble, which you can then manipulate with <strong>dplyr</strong>:</p>
+<pre class="r"><code>problems(x)</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##     row   col expected               actual
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;                  &lt;chr&gt; 
+## 1     3    NA an integer             abc   
+## 2     4    NA no trailing characters .45</code></pre>
+<p>There are eight particularly important parsers:</p>
+<ul>
+<li><code>parse_logical()</code> and <code>parse_integer()</code></li>
+<li><code>parse_double()</code> is a strict numeric parser, and <code>parse_number()</code> is a flexible numeric parser.</li>
+<li><code>parse_character()</code>. Character Encodings make it complicatd.</li>
+<li><code>parse_factor()</code> creates factors</li>
+<li><code>parse_datetime()</code>, <code>parse_date()</code>, and <code>parse_time()</code> allow you to parse various date and time specifications. These are the most complicated because there are so many different ways of writing dates.</li>
+</ul>
+<div id="locale" class="section level2">
+<h2>Locale</h2>
+<p>The <code>locale</code> broadly controls the following:</p>
+<ul>
+<li>date and time formats: <code>date_names</code>, <code>date_format</code>, and <code>time_format</code></li>
+<li>time_zone: <code>tz</code></li>
+<li>numbers: <code>decimal_mark</code>, <code>grouping_mark</code></li>
+<li>encoding: <code>encoding</code></li>
+</ul>
+</div>
+<div id="number" class="section level2">
+<h2>Number</h2>
+<div id="use-locale-decimal_mark-to-solve-different-decimal-marks" class="section level3">
+<h3>Use <code>locale (decimal_mark = )</code> to solve different decimal marks</h3>
+<p>People write numbers differently in different parts of the world. For example, some countries use <strong>.</strong> in between the integer and fractional parts of a real number, while others use <strong>,</strong>.</p>
+<p><code>locale</code> is an object that specifies parsing options that differ from place to place. You can override the default value of <strong>.</strong> by creating a new <code>locale</code> and setting the <code>decimal_mark</code> argument:</p>
+<pre class="r"><code>parse_double(&quot;1.23&quot;)</code></pre>
+<pre><code>## [1] 1.23</code></pre>
+<pre class="r"><code>parse_double(&quot;1,23&quot;, locale = locale(decimal_mark = &quot;,&quot;))</code></pre>
+<pre><code>## [1] 1.23</code></pre>
+</div>
+<div id="use-parse_number-to-ignore-nonnumeric-characters-before-and-after-the-number" class="section level3">
+<h3>Use <code>parse_number</code> to ignore nonnumeric characters before and after the number</h3>
+<p>Numbers are often surrounded by other characters that provide some context, like “$1000” or “10%”. We would want to remove those “context characters” in these cases:</p>
+<pre class="r"><code>parse_number(&quot;$100&quot;)</code></pre>
+<pre><code>## [1] 100</code></pre>
+<pre class="r"><code>parse_number(&quot;20%&quot;)</code></pre>
+<pre><code>## [1] 20</code></pre>
+<pre class="r"><code>parse_number(&quot;It cost $123.45&quot;)</code></pre>
+<pre><code>## [1] 123.45</code></pre>
+<p>Note that <code>parse_number</code> only looks for the first occurence of number. For example, the following only returns 100.</p>
+<pre class="r"><code>parse_number(&quot;$100 and $5000&quot;)</code></pre>
+<pre><code>## [1] 100</code></pre>
+</div>
+<div id="use-locale-and-parse_number-to-remove-grouping-marks" class="section level3">
+<h3>Use <code>locale</code> and <code>parse_number()</code> to remove grouping marks</h3>
+<p>Numbers often contain “grouping” characters to make them easier to read, like “1,000,000”, and these grouping characters vary around the world.</p>
+<pre class="r"><code># Used in America
+parse_number(&quot;$123,456,789&quot;)</code></pre>
+<pre><code>## [1] 123456789</code></pre>
+<pre class="r"><code># Used in many parts of Europe
+parse_number(
+&quot;123.456.789&quot;,
+locale = locale(grouping_mark = &quot;.&quot;)
+)</code></pre>
+<pre><code>## [1] 123456789</code></pre>
+<pre class="r"><code># Used in Switzerland
+parse_number(
+&quot;123&#39;456&#39;789&quot;,
+locale = locale(grouping_mark = &quot;&#39;&quot;)
+)</code></pre>
+<pre><code>## [1] 123456789</code></pre>
+</div>
+<div id="relationship-between-decimal_mark-and-grouping_mark" class="section level3">
+<h3>Relationship between <code>decimal_mark</code> and <code>grouping_mark</code></h3>
+<p>If the decimal and grouping marks are set to the same character, <code>locale</code> throws an error:</p>
+<pre class="r"><code>locale(decimal_mark = &quot;.&quot;, grouping_mark = &quot;.&quot;)</code></pre>
+<pre><code>## Error: `decimal_mark` and `grouping_mark` must be different</code></pre>
+<p>If the <code>decimal_mark</code> is set to the comma “,”, then the <code>grouping_mark</code> is set to the period “.”:</p>
+<pre class="r"><code>locale()</code></pre>
+<pre><code>## &lt;locale&gt;
+## Numbers:  123,456.78
+## Formats:  %AD / %AT
+## Timezone: UTC
+## Encoding: UTF-8
+## &lt;date_names&gt;
+## Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed),
+##         Thursday (Thu), Friday (Fri), Saturday (Sat)
+## Months: January (Jan), February (Feb), March (Mar), April (Apr), May
+##         (May), June (Jun), July (Jul), August (Aug), September
+##         (Sep), October (Oct), November (Nov), December (Dec)
+## AM/PM:  AM/PM</code></pre>
+<pre class="r"><code>## NUmbers: 123,456.78 means that the grouping_marks is &#39;,&#39; and the decimal marks is &#39;.&#39;
+
+locale(decimal_mark = &quot;,&quot;)</code></pre>
+<pre><code>## &lt;locale&gt;
+## Numbers:  123.456,78
+## Formats:  %AD / %AT
+## Timezone: UTC
+## Encoding: UTF-8
+## &lt;date_names&gt;
+## Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed),
+##         Thursday (Thu), Friday (Fri), Saturday (Sat)
+## Months: January (Jan), February (Feb), March (Mar), April (Apr), May
+##         (May), June (Jun), July (Jul), August (Aug), September
+##         (Sep), October (Oct), November (Nov), December (Dec)
+## AM/PM:  AM/PM</code></pre>
+<pre class="r"><code>## Pay attention to the difference between &#39;.&#39; and &#39;,&#39; next to NUmbers</code></pre>
+<p>If the <code>grouping_mark</code> is set to a period, then the <code>decimal_mark</code> is set to a comma:</p>
+<pre class="r"><code>locale(grouping_mark = &quot;.&quot;)</code></pre>
+<pre><code>## &lt;locale&gt;
+## Numbers:  123.456,78
+## Formats:  %AD / %AT
+## Timezone: UTC
+## Encoding: UTF-8
+## &lt;date_names&gt;
+## Days:   Sunday (Sun), Monday (Mon), Tuesday (Tue), Wednesday (Wed),
+##         Thursday (Thu), Friday (Fri), Saturday (Sat)
+## Months: January (Jan), February (Feb), March (Mar), April (Apr), May
+##         (May), June (Jun), July (Jul), August (Aug), September
+##         (Sep), October (Oct), November (Nov), December (Dec)
+## AM/PM:  AM/PM</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="string" class="section level2">
+<h2>String</h2>
+<div id="set-string-encoding-using-localeencoding" class="section level3">
+<h3>Set string encoding using <code>locale(encoding = )</code></h3>
+<p>Today there is one standard that is supported almost everywhere: UTF-8. <strong>readr</strong> uses UTF-8 everywhere: it assumes your data is UTF-8 encoded when you read it, and always uses it when writing. This is a good default, but will fail for data produced by older systems that don’t understand UTF-8. If this happens to you, your strings will look weird when you print them. For example:</p>
+<pre class="r"><code>x1 &lt;- &quot;El Ni\xf1o was particularly bad this year&quot;
+x2 &lt;- &quot;\x82\xb1\x82\xf1\x82\xc9\x82\xbf\x82\xcd&quot;</code></pre>
+<p>To fix the problem you need to specify the encoding in <code>locale</code> of <code>parse_character()</code>:</p>
+<pre class="r"><code>parse_character(x1, locale = locale(encoding = &quot;Latin1&quot;))</code></pre>
+<pre><code>## [1] &quot;El Niño was particularly bad this year&quot;</code></pre>
+<pre class="r"><code>parse_character(x2, locale = locale(encoding = &quot;Shift-JIS&quot;))</code></pre>
+<pre><code>## [1] &quot;&lt;U+3053&gt;&lt;U+3093&gt;&lt;U+306B&gt;&lt;U+3061&gt;&lt;U+306F&gt;&quot;</code></pre>
+</div>
+<div id="guess-text-encoding-using-guess_encoding" class="section level3">
+<h3>Guess text encoding using <code>guess_encoding()</code></h3>
+<p><strong>readr</strong> provides <code>guess_encoding()</code> to help you figure it out which is the correct encoding to be used. The first argument to <code>guess_encoding()</code> can either be a path to a file, or, as in this case, a raw vector.</p>
+<pre class="r"><code>guess_encoding(charToRaw(x1))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   encoding   confidence
+##   &lt;chr&gt;           &lt;dbl&gt;
+## 1 ISO-8859-1      0.460
+## 2 ISO-8859-9      0.230</code></pre>
+<pre class="r"><code>guess_encoding(charToRaw(x2))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   encoding confidence
+##   &lt;chr&gt;         &lt;dbl&gt;
+## 1 KOI8-R        0.420</code></pre>
+<p>In R, <code>charToRaw()</code> get us the underlying representation of a string in a computer:</p>
+<pre class="r"><code>charToRaw(&quot;Hadley&quot;)</code></pre>
+<pre><code>## [1] 48 61 64 6c 65 79</code></pre>
+</div>
+<div id="common-encodings-in-europe-and-asia" class="section level3">
+<h3>Common encodings in Europe and Asia</h3>
+<p>UTF-8 is standard now, and ASCII has been around forever.</p>
+<p>For the European languages, there are separate encodings for Romance languages and Eastern European languages using Latin script, Cyrillic, Greek, Hebrew, Turkish: usually with separate ISO and Windows encoding standards. There is also Mac OS Roman.</p>
+<p>For Asian languages Arabic and Vietnamese have ISO and Windows standards. The other major Asian scripts have their own:</p>
+<ul>
+<li>Japanese: JIS X 0208, Shift JIS, ISO-2022-JP</li>
+<li>Chinese: GB 2312, GBK, GB 18030</li>
+<li>Korean: KS X 1001, EUC-KR, ISO-2022-KR</li>
+</ul>
+<p>The list in the documentation for <code>stringi::stri_enc_detect</code> is a good list of encodings since it supports the most common encodings:</p>
+<ul>
+<li>Western European Latin script languages: ISO-8859-1, Windows-1250 (also CP-1250 for code-point)</li>
+<li>Eastern European Latin script languages: ISO-8859-2, Windows-1252</li>
+<li>Greek: ISO-8859-7</li>
+<li>Turkish: ISO-8859-9, Windows-1254</li>
+<li>Hebrew: ISO-8859-8, IBM424, Windows 1255</li>
+<li>Russian: Windows 1251</li>
+<li>Japanese: Shift JIS, ISO-2022-JP, EUC-JP</li>
+<li>Korean: ISO-2022-KR, EUC-KR</li>
+<li>Chinese: GB18030, ISO-2022-CN (Simplified), Big5 (Traditional)</li>
+<li>Arabic: ISO-8859-6, IBM420, Windows 1256</li>
+</ul>
+<p>For more information on character encodings see the following sources.</p>
+<p>Programs that identify the encoding of text include:</p>
+<ul>
+<li><code>guess_encoding</code> in the <strong>reader</strong> package</li>
+<li><code>str_enc_detect</code> in the <strong>stringi</strong> package</li>
+</ul>
+<p><br></p>
+</div>
+</div>
+<div id="factors" class="section level2">
+<h2>Factors</h2>
+<p>R uses factors to represent categorical variables that have a known set of possible values. Give <code>parse_factor()</code> a vector of known levels to generate a warning whenever an unexpected value is present:</p>
+<pre class="r"><code>fruit &lt;- c(&quot;apple&quot;, &quot;banana&quot;)
+parse_factor(c(&quot;apple&quot;, &quot;banana&quot;, &quot;bananana&quot;), levels = fruit)</code></pre>
+<pre><code>## Warning: 1 parsing failure.
+## row # A tibble: 1 x 4 col     row   col expected           actual   expected   &lt;int&gt; &lt;int&gt; &lt;chr&gt;              &lt;chr&gt;    actual 1     3    NA value in level set bananana</code></pre>
+<pre><code>## [1] apple  banana &lt;NA&gt;  
+## attr(,&quot;problems&quot;)
+## # A tibble: 1 x 4
+##     row   col expected           actual  
+##   &lt;int&gt; &lt;int&gt; &lt;chr&gt;              &lt;chr&gt;   
+## 1     3    NA value in level set bananana
+## Levels: apple banana</code></pre>
+<p>In this case, <code>bananana</code> is not listed in the <code>fruit</code>; an error messaege appears because of that.</p>
+<p>But if you have many problematic entries, it’s often easier to leave them as character vectors and then use the different tools in from package <strong>stringr</strong> and <strong>forcats</strong> to clean them up.</p>
+<p><br></p>
+</div>
+<div id="dates-date-times-and-times" class="section level2">
+<h2>Dates, Date-Times, and Times</h2>
+<div id="basic-parsing-with-parse_datetime-parse_date-and-parse_time" class="section level3">
+<h3>Basic parsing with <code>parse_datetime</code>, <code>parse_date</code> and <code>parse_time</code>,</h3>
+<p>When called without any additional arguments:</p>
+<ul>
+<li><code>parse_datetime()</code> expects an ISO8601 date-time. ISO8601 is an international standard in which the components of a date are organized from biggest to smallest: year, month, day, hour, minute, second. This is the most important date/time standard:</li>
+</ul>
+<pre class="r"><code>parse_datetime(&quot;2010-10-01T201059&quot;)</code></pre>
+<pre><code>## [1] &quot;2010-10-01 20:10:59 UTC&quot;</code></pre>
+<pre class="r"><code># The T in the following code means time
+parse_datetime(&quot;20101010T201059&quot;)</code></pre>
+<pre><code>## [1] &quot;2010-10-10 20:10:59 UTC&quot;</code></pre>
+<pre class="r"><code># If time is omitted, it will be set to midnight
+parse_datetime(&quot;20101010&quot;)</code></pre>
+<pre><code>## [1] &quot;2010-10-10 UTC&quot;</code></pre>
+<ul>
+<li><code>parse_date()</code> expects a four-digit year, a - or /, the month, a - or /, then the day:</li>
+</ul>
+<pre class="r"><code>parse_date(&quot;2010-10-01&quot;)</code></pre>
+<pre><code>## [1] &quot;2010-10-01&quot;</code></pre>
+<pre class="r"><code>parse_date(&quot;2010/10/01&quot;)</code></pre>
+<pre><code>## [1] &quot;2010-10-01&quot;</code></pre>
+<ul>
+<li><ul>
+<li>It is said in the vignette that the <code>date_format</code> from <code>locale()</code> is used for guessing column types. The default date format is <code>%Y-%m-%d</code> because that’s unambiguous:</li>
+</ul></li>
+</ul>
+<pre class="r"><code>parse_date(&quot;2010-10-10&quot;)</code></pre>
+<pre><code>## [1] &quot;2010-10-10&quot;</code></pre>
+<ul>
+<li><ul>
+<li>If you want to read 10/10/2010 (i.e., the American style) instead, you can specify the date format in the <code>parse_date</code> or in the <code>locale</code>:</li>
+</ul></li>
+</ul>
+<pre class="r"><code>parse_date(&quot;10/10/2010&quot;)</code></pre>
+<pre><code>## Warning: 1 parsing failure.
+## row # A tibble: 1 x 4 col     row   col expected     actual     expected   &lt;int&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;      actual 1     1    NA &quot;date like &quot; 10/10/2010</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code>parse_date(&quot;10/10/2010&quot;, locale = locale(date_format = &quot;%d/%m/%Y&quot;))</code></pre>
+<pre><code>## [1] &quot;2010-10-10&quot;</code></pre>
+<ul>
+<li><code>parse_time()</code> from <strong>hms</strong> package expects the hour, :, minutes, optionally : and seconds, and an optional a.m./p.m. specifier:</li>
+</ul>
+<pre class="r"><code>library(hms)
+parse_time(&quot;01:10 am&quot;)</code></pre>
+<pre><code>## 01:10:00</code></pre>
+<pre class="r"><code>parse_time(&quot;20:10:01&quot;)</code></pre>
+<pre><code>## 20:10:01</code></pre>
+</div>
+<div id="own-date-time-format" class="section level3">
+<h3>Own date-time format</h3>
+<p>You can do it in the following way or using <code>locale</code>, as mentioned above:</p>
+<pre class="r"><code>parse_date(&quot;01/02/15&quot;, &quot;%m/%d/%y&quot;) </code></pre>
+<pre><code>## [1] &quot;2015-01-02&quot;</code></pre>
+<pre class="r"><code># or parse_date(&quot;01/02/15&quot;, locale = locale(&quot;%m/%d/%y&quot;))
+
+parse_date(&quot;01/02/15&quot;, &quot;%d/%m/%y&quot;)</code></pre>
+<pre><code>## [1] &quot;2015-02-01&quot;</code></pre>
+<pre class="r"><code>parse_date(&quot;01/02/15&quot;, &quot;%y/%m/%d&quot;)</code></pre>
+<pre><code>## [1] &quot;2001-02-15&quot;</code></pre>
+<p>The following are the pieces:</p>
+<ul>
+<li><em>Year</em>
+<ul>
+<li>%Y (4 digits).</li>
+<li>%y (2 digits; 00-69 –&gt; 2000-2069, 70-99 –&gt; 1970-1999).</li>
+</ul></li>
+<li><em>Month</em>
+<ul>
+<li>%m (2 digits).</li>
+<li>%b (abbreviated name, like “Jan”).</li>
+<li>%B (full name, “January”).</li>
+</ul></li>
+<li><em>Day</em>
+<ul>
+<li>%d (2 digits).</li>
+<li>%e (optional leading space).</li>
+</ul></li>
+<li><em>Time</em>
+<ul>
+<li>%H (0-23 hour format).</li>
+<li>%I (0-12, must be used with %p).</li>
+<li>%p (a.m./p.m. indicator).</li>
+<li>%M (minutes).</li>
+<li>%S (integer seconds).</li>
+<li>%OS (real seconds).</li>
+<li>%Z (time zone [a name, e.g., America/Chicago]). Note: beware of abbreviations. If you’re American, note that “EST” is a Canadian time zone that does not have daylight saving time. It is Eastern Standard Time!</li>
+<li>%z (as offset from UTC, e.g., +0800).</li>
+</ul></li>
+<li><em>Nondigits</em>
+<ul>
+<li>%. (skips one nondigit character).</li>
+<li>%* (skips any number of nondigits).</li>
+</ul></li>
+</ul>
+</div>
+<div id="built-in-non-english-month-names-with-localedate_names" class="section level3">
+<h3>Built-in Non-English month names with <code>locale(date_names =  )</code></h3>
+<p>If you’re using <code>%b</code> or <code>%B</code> with non-English month names, you’ll need to set the lang argument to <code>locale()</code>. See the list of built-in languages in <code>date_names_langs()</code>, or if your language is not already included, create your own with <code>date_names()</code>:</p>
+<pre class="r"><code>parse_date(&quot;1 janvier 2015&quot;, &quot;%d %B %Y&quot;, locale = locale(&quot;fr&quot;))</code></pre>
+<pre><code>## [1] &quot;2015-01-01&quot;</code></pre>
+</div>
+<div id="customize-date-and-month-names-using-date_names" class="section level3">
+<h3>Customize date and month names using <code>date_names</code></h3>
+<p>The following example creates a locale with Maori date names:</p>
+<pre class="r"><code>maori &lt;- locale(date_names(
+  day = c(&quot;Ratapu&quot;, &quot;Rahina&quot;, &quot;Ratu&quot;, &quot;Raapa&quot;, &quot;Rapare&quot;, &quot;Ramere&quot;, &quot;Rahoroi&quot;),
+  mon = c(&quot;Kohi-tatea&quot;, &quot;Hui-tanguru&quot;, &quot;Poutu-te-rangi&quot;, &quot;Paenga-whawha&quot;,
+    &quot;Haratua&quot;, &quot;Pipiri&quot;, &quot;Hongongoi&quot;, &quot;Here-turi-koka&quot;, &quot;Mahuru&quot;,
+    &quot;Whiringa-a-nuku&quot;, &quot;Whiringa-a-rangi&quot;, &quot;Hakihea&quot;)
+))</code></pre>
+<p>The following example creates a locale with Malaysia date names:</p>
+<pre class="r"><code>malaysia &lt;- locale(date_names(
+  day = c(&quot;Isnin&quot;, &quot;Selasa&quot;, &quot;Rabu&quot;, &quot;Khamis&quot;, &quot;Jumaat&quot;, &quot;Sabtu&quot;, &quot;Ahad&quot;),
+  mon = c(&quot;Januari&quot;, &quot;Februari&quot;, &quot;Mac&quot;, &quot;April&quot;,&quot;Mei&quot;,
+    &quot;Jun&quot;, &quot;Julai&quot;, &quot;Ogos&quot;, &quot;September&quot;, &quot;Oktober&quot;,
+    &quot;November&quot;, &quot;Disember&quot;)
+))</code></pre>
+<p><br></p>
+</div>
+</div>
+</div>
+<div id="parsing-a-file" class="section level1">
+<h1>Parsing a File</h1>
+<div id="strategy-used-by-readr" class="section level2">
+<h2>Strategy used by <strong>readr</strong></h2>
+<p><strong>readr</strong> uses a heuristic to figure out the type of each column: it reads the first 1000 rows and uses some (moderately conservative) heuristics to figure out the type of each column. You can emulate this process with a character vector using:</p>
+<ul>
+<li><code>guess_parser()</code>, which returns <strong>readr</strong>’s best guess</li>
+<li><code>parse_guess()</code>, which uses that guess to parse the column</li>
+</ul>
+<pre class="r"><code>guess_parser(&quot;2010-10-01&quot;)</code></pre>
+<pre><code>## [1] &quot;date&quot;</code></pre>
+<pre class="r"><code>guess_parser(&quot;15:01&quot;)</code></pre>
+<pre><code>## [1] &quot;time&quot;</code></pre>
+<pre class="r"><code>guess_parser(c(&quot;TRUE&quot;, &quot;FALSE&quot;))</code></pre>
+<pre><code>## [1] &quot;logical&quot;</code></pre>
+<pre class="r"><code>guess_parser(c(&quot;1&quot;, &quot;5&quot;, &quot;9&quot;))</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<pre class="r"><code>guess_parser(c(&quot;12,352,561&quot;))</code></pre>
+<pre><code>## [1] &quot;number&quot;</code></pre>
+<pre class="r"><code>str(parse_guess(&quot;2010-10-10&quot;))</code></pre>
+<pre><code>##  Date[1:1], format: &quot;2010-10-10&quot;</code></pre>
+<p>The heuristic tries each of the following types, stopping when it finds a match:</p>
+<ul>
+<li><em>logical</em> Contains only “F”, “T”, “FALSE”, or “TRUE”.</li>
+<li><em>integer</em> Contains only numeric characters (and -).</li>
+<li><em>double</em> Contains only valid doubles (including numbers like 4.5e-5).</li>
+<li><em>number</em> Contains valid doubles with the <code>grouping mark</code> inside.</li>
+<li><em>time</em> Matches the default <code>time_format</code>(<code>%Y-%m-%d</code>).</li>
+<li><em>date</em> Matches the default <code>date_format</code> (separate with :).</li>
+<li><em>date-time</em> Any ISO8601 date.</li>
+</ul>
+<p>If none of these rules apply, then the column will stay as a vector of strings.</p>
+</div>
+<div id="problems-of-default-file-parsing" class="section level2">
+<h2>Problems of default file parsing</h2>
+<p>There are two basic problems:</p>
+<ul>
+<li>The first thousand rows might be a special case, and <strong>readr</strong> guesses a type that is not sufficiently general. For example, you might have a column of doubles that only contains integers in the first 1000 rows.</li>
+<li>The column might contain a lot of missing values. If the first 1000 rows contain only NAs, readr will guess that it’s a character vector.</li>
+</ul>
+<p><br></p>
+<p><strong>readr</strong> contains a challenging CSV that illustrates both of these problems. Note the use of <code>readr_example()</code>, which finds the path to one of the files included with the package:</p>
+<pre class="r"><code>challenge &lt;- read_csv(readr_example(&quot;challenge.csv&quot;))</code></pre>
+<pre><code>## Warning in rbind(names(probs), probs_f): number of columns of result is not
+## a multiple of vector length (arg 1)</code></pre>
+<pre><code>## Warning: 1000 parsing failures.
+## row # A tibble: 5 x 5 col     row col   expected               actual             file               expected   &lt;int&gt; &lt;chr&gt; &lt;chr&gt;                  &lt;chr&gt;              &lt;chr&gt;              actual 1  1001 x     no trailing characters .23837975086644292 &#39;C:/Users/mirac/O~ file 2  1002 x     no trailing characters .41167997173033655 &#39;C:/Users/mirac/O~ row 3  1003 x     no trailing characters .7460716762579978  &#39;C:/Users/mirac/O~ col 4  1004 x     no trailing characters .723450553836301   &#39;C:/Users/mirac/O~ expected 5  1005 x     no trailing characters .614524137461558   &#39;C:/Users/mirac/O~
+## ... ................. ... .......................................................................... ........ .......................................................................... ...... .......................................................................... .... .......................................................................... ... .......................................................................... ... .......................................................................... ........ ..........................................................................
+## See problems(...) for more details.</code></pre>
+<p>Use <code>problems()</code> to explore in depth:</p>
+<pre class="r"><code>problems(challenge)</code></pre>
+<pre><code>## # A tibble: 1,000 x 5
+##      row col   expected               actual             file             
+##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt;                  &lt;chr&gt;              &lt;chr&gt;            
+##  1  1001 x     no trailing characters .23837975086644292 &#39;C:/Users/mirac/~
+##  2  1002 x     no trailing characters .41167997173033655 &#39;C:/Users/mirac/~
+##  3  1003 x     no trailing characters .7460716762579978  &#39;C:/Users/mirac/~
+##  4  1004 x     no trailing characters .723450553836301   &#39;C:/Users/mirac/~
+##  5  1005 x     no trailing characters .614524137461558   &#39;C:/Users/mirac/~
+##  6  1006 x     no trailing characters .473980569280684   &#39;C:/Users/mirac/~
+##  7  1007 x     no trailing characters .5784610391128808  &#39;C:/Users/mirac/~
+##  8  1008 x     no trailing characters .2415937229525298  &#39;C:/Users/mirac/~
+##  9  1009 x     no trailing characters .11437866208143532 &#39;C:/Users/mirac/~
+## 10  1010 x     no trailing characters .2983446326106787  &#39;C:/Users/mirac/~
+## # ... with 990 more rows</code></pre>
+<p>Let’s check out the last few rows and you’ll see that they’re dates stored in a character vector in column <code>y</code>:</p>
+<pre class="r"><code>tail(challenge)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##       x y         
+##   &lt;int&gt; &lt;chr&gt;     
+## 1    NA 2019-11-21
+## 2    NA 2018-03-29
+## 3    NA 2014-08-04
+## 4    NA 2015-08-16
+## 5    NA 2020-02-04
+## 6    NA 2019-01-06</code></pre>
+<p>A good strategy is to work column by column until there are no problems remaining. Here we can see that there are a lot of parsing problems with the x column-there are trailing characters after the integer value. That suggests we need to use a double parser instead.</p>
+<div id="overwrite-the-default-file-parsing-specification" class="section level3">
+<h3>Overwrite the default file parsing specification</h3>
+<p>Start with copying the column specification. Remember to add in <code>col_types =</code> Then, tweak the type of the desired column, x:</p>
+<pre class="r"><code>challenge &lt;- read_csv(
+  readr_example(&quot;challenge.csv&quot;),
+  col_types = cols(
+  x = col_double(),
+  y = col_date()
+  )
+)</code></pre>
+<p>Every <code>parse_xyz()</code> function has a corresponding <code>col_xyz()</code> function. You use <code>parse_xyz()</code> when the data is in a character vector in R already; you use <code>col_xyz()</code> when you want to tell readr how to load the data.</p>
+<p>It’s recommended to always supply <code>col_types</code> instead of relying on the default. If you want to be really strict, use <code>stop_for_problems()</code>: that will throw an error and stop your script if there are any parsing problems.</p>
+</div>
+</div>
+<div id="other-strategies-to-parse-files" class="section level2">
+<h2>Other Strategies to parse files</h2>
+<p>There are a few other general strategies to help you parse files:</p>
+<ul>
+<li>Increase the number of <code>guess_max</code>. In the previous example, if we look at just one more row than the default, we can correctly parse in one shot</li>
+</ul>
+<pre class="r"><code>challenge2 &lt;- read_csv(
+                readr_example(&quot;challenge.csv&quot;),
+                guess_max = 1001
+              )</code></pre>
+<ul>
+<li>Read in all the columns as character vectors in conjunction with <code>type_convert()</code>, which applies the parsing heuristics to the character columns in a data frame. This makes problem diagnosis easier:</li>
+</ul>
+<pre class="r"><code>challenge2 &lt;- read_csv(readr_example(&quot;challenge.csv&quot;),
+                col_types = cols(.default = col_character())
+              )
+
+challenge3 &lt;- type_convert(challenge2)
+tail(challenge3)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##       x y         
+##   &lt;dbl&gt; &lt;date&gt;    
+## 1 0.805 2019-11-21
+## 2 0.164 2018-03-29
+## 3 0.472 2014-08-04
+## 4 0.718 2015-08-16
+## 5 0.270 2020-02-04
+## 6 0.608 2019-01-06</code></pre>
+<ul>
+<li>If you’re reading a very large file, you might want to set <code>n_max</code>, maximum number of records to read, to a smallish number like 10,000 or 100,000. That will accelerate your iterations when you eliminate common problems.</li>
+<li>If you’re having major parsing problems, sometimes it’s easier to just read into a character vector of lines with <code>read_lines()</code>, or even a character vector of length 1 with <code>read_file()</code>. Then you can use the string parsing skills you’ll learn later to parse more exotic formats.</li>
+</ul>
+<p><br></p>
+</div>
+</div>
+<div id="writing-to-a-file" class="section level1">
+<h1>Writing to a File</h1>
+<p>The two main functions are: <code>write_csv()</code> and <code>write_tsv()</code>. If you want to export a CSV file to Excel, use <code>write_excel_csv()</code>. Both functions increase the chances of the output file being read back in correctly by:</p>
+<ul>
+<li>Always encoding strings in UTF-8.</li>
+<li>Saving dates and date-times in ISO8601 format so they are easily parsed elsewhere.</li>
+</ul>
+<div id="write-to-csv-file" class="section level2">
+<h2>Write to csv file</h2>
+<p>The arguments for the functions are:<br />
+<code>write_csv(data_frame_to_save, path, na = &quot;NA&quot;, append = FALSE, col_names = !append)</code></p>
+<p>For example:</p>
+<pre><code>write_csv(challenge, &quot;challenge.csv&quot;)</code></pre>
+<p>Note that the <strong>type</strong> information is lost when you save to CSV - you need to re-create the column specification every time you load in.</p>
+</div>
+<div id="alternative-file-writing-methods-that-preserve-data-type" class="section level2">
+<h2>Alternative file writing methods that preserve data type</h2>
+<p>There are two alternatives:</p>
+<ul>
+<li><code>write_rds(</code>) and <code>read_rds()</code> are uniform wrappers around the base functions <code>readRDS()</code> and <code>saveRDS()</code>. These store data in R’s custom binary format called RDS:</li>
+</ul>
+<pre><code>write_rds(challenge, &quot;challenge.rds&quot;)
+read_rds(&quot;challenge.rds&quot;)</code></pre>
+<ul>
+<li>The <strong>feather</strong> package implements a fast binary file format that can be shared across programming languages:</li>
+</ul>
+<pre><code>library(feather)
+write_feather(challenge, &quot;challenge.feather&quot;)
+read_feather(&quot;challenge.feather&quot;)</code></pre>
+<p><strong>feather</strong> tends to be faster than RDS and is usable outside of R. RDS supports list-columns (which you’ll learn about in Chapter 20); <strong>feather</strong> currently does not.</p>
+</div>
+</div>
+<div id="other-types-of-data" class="section level1">
+<h1>Other Types of Data</h1>
+<div id="rectangular-data" class="section level2">
+<h2>Rectangular data</h2>
+<p>For rectangular data:</p>
+<ul>
+<li><strong>haven</strong> reads SPSS, Stata, and SAS files.</li>
+<li><strong>readxl</strong> reads Excel files (both <em>.xls</em> and <em>.xlsx</em>).</li>
+<li><strong>DBI</strong>, along with a database-specific backend (e.g., <strong>RMySQL</strong>, <strong>RSQLite</strong>, <strong>RPostgreSQL</strong>, etc.) allows you to run SQL queries against a database and return a data frame.</li>
+</ul>
+</div>
+<div id="hierarchical-data" class="section level2">
+<h2>Hierarchical Data</h2>
+<p>For hierarchical data: use <strong>jsonlite</strong> (by Jeroen Ooms) for JSON, and <strong>xml2</strong> for XML. Jenny Bryan has some excellent worked examples at <a href="https://jennybc.github.io/purrr-tutorial/" class="uri">https://jennybc.github.io/purrr-tutorial/</a>.</p>
+<p><br></p>
+<p>For other file types, try the <strong>R data import/export manual</strong> and the <strong>rio</strong> package.</p>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r-for-data-science">R for Data Science</a>
+  
+  <a class="btn btn-primary btn-outline" href="/tags/r4ds">r4ds</a>
+  
+</div>
+
+
+
+
+    
+    
+    <div class="article-widget">
+      <div class="hr-light"></div>
+      <h3>Related</h3>
+      <ul>
+        
+        <li><a href="/readings/tibbles/">Tibbles</a></li>
+        
+        <li><a href="/readings/exploratory-data-analysis/">Exploratory Data Analysis (EDA)</a></li>
+        
+        <li><a href="/readings/data-visualization-with-ggplot2/">Data Visualization with ggplot2</a></li>
+        
+      </ul>
+    </div>
+    
+
+    
+    <div class="article-widget">
+      <div class="post-nav">
+  
+  
+  <div class="post-nav-item">
+    <div class="meta-nav">Previous</div>
+    <a href="/readings/tibbles/" rel="prev">Tibbles</a>
+  </div>
+  
+</div>
+
+    </div>
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 Thean Cheat Lim &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML" integrity="sha512-tOav5w1OjvsSJzePRtt2uQPFwBoHt1VZcUq8l8nm5284LEKE9FSJBQryzMBzHxY5P0zRdNqEcpLIRVYFNgu1jw==" crossorigin="anonymous"></script>
+    
+    
+
+  </body>
+</html>
+
