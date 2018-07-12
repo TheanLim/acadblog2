@@ -1,0 +1,556 @@
+---
+title: Tidy Data with tidyr
+author: Thean Lim
+date: '2018-07-12'
+slug: tidy-data-with-tidyr
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+summary: tidy dataset allows R's vectorized nature to shine. Most built-in R functions work with vectors of values. That makes transforming tidy data feel particularly natural. 
+categories:
+  - R
+tags:
+  - r4ds
+  - R for Data Science
+header:
+  caption: ''
+  image: ''
+---
+
+```{r setup, include=FALSE}
+library(knitr); library(tidyverse)
+opts_chunk$set(message = FALSE, warning = FALSE, error = TRUE)
+library(methods)
+library(ggplot2)
+theme_set(theme_light())
+```
+
+** This post is heavily based on [R for Data Science](http://r4ds.had.co.nz/). Please consider to buy that book if you find this post useful.** 
+
+**tidyr**, a member of the core tidyverse, will be used in this chapter.
+
+# Tidy Data
+
+The tidy dataset, will be much easier to work with inside the tidyverse.  
+There are three interrelated rules which make a dataset tidy: 
+
+1. Each variable must have its own column.
+2. Each observation must have its own row.
+3. Each value must have its own cell.  
+
+That interrelationship leads to an even simpler set of practical instructions:
+
+1. Put each dataset in a tibble.
+2. Put each variable in a column.
+
+The two main advantages of tidy data:
+
+1. Due to having a consistent data structure (i.e., tidy data), it's easier to learn the tools that work with it because they have an underlying uniformity.
+2. There's a specific advantage to placing variables in columns because it allows R's vectorized nature to shine. Most built-in R functions work with vectors of values. That makes transforming tidy data feel particularly natural.
+
+All of the packages in the tidyverse are designed to work with tidy data. For example:  
+
+```{r}
+# Compute rate per 10,000
+table1 %>%
+  mutate(rate = cases / population * 10000)
+
+# Compute cases per year
+table1 %>%
+  count(year, wt = cases)
+
+# Visualize changes over time
+library(ggplot2)
+ggplot(table1, aes(year, cases)) +
+  geom_line(aes(group = country), color = "grey50") +
+  geom_point(aes(color = country))
+```
+
+<br>
+
+
+
+
+
+# Spreading and Gathering
+
+Most data that you will encounter will be untidy. There are two main reasons:
+
+1. Most people aren't familiar with the principles of tidy data, and it's hard to derive them yourself unless you spend a lot of time working with data.
+2. Data is often organized to facilitate some use other than analysis. For example, data is often organized to make entry as easy as possible.
+
+Thus, you need to do some tidying for the most of the datasets:
+
+1. Figure out what the variables and observations are.
+2. Resolve one of two common problems using tidyr's `gather()` and `spread()`:
+    i) One variable might be spread across multiple columns. Use `gather()` for this.
+    ii) One observation might be scattered across multiple rows. Use `spread()` for this.
+    
+## Gathering by `gather(data, key, value, cols_selection)`
+
+A common problem is a dataset where some of the column names are not names of variables, but *values* of a variable.  
+
+For example, column names `1999` and `2000` represent *values* of the `year` variable in `table4a`,and each row represents two observations, not one:
+
+```{r}
+table4a
+```
+
+To tidy a dataset like this, we need to *gather* those columns into a new pair of variables.
+
+`gather(data, value_column, key_var_name, spreading_value)`
+
+1. The set of columns that represent *values*, not variables. In this example, those are the columns `1999` and `2000`.
+2. The name of the variable whose *values* form the column names. I call that the key, and here it is `year`.
+3. The name of the variable whose values are spread over the cells. I call that `value`, and here it's the number of `cases`.
+
+```{r}
+table4a %>%
+`gather(`1999`, `2000`, key = "year", value = "cases")
+
+table4b %>%
+  gather(`1999`, `2000`, key = "year", value = "population")
+```
+
+To combine the tidied versions of `table4a` and `table4b` into a single tibble, we need to use **dplyr::left_join()**:
+
+```{r}
+
+tidy4a <- table4a %>%
+  gather(`1999`, `2000`, key = "year", value = "cases")
+tidy4b <- table4b %>%
+  gather(`1999`, `2000`, key = "year", value = "population")
+left_join(tidy4a, tidy4b)
+```
+
+## Spreading with `spread(data, key, value, fill = NA)`
+
+Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. Thus, `spread` and `gather` are complement.
+
+For example, take table2-an observation is a country in a year, but each observation is spread across two rows:
+
+```{r}
+table2
+```
+
+The syntax of spread is:
+
+`spread(dataframe, key = col_name_or_position_of_var, `
+                  `value = cols_with_multiple_vars_values, fill = NA)`
+
+```{r}
+spread(table2, key = type, value = count)
+```
+
+`fill = ` ensures that missing values will be replaced by this value.
+
+`spread()` and `gather()` are complements. `gather()` makes wide tables narrower and longer; `spread()` makes long tables shorter and wider.
+
+### Unique identifiers in `spread`
+
+Spreading this tibble would fail:
+
+```{r, error= TRUE}
+people <- tribble(
+  ~name,             ~key,    ~value,
+  #-----------------|--------|------
+  "Phillip Woods",   "age",       45,
+  "Phillip Woods",   "height",   186,
+  "Phillip Woods",   "age",       50,
+  "Jessica Cordero", "age",       37,
+  "Jessica Cordero", "height",   156
+)
+spread(people, key, value)
+```
+
+Spreading the tibble fails because there are two rows with "age" for "Phillip Woods". We would need to add another column with an indicator for the number observation it is:
+
+```{r}
+people[["id"]] <- c(1,1,2,3,3)
+spread(people, key, value)
+```
+
+## Imperfect symmetrical complement of `spread` and `gather`| unless `convert = TRUE`
+
+For example:
+
+```{r}
+stocks <- tibble(
+  year   = c(2015, 2015, 2016, 2016),
+  half  = c(   1,    2,     1,    2),
+  return = c(1.88, 0.59, 0.92, 0.17)
+)
+stocks %>%
+  spread(year, return) %>%
+  gather("year", "return", `2015`:`2016`)
+```
+
+The functions `spread` and `gather` are not perfectly symmetrical because column type information is not transferred between them. In the original table the column year was numeric, but after running `spread()` and `gather()` it is a character vector. This is because the key variable names are always converted to a character vector by `gather()` or it will be saved as factor if the `factor_key = TRUE`.  
+
+The `convert` argument tries to convert character vectors to the appropriate type. In the background this uses the `type.convert` function.
+
+```{r}
+stocks %>%
+  spread(year, return) %>%
+  gather("year", "return", `2015`:`2016`, convert = TRUE)
+```
+
+<br>
+
+# Separating and Uniting
+
+## Separate by `separate(data, ... = col_to_be_separated, into = new_vars_name)`
+
+`separate()` pulls apart one column into multiple columns, by splitting wherever a separator character appears.     
+
+The `rate` column in **table3** contains both `cases` and `population` variables and we need to split it into two variables.
+
+`separate(data, col_to_be_separated, into = new_vars_name)`
+
+```{r}
+table3 %>%
+  separate(rate, into = c("cases", "population"))
+```
+
+### Type conversion by `convert = TRUE`
+
+Note that the default behavior in `separate()`: it leaves the type of the column as it originally is. However, We can ask `separate()` to try and convert to better types using `convert = TRUE`:
+
+```{r}
+table3 %>%
+  separate(
+    rate,
+    into = c("cases", "population"),
+    convert = TRUE
+  )
+```
+
+### Specific character as split values by `sep = "/"`
+
+By default, `separate()` will split values wherever it sees a nonalphanumeric character (i.e., a character that isn't a number or letter). If you wish to use a specific character to separate a column, you can pass the character to the sep argument of `separate()`.
+
+```{r}
+table3 %>%
+  separate(rate, into = c("cases", "population"), sep = "/")
+```
+
+(Formally, **sep** is a regular expression)  
+
+### Split by vector of integers by `sep = c(2,4)`
+
+You can also pass a vector of integers to **sep**. `separate()` will interpret
+the integers as positions to split at:
+
+* Positive values start at 1 on the far left of the strings; 
+* negative values start at -1 on the far right of the strings.
+
+When using integers to separate strings, the length of **sep** should be one less than the number of names in `into`. For example,
+
+```{r}
+table3 %>%
+  separate(year, into = c("century", "decade", "year"), sep = c(2,3))
+```
+
+### `extra` in `separate`
+
+The `extra` argument tells separate what to do if there are too many pieces.  
+
+For example:  
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j"))
+```
+
+We can see that we have an extra `g`. 
+
+By default `separate` drops the extra values with a warning:
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>%
+  separate(x, c("one", "two", "three"))
+```
+
+The following produces the same result as above, dropping extra values, but without the warning:
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>%
+  separate(x, c("one", "two", "three"), extra = "drop")
+```
+
+In the following, the extra values are not split, so "f,g" appears in column three:  
+
+```{r}
+tibble(x = c("a,b,c", "d,e,f,g", "h,i,j")) %>%
+  separate(x, c("one", "two", "three"), extra = "merge")
+```
+
+### `fill` in `separate`
+
+The `fill` argument tells separate what to do if there aren't enough pieces. Now, let's look at another tibble where we don't have enough entries (`g` is missing in this case): 
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i"))
+```
+
+The default for `fill` is similar to separate; it fills with missing values but emits a warning. In this, row 2 of column "three", is NA:  
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>%
+  separate(x, c("one", "two", "three"))
+```
+
+Alternative options for `fill` are `"right"`, to fill with missing values from the right, but without a warning:  
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>%
+  separate(x, c("one", "two", "three"), fill = "right")
+```
+
+The option `fill = "left"` also fills with missing values without a warning, but this time from the left side. Now, column "one" of row 2 will be missing, and the other values in that row are shifted over:  
+
+```{r}
+tibble(x = c("a,b,c", "d,e", "f,g,i")) %>%
+  separate(x, c("one", "two", "three"), fill = "left")
+```
+
+
+## Unite with `unite(data, col = new_col_name, ... = selection_of_cols, sep = "_", remove = TRUE)`
+
+`unite()` is the inverse of `separate()`: it combines multiple columns into a single column.  
+
+We can use `unite()` to rejoin the *century* and *year* columns in **table5**.  
+
+`unite(data, col = new_col_name,                                                            ... = selection_of_cols, sep = "_", remove = TRUE)`  
+
+`remove` If TRUE, remove input columns from output data frame.
+
+```{r}
+table5 %>%
+  unite(col = new, century, year, sep = "")
+```
+
+## `remove` in `unite()` and `separate()`
+
+Both `unite()` and `separate()` have a remove argument. It will remove the old variables if it is set to `TRUE`. You would set it to `FALSE` if you want to create a new variable while keeping the old one.
+
+<br>
+
+
+
+
+# Missing Values
+
+Surprisingly, a value can be missing in one of two possible ways:
+
+* *Explicitly*, i.e., flagged with NA.
+* *Implicitly*, i.e., simply not present in the data. 
+
+For example:
+
+```{r}
+stocks <- tibble(
+  year = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
+  qtr = c( 1, 2, 3, 4, 2, 3, 4),
+  return = c(1.88, 0.59, 0.35, NA, 0.92, 0.17, 2.66)
+)
+```
+
+There are two missing values in this dataset:
+
+* The return for the fourth quarter of 2015 is explicitly missing, because the cell where its value should be instead contains NA.
+* The return for the first quarter of 2016 is implicitly missing, because it simply does not appear in the dataset.
+
+The way that a dataset is represented can make implicit values explicit. For example, we can make the implicit missing value explicit by putting years in the columns:
+
+```{r}
+stocks %>%
+  spread(year, return)
+```
+
+## Turning explicit to implicit missing values using `na.rm = TRUE`
+
+Because these explicit missing values may not be important in other representations of the data, you can set `na.rm = TRUE` in `gather()` to turn explicit missing values implicit:
+
+```{r}
+stocks %>%
+  spread(year, return) %>%
+  gather(year, return, `2015`:`2016`, na.rm = TRUE)
+```
+
+## Filling in explicit NAs with `complete()`
+
+`complete()` takes a set of columns, and finds all unique combinations. It then ensures the original dataset contains all those values, filling in explicit NAs where necessary:
+
+```{r}
+stocks %>%
+  complete(year, qtr)
+```
+
+## Filling in missing values from recent entries with `fill(data, column)`
+
+When a data source has primarily been used for data entry, missing values may indicate that the previous value should be carried forward:  
+
+```{r}
+treatment <- tribble(
+  ~ person,           ~ treatment, ~response,
+  "Derrick Whitmore", 1,           7,
+  NA,                 2,           10,
+  NA,                 3,           9,
+  "Katherine Burke",  1,           4
+)
+```
+
+You can fill in these missing values with `fill()`. It takes a set of columns where you want missing values to be replaced by the most recent nonmissing value (sometimes called last observation carried forward):  
+
+```{r}
+treatment %>%
+  fill(person)
+```
+
+### `direction` in  `fill()`
+
+`fill(data, ..., .direction = c("down", "up"))`
+
+With `fill`, it determines whether NA values should be replaced by the previous non-missing value (`"down"`), which is the default, or the next non-missing value (`"up"`).
+
+# Comparing the `fill` arguments of `spread()` and `complete()`
+
+``spread(data, key, value, fill = NA` vs `complete(data, ..., fill = list())`
+
+* Both replace both explicit and implicit NA.
+* `spread()`: If the tidy structure creates combinations of variables that do not exist in the original data set, spread() will place an NA in the resulting cells. NA is R's missing value symbol. You can change this behaviour by passing fill an alternative value to use.
+* `complete()` A named list that for each variable supplies a single value to use instead of NA for missing combinations. 
+    + For example:
+    ```{r}
+    df <- tibble(
+                  group = c(1:2, 1),
+                  item_id = c(1:2, 2),
+                  item_name = c("a", "b", "b"),
+                  value1 = 1:3,
+                  value2 = 4:6
+                )
+    
+    ## W/O specifying the fill
+    df %>% complete(group, nesting(item_id, item_name))
+    
+    ## Specify a list for the missing value in value1
+    df %>% complete(group, nesting(item_id, item_name), 
+                    fill = list(value1 = 0))
+    ```
+
+<br>
+# Case study
+
+The **tidyr::who** dataset contains tuberculosis (TB) cases broken down by year, country, age, gender, and diagnosis method. Let' take a look at the dataset:  
+
+```{r}
+who
+```
+
+It contains redundant columns odd variable codes, and many missing values. In short, who is messy, and we'll need multiple steps to tidy it.  
+
+The best place to start is almost always to gather together the columns
+that are not variables. Let's have a look at what we've got:
+
+* It looks like `country`, `iso2`, and `iso3` are three variables that redundantly specify the country.
+* year is clearly also a variable.
+* We don't know what all the other columns are yet, but given the structure in the variable names (e.g., `new_sp_m014`, `new_ep_m014`, `new_ep_f014`) these are likely to be values, not variables.
+
+So we need to gather together all the columns from `new_sp_m014` to `newrel_f65`. We don't know what those values represent yet, so we'll give them the generic name `"key"`. We know the cells represent the count of cases, so we'll use the variable `cases`. There are a lot of missing values in the current representation, so for now we'll use `na.rm` just so we can focus on the values that are present:  
+
+```{r}
+who1 <- who %>%
+          gather(new_sp_m014:newrel_f65,
+                 key = "key", value = "cases",  na.rm = TRUE)
+
+who1
+```
+
+We can get some hint of the structure of the values in the new key column by counting them:
+
+```{r}
+who1 %>%
+  count(key)
+```
+
+The data dictionary tells us:
+1. The first three letters of each column denote whether the column contains new or old cases of TB. In this dataset, each column contains new cases.
+2. The next two letters describe the type of TB:
+    i) `rel` stands for cases of relapse.
+    ii) `ep` stands for cases of extrapulmonary TB.
+    iii) `sn` stands for cases of pulmonary TB that could not be diagnosed by a pulmonary smear (smear negative).
+    iv) `sp` stands for cases of pulmonary TB that could be diagnosed be a pulmonary smear (smear positive).
+3. The sixth letter gives the sex of TB patients. The dataset groups cases by males (m) and females (f).
+4. The remaining numbers give the age group. The dataset groups cases into seven age groups:
+    i) 014 = 0-14 years old
+    ii) 1524 = 15-24 years old
+    iii) 2534 = 25-34 years old
+    iv) 3544 = 35-44 years old
+    v) 4554 = 45-54 years old
+    vi) 5564 = 55-64 years old
+    vii) 65 = 65 or older
+
+We are fixing a minor mistake here: inconsistent column name between `newrel` and `new_rel`.
+
+```{r}
+who2 <- who1 %>%
+  mutate(key = stringr::str_replace(key, "newrel", "new_rel"))
+who2
+```
+
+Then, we separate the **key** into several columns by seperator _ :
+
+```{r}
+who3 <- who2 %>%
+  separate(key, c("new", "type", "sexage"), sep = "_")
+who3
+```
+
+It's found at below that the `new` column is redundant because they are all the same:
+
+```{r}
+who3 %>%
+  count(new)
+```
+
+In addition, `iso2` and `iso3` is redundant because it is tied to country name. We can show that by counting the occurences of unique combination of `country`, `iso2`, and `iso3`; if the occurences is not more than one, then `iso` are uniwue for each country:
+
+```{r}
+who3 %>%
+  select(country, iso2, iso3) %>%
+  distinct() %>%
+  group_by(country) %>% 
+  filter(n()>1)
+```
+
+Let's drop the `new` column alongside with `iso2` and `iso3` since they're redundant:
+
+```{r}
+who4 <- who3 %>%
+  select(-new, - iso2, -iso3)
+```
+
+Then, we separate `sex` and `age` from `sexage` by splitting after the
+first character: 
+
+```{r}
+who5 <- who4%>%
+  separate(sexage, into = c("sex", "age"), sep = 1)
+who5
+```
+
+The dataset is tidy now!
+
+<br>
+
+# Nontidy Data
+
+There are lots of useful and well-founded data structures that are not tidy
+data. There are two main reasons to use other data structures:  
+
+* Alternative representations may have substantial performance or space advantages.
+* Specialized fields have evolved their own conventions for storing data that may be quite different to the conventions of tidy data.
+
+Tidy data should be your choice if your data fits into rectangular structure.

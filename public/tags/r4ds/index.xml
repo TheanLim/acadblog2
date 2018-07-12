@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018 Thean Cheat Lim</copyright>
-    <lastBuildDate>Mon, 09 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/r4ds/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Tidy Data with tidyr</title>
+      <link>/readings/tidy-data-with-tidyr/</link>
+      <pubDate>Thu, 12 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/readings/tidy-data-with-tidyr/</guid>
+      <description>Tidy DataSpreading and GatheringGathering by gather(data, key, value, cols_selection)Spreading with spread(data, key, value, fill = NA)Unique identifiers in spreadImperfect symmetrical complement of spread and gather| unless convert = TRUESeparating and UnitingSeparate by separate(data, ... = col_to_be_separated, into = new_vars_name)Type conversion by convert = TRUESpecific character as split values by sep = &amp;quot;/&amp;quot;Split by vector of integers by sep = c(2,4)extra in separatefill in separateUnite with unite(data, col = new_col_name, .</description>
+    </item>
     
     <item>
       <title>Data Import with readr</title>

@@ -1,0 +1,723 @@
+---
+title: Tidy Data with tidyr
+author: Thean Lim
+date: '2018-07-12'
+slug: tidy-data-with-tidyr
+output:
+  blogdown::html_page:
+    toc: true
+    number_sections: false
+    toc_depth: 3
+summary: tidy dataset allows R's vectorized nature to shine. Most built-in R functions work with vectors of values. That makes transforming tidy data feel particularly natural. 
+categories:
+  - R
+tags:
+  - r4ds
+  - R for Data Science
+header:
+  caption: ''
+  image: ''
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#tidy-data">Tidy Data</a></li>
+<li><a href="#spreading-and-gathering">Spreading and Gathering</a><ul>
+<li><a href="#gathering-by-gatherdata-key-value-cols_selection">Gathering by <code>gather(data, key, value, cols_selection)</code></a></li>
+<li><a href="#spreading-with-spreaddata-key-value-fill-na">Spreading with <code>spread(data, key, value, fill = NA)</code></a><ul>
+<li><a href="#unique-identifiers-in-spread">Unique identifiers in <code>spread</code></a></li>
+</ul></li>
+<li><a href="#imperfect-symmetrical-complement-of-spread-and-gather-unless-convert-true">Imperfect symmetrical complement of <code>spread</code> and <code>gather</code>| unless <code>convert = TRUE</code></a></li>
+</ul></li>
+<li><a href="#separating-and-uniting">Separating and Uniting</a><ul>
+<li><a href="#separate-by-separatedata-...-col_to_be_separated-into-new_vars_name">Separate by <code>separate(data, ... = col_to_be_separated, into = new_vars_name)</code></a><ul>
+<li><a href="#type-conversion-by-convert-true">Type conversion by <code>convert = TRUE</code></a></li>
+<li><a href="#specific-character-as-split-values-by-sep">Specific character as split values by <code>sep = &quot;/&quot;</code></a></li>
+<li><a href="#split-by-vector-of-integers-by-sep-c24">Split by vector of integers by <code>sep = c(2,4)</code></a></li>
+<li><a href="#extra-in-separate"><code>extra</code> in <code>separate</code></a></li>
+<li><a href="#fill-in-separate"><code>fill</code> in <code>separate</code></a></li>
+</ul></li>
+<li><a href="#unite-with-unitedata-col-new_col_name-...-selection_of_cols-sep-_-remove-true">Unite with <code>unite(data, col = new_col_name, ... = selection_of_cols, sep = &quot;_&quot;, remove = TRUE)</code></a></li>
+<li><a href="#remove-in-unite-and-separate"><code>remove</code> in <code>unite()</code> and <code>separate()</code></a></li>
+</ul></li>
+<li><a href="#missing-values">Missing Values</a><ul>
+<li><a href="#turning-explicit-to-implicit-missing-values-using-na.rm-true">Turning explicit to implicit missing values using <code>na.rm = TRUE</code></a></li>
+<li><a href="#filling-in-explicit-nas-with-complete">Filling in explicit NAs with <code>complete()</code></a></li>
+<li><a href="#filling-in-missing-values-from-recent-entries-with-filldata-column">Filling in missing values from recent entries with <code>fill(data, column)</code></a><ul>
+<li><a href="#direction-in-fill"><code>direction</code> in <code>fill()</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#comparing-the-fill-arguments-of-spread-and-complete">Comparing the <code>fill</code> arguments of <code>spread()</code> and <code>complete()</code></a></li>
+<li><a href="#nontidy-data">Nontidy Data</a></li>
+</ul>
+</div>
+
+<p>** This post is heavily based on <a href="http://r4ds.had.co.nz/">R for Data Science</a>. Please consider to buy that book if you find this post useful.**</p>
+<p><strong>tidyr</strong>, a member of the core tidyverse, will be used in this chapter.</p>
+<div id="tidy-data" class="section level1">
+<h1>Tidy Data</h1>
+<p>The tidy dataset, will be much easier to work with inside the tidyverse.<br />
+There are three interrelated rules which make a dataset tidy:</p>
+<ol style="list-style-type: decimal">
+<li>Each variable must have its own column.</li>
+<li>Each observation must have its own row.</li>
+<li>Each value must have its own cell.</li>
+</ol>
+<p>That interrelationship leads to an even simpler set of practical instructions:</p>
+<ol style="list-style-type: decimal">
+<li>Put each dataset in a tibble.</li>
+<li>Put each variable in a column.</li>
+</ol>
+<p>The two main advantages of tidy data:</p>
+<ol style="list-style-type: decimal">
+<li>Due to having a consistent data structure (i.e., tidy data), it’s easier to learn the tools that work with it because they have an underlying uniformity.</li>
+<li>There’s a specific advantage to placing variables in columns because it allows R’s vectorized nature to shine. Most built-in R functions work with vectors of values. That makes transforming tidy data feel particularly natural.</li>
+</ol>
+<p>All of the packages in the tidyverse are designed to work with tidy data. For example:</p>
+<pre class="r"><code># Compute rate per 10,000
+table1 %&gt;%
+  mutate(rate = cases / population * 10000)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   country      year  cases population  rate
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt; &lt;dbl&gt;
+## 1 Afghanistan  1999    745   19987071 0.373
+## 2 Afghanistan  2000   2666   20595360 1.29 
+## 3 Brazil       1999  37737  172006362 2.19 
+## 4 Brazil       2000  80488  174504898 4.61 
+## 5 China        1999 212258 1272915272 1.67 
+## 6 China        2000 213766 1280428583 1.67</code></pre>
+<pre class="r"><code># Compute cases per year
+table1 %&gt;%
+  count(year, wt = cases)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##    year      n
+##   &lt;int&gt;  &lt;int&gt;
+## 1  1999 250740
+## 2  2000 296920</code></pre>
+<pre class="r"><code># Visualize changes over time
+library(ggplot2)
+ggplot(table1, aes(year, cases)) +
+  geom_line(aes(group = country), color = &quot;grey50&quot;) +
+  geom_point(aes(color = country))</code></pre>
+<p><img src="/readings/2018-07-12-tidy-data-with-tidyr_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><br></p>
+</div>
+<div id="spreading-and-gathering" class="section level1">
+<h1>Spreading and Gathering</h1>
+<p>Most data that you will encounter will be untidy. There are two main reasons:</p>
+<ol style="list-style-type: decimal">
+<li>Most people aren’t familiar with the principles of tidy data, and it’s hard to derive them yourself unless you spend a lot of time working with data.</li>
+<li>Data is often organized to facilitate some use other than analysis. For example, data is often organized to make entry as easy as possible.</li>
+</ol>
+<p>Thus, you need to do some tidying for the most of the datasets:</p>
+<ol style="list-style-type: decimal">
+<li>Figure out what the variables and observations are.</li>
+<li>Resolve one of two common problems using tidyr’s <code>gather()</code> and <code>spread()</code>:
+<ol style="list-style-type: lower-roman">
+<li>One variable might be spread across multiple columns. Use <code>gather()</code> for this.</li>
+<li>One observation might be scattered across multiple rows. Use <code>spread()</code> for this.</li>
+</ol></li>
+</ol>
+<div id="gathering-by-gatherdata-key-value-cols_selection" class="section level2">
+<h2>Gathering by <code>gather(data, key, value, cols_selection)</code></h2>
+<p>A common problem is a dataset where some of the column names are not names of variables, but <em>values</em> of a variable.</p>
+<p>For example, column names <code>1999</code> and <code>2000</code> represent <em>values</em> of the <code>year</code> variable in <code>table4a</code>,and each row represents two observations, not one:</p>
+<pre class="r"><code>table4a</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   country     `1999` `2000`
+## * &lt;chr&gt;        &lt;int&gt;  &lt;int&gt;
+## 1 Afghanistan    745   2666
+## 2 Brazil       37737  80488
+## 3 China       212258 213766</code></pre>
+<p>To tidy a dataset like this, we need to <em>gather</em> those columns into a new pair of variables.</p>
+<p><code>gather(data, value_column, key_var_name, spreading_value)</code></p>
+<ol style="list-style-type: decimal">
+<li>The set of columns that represent <em>values</em>, not variables. In this example, those are the columns <code>1999</code> and <code>2000</code>.</li>
+<li>The name of the variable whose <em>values</em> form the column names. I call that the key, and here it is <code>year</code>.</li>
+<li>The name of the variable whose values are spread over the cells. I call that <code>value</code>, and here it’s the number of <code>cases</code>.</li>
+</ol>
+<pre class="r"><code>table4a %&gt;%
+`gather(`1999`, `2000`, key = &quot;year&quot;, value = &quot;cases&quot;)
+
+table4b %&gt;%
+  gather(`1999`, `2000`, key = &quot;year&quot;, value = &quot;population&quot;)</code></pre>
+<pre><code>## Error: &lt;text&gt;:2:10: unexpected numeric constant
+## 1: table4a %&gt;%
+## 2: `gather(`1999
+##             ^</code></pre>
+<p>To combine the tidied versions of <code>table4a</code> and <code>table4b</code> into a single tibble, we need to use <strong>dplyr::left_join()</strong>:</p>
+<pre class="r"><code>tidy4a &lt;- table4a %&gt;%
+  gather(`1999`, `2000`, key = &quot;year&quot;, value = &quot;cases&quot;)
+tidy4b &lt;- table4b %&gt;%
+  gather(`1999`, `2000`, key = &quot;year&quot;, value = &quot;population&quot;)
+left_join(tidy4a, tidy4b)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   country     year   cases population
+##   &lt;chr&gt;       &lt;chr&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan 1999     745   19987071
+## 2 Brazil      1999   37737  172006362
+## 3 China       1999  212258 1272915272
+## 4 Afghanistan 2000    2666   20595360
+## 5 Brazil      2000   80488  174504898
+## 6 China       2000  213766 1280428583</code></pre>
+</div>
+<div id="spreading-with-spreaddata-key-value-fill-na" class="section level2">
+<h2>Spreading with <code>spread(data, key, value, fill = NA)</code></h2>
+<p>Spreading is the opposite of gathering. You use it when an observation is scattered across multiple rows. Thus, <code>spread</code> and <code>gather</code> are complement.</p>
+<p>For example, take table2-an observation is a country in a year, but each observation is spread across two rows:</p>
+<pre class="r"><code>table2</code></pre>
+<pre><code>## # A tibble: 12 x 4
+##    country      year type            count
+##    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;           &lt;int&gt;
+##  1 Afghanistan  1999 cases             745
+##  2 Afghanistan  1999 population   19987071
+##  3 Afghanistan  2000 cases            2666
+##  4 Afghanistan  2000 population   20595360
+##  5 Brazil       1999 cases           37737
+##  6 Brazil       1999 population  172006362
+##  7 Brazil       2000 cases           80488
+##  8 Brazil       2000 population  174504898
+##  9 China        1999 cases          212258
+## 10 China        1999 population 1272915272
+## 11 China        2000 cases          213766
+## 12 China        2000 population 1280428583</code></pre>
+<p>The syntax of spread is:</p>
+<p><code>spread(dataframe, key = col_name_or_position_of_var,</code> <code>value = cols_with_multiple_vars_values, fill = NA)</code></p>
+<pre class="r"><code>spread(table2, key = type, value = count)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   country      year  cases population
+##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583</code></pre>
+<p><code>fill =</code> ensures that missing values will be replaced by this value.</p>
+<p><code>spread()</code> and <code>gather()</code> are complements. <code>gather()</code> makes wide tables narrower and longer; <code>spread()</code> makes long tables shorter and wider.</p>
+<div id="unique-identifiers-in-spread" class="section level3">
+<h3>Unique identifiers in <code>spread</code></h3>
+<p>Spreading this tibble would fail:</p>
+<pre class="r"><code>people &lt;- tribble(
+  ~name,             ~key,    ~value,
+  #-----------------|--------|------
+  &quot;Phillip Woods&quot;,   &quot;age&quot;,       45,
+  &quot;Phillip Woods&quot;,   &quot;height&quot;,   186,
+  &quot;Phillip Woods&quot;,   &quot;age&quot;,       50,
+  &quot;Jessica Cordero&quot;, &quot;age&quot;,       37,
+  &quot;Jessica Cordero&quot;, &quot;height&quot;,   156
+)
+spread(people, key, value)</code></pre>
+<pre><code>## Error: Duplicate identifiers for rows (1, 3)</code></pre>
+<p>Spreading the tibble fails because there are two rows with “age” for “Phillip Woods”. We would need to add another column with an indicator for the number observation it is:</p>
+<pre class="r"><code>people[[&quot;id&quot;]] &lt;- c(1,1,2,3,3)
+spread(people, key, value)</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   name               id   age height
+##   &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Jessica Cordero    3.   37.   156.
+## 2 Phillip Woods      1.   45.   186.
+## 3 Phillip Woods      2.   50.    NA</code></pre>
+</div>
+</div>
+<div id="imperfect-symmetrical-complement-of-spread-and-gather-unless-convert-true" class="section level2">
+<h2>Imperfect symmetrical complement of <code>spread</code> and <code>gather</code>| unless <code>convert = TRUE</code></h2>
+<p>For example:</p>
+<pre class="r"><code>stocks &lt;- tibble(
+  year   = c(2015, 2015, 2016, 2016),
+  half  = c(   1,    2,     1,    2),
+  return = c(1.88, 0.59, 0.92, 0.17)
+)
+stocks %&gt;%
+  spread(year, return) %&gt;%
+  gather(&quot;year&quot;, &quot;return&quot;, `2015`:`2016`)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##    half year  return
+##   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1    1. 2015   1.88 
+## 2    2. 2015   0.590
+## 3    1. 2016   0.920
+## 4    2. 2016   0.170</code></pre>
+<p>The functions <code>spread</code> and <code>gather</code> are not perfectly symmetrical because column type information is not transferred between them. In the original table the column year was numeric, but after running <code>spread()</code> and <code>gather()</code> it is a character vector. This is because the key variable names are always converted to a character vector by <code>gather()</code> or it will be saved as factor if the <code>factor_key = TRUE</code>.</p>
+<p>The <code>convert</code> argument tries to convert character vectors to the appropriate type. In the background this uses the <code>type.convert</code> function.</p>
+<pre class="r"><code>stocks %&gt;%
+  spread(year, return) %&gt;%
+  gather(&quot;year&quot;, &quot;return&quot;, `2015`:`2016`, convert = TRUE)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##    half  year return
+##   &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;
+## 1    1.  2015  1.88 
+## 2    2.  2015  0.590
+## 3    1.  2016  0.920
+## 4    2.  2016  0.170</code></pre>
+<p><br></p>
+</div>
+</div>
+<div id="separating-and-uniting" class="section level1">
+<h1>Separating and Uniting</h1>
+<div id="separate-by-separatedata-...-col_to_be_separated-into-new_vars_name" class="section level2">
+<h2>Separate by <code>separate(data, ... = col_to_be_separated, into = new_vars_name)</code></h2>
+<p><code>separate()</code> pulls apart one column into multiple columns, by splitting wherever a separator character appears.</p>
+<p>The <code>rate</code> column in <strong>table3</strong> contains both <code>cases</code> and <code>population</code> variables and we need to split it into two variables.</p>
+<p><code>separate(data, col_to_be_separated, into = new_vars_name)</code></p>
+<pre class="r"><code>table3 %&gt;%
+  separate(rate, into = c(&quot;cases&quot;, &quot;population&quot;))</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   country      year cases  population
+## * &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     
+## 1 Afghanistan  1999 745    19987071  
+## 2 Afghanistan  2000 2666   20595360  
+## 3 Brazil       1999 37737  172006362 
+## 4 Brazil       2000 80488  174504898 
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583</code></pre>
+<div id="type-conversion-by-convert-true" class="section level3">
+<h3>Type conversion by <code>convert = TRUE</code></h3>
+<p>Note that the default behavior in <code>separate()</code>: it leaves the type of the column as it originally is. However, We can ask <code>separate()</code> to try and convert to better types using <code>convert = TRUE</code>:</p>
+<pre class="r"><code>table3 %&gt;%
+  separate(
+    rate,
+    into = c(&quot;cases&quot;, &quot;population&quot;),
+    convert = TRUE
+  )</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   country      year  cases population
+## * &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;
+## 1 Afghanistan  1999    745   19987071
+## 2 Afghanistan  2000   2666   20595360
+## 3 Brazil       1999  37737  172006362
+## 4 Brazil       2000  80488  174504898
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583</code></pre>
+</div>
+<div id="specific-character-as-split-values-by-sep" class="section level3">
+<h3>Specific character as split values by <code>sep = &quot;/&quot;</code></h3>
+<p>By default, <code>separate()</code> will split values wherever it sees a nonalphanumeric character (i.e., a character that isn’t a number or letter). If you wish to use a specific character to separate a column, you can pass the character to the sep argument of <code>separate()</code>.</p>
+<pre class="r"><code>table3 %&gt;%
+  separate(rate, into = c(&quot;cases&quot;, &quot;population&quot;), sep = &quot;/&quot;)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   country      year cases  population
+## * &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;     
+## 1 Afghanistan  1999 745    19987071  
+## 2 Afghanistan  2000 2666   20595360  
+## 3 Brazil       1999 37737  172006362 
+## 4 Brazil       2000 80488  174504898 
+## 5 China        1999 212258 1272915272
+## 6 China        2000 213766 1280428583</code></pre>
+<p>(Formally, <strong>sep</strong> is a regular expression)</p>
+</div>
+<div id="split-by-vector-of-integers-by-sep-c24" class="section level3">
+<h3>Split by vector of integers by <code>sep = c(2,4)</code></h3>
+<p>You can also pass a vector of integers to <strong>sep</strong>. <code>separate()</code> will interpret the integers as positions to split at:</p>
+<ul>
+<li>Positive values start at 1 on the far left of the strings;</li>
+<li>negative values start at -1 on the far right of the strings.</li>
+</ul>
+<p>When using integers to separate strings, the length of <strong>sep</strong> should be one less than the number of names in <code>into</code>. For example,</p>
+<pre class="r"><code>table3 %&gt;%
+  separate(year, into = c(&quot;century&quot;, &quot;decade&quot;, &quot;year&quot;), sep = c(2,3))</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   country     century decade year  rate             
+## * &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 19      9      9     745/19987071     
+## 2 Afghanistan 20      0      0     2666/20595360    
+## 3 Brazil      19      9      9     37737/172006362  
+## 4 Brazil      20      0      0     80488/174504898  
+## 5 China       19      9      9     212258/1272915272
+## 6 China       20      0      0     213766/1280428583</code></pre>
+</div>
+<div id="extra-in-separate" class="section level3">
+<h3><code>extra</code> in <code>separate</code></h3>
+<p>The <code>extra</code> argument tells separate what to do if there are too many pieces.</p>
+<p>For example:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e,f,g&quot;, &quot;h,i,j&quot;))</code></pre>
+<pre><code>## # A tibble: 3 x 1
+##   x      
+##   &lt;chr&gt;  
+## 1 a,b,c  
+## 2 d,e,f,g
+## 3 h,i,j</code></pre>
+<p>We can see that we have an extra <code>g</code>.</p>
+<p>By default <code>separate</code> drops the extra values with a warning:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e,f,g&quot;, &quot;h,i,j&quot;)) %&gt;%
+  separate(x, c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;))</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   one   two   three
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 a     b     c    
+## 2 d     e     f    
+## 3 h     i     j</code></pre>
+<p>The following produces the same result as above, dropping extra values, but without the warning:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e,f,g&quot;, &quot;h,i,j&quot;)) %&gt;%
+  separate(x, c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;), extra = &quot;drop&quot;)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   one   two   three
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 a     b     c    
+## 2 d     e     f    
+## 3 h     i     j</code></pre>
+<p>In the following, the extra values are not split, so “f,g” appears in column three:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e,f,g&quot;, &quot;h,i,j&quot;)) %&gt;%
+  separate(x, c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;), extra = &quot;merge&quot;)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   one   two   three
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 a     b     c    
+## 2 d     e     f,g  
+## 3 h     i     j</code></pre>
+</div>
+<div id="fill-in-separate" class="section level3">
+<h3><code>fill</code> in <code>separate</code></h3>
+<p>The <code>fill</code> argument tells separate what to do if there aren’t enough pieces. Now, let’s look at another tibble where we don’t have enough entries (<code>g</code> is missing in this case):</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e&quot;, &quot;f,g,i&quot;))</code></pre>
+<pre><code>## # A tibble: 3 x 1
+##   x    
+##   &lt;chr&gt;
+## 1 a,b,c
+## 2 d,e  
+## 3 f,g,i</code></pre>
+<p>The default for <code>fill</code> is similar to separate; it fills with missing values but emits a warning. In this, row 2 of column “three”, is NA:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e&quot;, &quot;f,g,i&quot;)) %&gt;%
+  separate(x, c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;))</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   one   two   three
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 a     b     c    
+## 2 d     e     &lt;NA&gt; 
+## 3 f     g     i</code></pre>
+<p>Alternative options for <code>fill</code> are <code>&quot;right&quot;</code>, to fill with missing values from the right, but without a warning:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e&quot;, &quot;f,g,i&quot;)) %&gt;%
+  separate(x, c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;), fill = &quot;right&quot;)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   one   two   three
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 a     b     c    
+## 2 d     e     &lt;NA&gt; 
+## 3 f     g     i</code></pre>
+<p>The option <code>fill = &quot;left&quot;</code> also fills with missing values without a warning, but this time from the left side. Now, column “one” of row 2 will be missing, and the other values in that row are shifted over:</p>
+<pre class="r"><code>tibble(x = c(&quot;a,b,c&quot;, &quot;d,e&quot;, &quot;f,g,i&quot;)) %&gt;%
+  separate(x, c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;), fill = &quot;left&quot;)</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   one   two   three
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 a     b     c    
+## 2 &lt;NA&gt;  d     e    
+## 3 f     g     i</code></pre>
+</div>
+</div>
+<div id="unite-with-unitedata-col-new_col_name-...-selection_of_cols-sep-_-remove-true" class="section level2">
+<h2>Unite with <code>unite(data, col = new_col_name, ... = selection_of_cols, sep = &quot;_&quot;, remove = TRUE)</code></h2>
+<p><code>unite()</code> is the inverse of <code>separate()</code>: it combines multiple columns into a single column.</p>
+<p>We can use <code>unite()</code> to rejoin the <em>century</em> and <em>year</em> columns in <strong>table5</strong>.</p>
+<p><code>unite(data, col = new_col_name,                                                            ... = selection_of_cols, sep = &quot;_&quot;, remove = TRUE)</code></p>
+<p><code>remove</code> If TRUE, remove input columns from output data frame.</p>
+<pre class="r"><code>table5 %&gt;%
+  unite(col = new, century, year, sep = &quot;&quot;)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   country     new   rate             
+##   &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;            
+## 1 Afghanistan 1999  745/19987071     
+## 2 Afghanistan 2000  2666/20595360    
+## 3 Brazil      1999  37737/172006362  
+## 4 Brazil      2000  80488/174504898  
+## 5 China       1999  212258/1272915272
+## 6 China       2000  213766/1280428583</code></pre>
+</div>
+<div id="remove-in-unite-and-separate" class="section level2">
+<h2><code>remove</code> in <code>unite()</code> and <code>separate()</code></h2>
+<p>Both <code>unite()</code> and <code>separate()</code> have a remove argument. It will remove the old variables if it is set to <code>TRUE</code>. You would set it to <code>FALSE</code> if you want to create a new variable while keeping the old one.</p>
+<p><br></p>
+</div>
+</div>
+<div id="missing-values" class="section level1">
+<h1>Missing Values</h1>
+<p>Surprisingly, a value can be missing in one of two possible ways:</p>
+<ul>
+<li><em>Explicitly</em>, i.e., flagged with NA.</li>
+<li><em>Implicitly</em>, i.e., simply not present in the data.</li>
+</ul>
+<p>For example:</p>
+<pre class="r"><code>stocks &lt;- tibble(
+  year = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
+  qtr = c( 1, 2, 3, 4, 2, 3, 4),
+  return = c(1.88, 0.59, 0.35, NA, 0.92, 0.17, 2.66)
+)</code></pre>
+<p>There are two missing values in this dataset:</p>
+<ul>
+<li>The return for the fourth quarter of 2015 is explicitly missing, because the cell where its value should be instead contains NA.</li>
+<li>The return for the first quarter of 2016 is implicitly missing, because it simply does not appear in the dataset.</li>
+</ul>
+<p>The way that a dataset is represented can make implicit values explicit. For example, we can make the implicit missing value explicit by putting years in the columns:</p>
+<pre class="r"><code>stocks %&gt;%
+  spread(year, return)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##     qtr `2015` `2016`
+##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1    1.  1.88  NA    
+## 2    2.  0.590  0.920
+## 3    3.  0.350  0.170
+## 4    4. NA      2.66</code></pre>
+<div id="turning-explicit-to-implicit-missing-values-using-na.rm-true" class="section level2">
+<h2>Turning explicit to implicit missing values using <code>na.rm = TRUE</code></h2>
+<p>Because these explicit missing values may not be important in other representations of the data, you can set <code>na.rm = TRUE</code> in <code>gather()</code> to turn explicit missing values implicit:</p>
+<pre class="r"><code>stocks %&gt;%
+  spread(year, return) %&gt;%
+  gather(year, return, `2015`:`2016`, na.rm = TRUE)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##     qtr year  return
+## * &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1    1. 2015   1.88 
+## 2    2. 2015   0.590
+## 3    3. 2015   0.350
+## 4    2. 2016   0.920
+## 5    3. 2016   0.170
+## 6    4. 2016   2.66</code></pre>
+</div>
+<div id="filling-in-explicit-nas-with-complete" class="section level2">
+<h2>Filling in explicit NAs with <code>complete()</code></h2>
+<p><code>complete()</code> takes a set of columns, and finds all unique combinations. It then ensures the original dataset contains all those values, filling in explicit NAs where necessary:</p>
+<pre class="r"><code>stocks %&gt;%
+  complete(year, qtr)</code></pre>
+<pre><code>## # A tibble: 8 x 3
+##    year   qtr return
+##   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 2015.    1.  1.88 
+## 2 2015.    2.  0.590
+## 3 2015.    3.  0.350
+## 4 2015.    4. NA    
+## 5 2016.    1. NA    
+## 6 2016.    2.  0.920
+## 7 2016.    3.  0.170
+## 8 2016.    4.  2.66</code></pre>
+</div>
+<div id="filling-in-missing-values-from-recent-entries-with-filldata-column" class="section level2">
+<h2>Filling in missing values from recent entries with <code>fill(data, column)</code></h2>
+<p>When a data source has primarily been used for data entry, missing values may indicate that the previous value should be carried forward:</p>
+<pre class="r"><code>treatment &lt;- tribble(
+  ~ person,           ~ treatment, ~response,
+  &quot;Derrick Whitmore&quot;, 1,           7,
+  NA,                 2,           10,
+  NA,                 3,           9,
+  &quot;Katherine Burke&quot;,  1,           4
+)</code></pre>
+<p>You can fill in these missing values with <code>fill()</code>. It takes a set of columns where you want missing values to be replaced by the most recent nonmissing value (sometimes called last observation carried forward):</p>
+<pre class="r"><code>treatment %&gt;%
+  fill(person)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   person           treatment response
+##   &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Derrick Whitmore        1.       7.
+## 2 Derrick Whitmore        2.      10.
+## 3 Derrick Whitmore        3.       9.
+## 4 Katherine Burke         1.       4.</code></pre>
+<div id="direction-in-fill" class="section level3">
+<h3><code>direction</code> in <code>fill()</code></h3>
+<p><code>fill(data, ..., .direction = c(&quot;down&quot;, &quot;up&quot;))</code></p>
+<p>With <code>fill</code>, it determines whether NA values should be replaced by the previous non-missing value (<code>&quot;down&quot;</code>), which is the default, or the next non-missing value (<code>&quot;up&quot;</code>).</p>
+</div>
+</div>
+</div>
+<div id="comparing-the-fill-arguments-of-spread-and-complete" class="section level1">
+<h1>Comparing the <code>fill</code> arguments of <code>spread()</code> and <code>complete()</code></h1>
+<p>`<code>spread(data, key, value, fill = NA</code> vs <code>complete(data, ..., fill = list())</code></p>
+<ul>
+<li>Both replace both explicit and implicit NA.</li>
+<li><code>spread()</code>: If the tidy structure creates combinations of variables that do not exist in the original data set, spread() will place an NA in the resulting cells. NA is R’s missing value symbol. You can change this behaviour by passing fill an alternative value to use.</li>
+<li><code>complete()</code> A named list that for each variable supplies a single value to use instead of NA for missing combinations.
+<ul>
+<li>For example:</li>
+</ul>
+<pre class="r"><code>df &lt;- tibble(
+              group = c(1:2, 1),
+              item_id = c(1:2, 2),
+              item_name = c(&quot;a&quot;, &quot;b&quot;, &quot;b&quot;),
+              value1 = 1:3,
+              value2 = 4:6
+            )
+
+## W/O specifying the fill
+df %&gt;% complete(group, nesting(item_id, item_name))</code></pre>
+<pre><code>## # A tibble: 4 x 5
+##   group item_id item_name value1 value2
+##   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt;  &lt;int&gt;
+## 1    1.      1. a              1      4
+## 2    1.      2. b              3      6
+## 3    2.      1. a             NA     NA
+## 4    2.      2. b              2      5</code></pre>
+<pre class="r"><code>## Specify a list for the missing value in value1
+df %&gt;% complete(group, nesting(item_id, item_name), 
+                fill = list(value1 = 0))</code></pre>
+<pre><code>## # A tibble: 4 x 5
+##   group item_id item_name value1 value2
+##   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;  &lt;int&gt;
+## 1    1.      1. a             1.      4
+## 2    1.      2. b             3.      6
+## 3    2.      1. a             0.     NA
+## 4    2.      2. b             2.      5</code></pre></li>
+</ul>
+<p><br> # Case study</p>
+<p>The <strong>tidyr::who</strong> dataset contains tuberculosis (TB) cases broken down by year, country, age, gender, and diagnosis method. Let’ take a look at the dataset:</p>
+<pre class="r"><code>who</code></pre>
+<pre><code>## # A tibble: 7,240 x 60
+##    country     iso2  iso3   year new_sp_m014 new_sp_m1524 new_sp_m2534
+##    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt;       &lt;int&gt;        &lt;int&gt;        &lt;int&gt;
+##  1 Afghanistan AF    AFG    1980          NA           NA           NA
+##  2 Afghanistan AF    AFG    1981          NA           NA           NA
+##  3 Afghanistan AF    AFG    1982          NA           NA           NA
+##  4 Afghanistan AF    AFG    1983          NA           NA           NA
+##  5 Afghanistan AF    AFG    1984          NA           NA           NA
+##  6 Afghanistan AF    AFG    1985          NA           NA           NA
+##  7 Afghanistan AF    AFG    1986          NA           NA           NA
+##  8 Afghanistan AF    AFG    1987          NA           NA           NA
+##  9 Afghanistan AF    AFG    1988          NA           NA           NA
+## 10 Afghanistan AF    AFG    1989          NA           NA           NA
+## # ... with 7,230 more rows, and 53 more variables: new_sp_m3544 &lt;int&gt;,
+## #   new_sp_m4554 &lt;int&gt;, new_sp_m5564 &lt;int&gt;, new_sp_m65 &lt;int&gt;,
+## #   new_sp_f014 &lt;int&gt;, new_sp_f1524 &lt;int&gt;, new_sp_f2534 &lt;int&gt;,
+## #   new_sp_f3544 &lt;int&gt;, new_sp_f4554 &lt;int&gt;, new_sp_f5564 &lt;int&gt;,
+## #   new_sp_f65 &lt;int&gt;, new_sn_m014 &lt;int&gt;, new_sn_m1524 &lt;int&gt;,
+## #   new_sn_m2534 &lt;int&gt;, new_sn_m3544 &lt;int&gt;, new_sn_m4554 &lt;int&gt;,
+## #   new_sn_m5564 &lt;int&gt;, new_sn_m65 &lt;int&gt;, new_sn_f014 &lt;int&gt;,
+## #   new_sn_f1524 &lt;int&gt;, new_sn_f2534 &lt;int&gt;, new_sn_f3544 &lt;int&gt;,
+## #   new_sn_f4554 &lt;int&gt;, new_sn_f5564 &lt;int&gt;, new_sn_f65 &lt;int&gt;,
+## #   new_ep_m014 &lt;int&gt;, new_ep_m1524 &lt;int&gt;, new_ep_m2534 &lt;int&gt;,
+## #   new_ep_m3544 &lt;int&gt;, new_ep_m4554 &lt;int&gt;, new_ep_m5564 &lt;int&gt;,
+## #   new_ep_m65 &lt;int&gt;, new_ep_f014 &lt;int&gt;, new_ep_f1524 &lt;int&gt;,
+## #   new_ep_f2534 &lt;int&gt;, new_ep_f3544 &lt;int&gt;, new_ep_f4554 &lt;int&gt;,
+## #   new_ep_f5564 &lt;int&gt;, new_ep_f65 &lt;int&gt;, newrel_m014 &lt;int&gt;,
+## #   newrel_m1524 &lt;int&gt;, newrel_m2534 &lt;int&gt;, newrel_m3544 &lt;int&gt;,
+## #   newrel_m4554 &lt;int&gt;, newrel_m5564 &lt;int&gt;, newrel_m65 &lt;int&gt;,
+## #   newrel_f014 &lt;int&gt;, newrel_f1524 &lt;int&gt;, newrel_f2534 &lt;int&gt;,
+## #   newrel_f3544 &lt;int&gt;, newrel_f4554 &lt;int&gt;, newrel_f5564 &lt;int&gt;,
+## #   newrel_f65 &lt;int&gt;</code></pre>
+<p>It contains redundant columns odd variable codes, and many missing values. In short, who is messy, and we’ll need multiple steps to tidy it.</p>
+<p>The best place to start is almost always to gather together the columns that are not variables. Let’s have a look at what we’ve got:</p>
+<ul>
+<li>It looks like <code>country</code>, <code>iso2</code>, and <code>iso3</code> are three variables that redundantly specify the country.</li>
+<li>year is clearly also a variable.</li>
+<li>We don’t know what all the other columns are yet, but given the structure in the variable names (e.g., <code>new_sp_m014</code>, <code>new_ep_m014</code>, <code>new_ep_f014</code>) these are likely to be values, not variables.</li>
+</ul>
+<p>So we need to gather together all the columns from <code>new_sp_m014</code> to <code>newrel_f65</code>. We don’t know what those values represent yet, so we’ll give them the generic name <code>&quot;key&quot;</code>. We know the cells represent the count of cases, so we’ll use the variable <code>cases</code>. There are a lot of missing values in the current representation, so for now we’ll use <code>na.rm</code> just so we can focus on the values that are present:</p>
+<pre class="r"><code>who1 &lt;- who %&gt;%
+          gather(new_sp_m014:newrel_f65,
+                 key = &quot;key&quot;, value = &quot;cases&quot;,  na.rm = TRUE)
+
+who1</code></pre>
+<pre><code>## # A tibble: 76,046 x 6
+##    country     iso2  iso3   year key         cases
+##  * &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt;       &lt;int&gt;
+##  1 Afghanistan AF    AFG    1997 new_sp_m014     0
+##  2 Afghanistan AF    AFG    1998 new_sp_m014    30
+##  3 Afghanistan AF    AFG    1999 new_sp_m014     8
+##  4 Afghanistan AF    AFG    2000 new_sp_m014    52
+##  5 Afghanistan AF    AFG    2001 new_sp_m014   129
+##  6 Afghanistan AF    AFG    2002 new_sp_m014    90
+##  7 Afghanistan AF    AFG    2003 new_sp_m014   127
+##  8 Afghanistan AF    AFG    2004 new_sp_m014   139
+##  9 Afghanistan AF    AFG    2005 new_sp_m014   151
+## 10 Afghanistan AF    AFG    2006 new_sp_m014   193
+## # ... with 76,036 more rows</code></pre>
+<p>We can get some hint of the structure of the values in the new key column by counting them:</p>
+<pre class="r"><code>who1 %&gt;%
+  count(key)</code></pre>
+<pre><code>## # A tibble: 56 x 2
+##    key              n
+##    &lt;chr&gt;        &lt;int&gt;
+##  1 new_ep_f014   1032
+##  2 new_ep_f1524  1021
+##  3 new_ep_f2534  1021
+##  4 new_ep_f3544  1021
+##  5 new_ep_f4554  1017
+##  6 new_ep_f5564  1017
+##  7 new_ep_f65    1014
+##  8 new_ep_m014   1038
+##  9 new_ep_m1524  1026
+## 10 new_ep_m2534  1020
+## # ... with 46 more rows</code></pre>
+<p>The data dictionary tells us: 1. The first three letters of each column denote whether the column contains new or old cases of TB. In this dataset, each column contains new cases. 2. The next two letters describe the type of TB: i) <code>rel</code> stands for cases of relapse. ii) <code>ep</code> stands for cases of extrapulmonary TB. iii) <code>sn</code> stands for cases of pulmonary TB that could not be diagnosed by a pulmonary smear (smear negative). iv) <code>sp</code> stands for cases of pulmonary TB that could be diagnosed be a pulmonary smear (smear positive). 3. The sixth letter gives the sex of TB patients. The dataset groups cases by males (m) and females (f). 4. The remaining numbers give the age group. The dataset groups cases into seven age groups: i) 014 = 0-14 years old ii) 1524 = 15-24 years old iii) 2534 = 25-34 years old iv) 3544 = 35-44 years old v) 4554 = 45-54 years old vi) 5564 = 55-64 years old vii) 65 = 65 or older</p>
+<p>We are fixing a minor mistake here: inconsistent column name between <code>newrel</code> and <code>new_rel</code>.</p>
+<pre class="r"><code>who2 &lt;- who1 %&gt;%
+  mutate(key = stringr::str_replace(key, &quot;newrel&quot;, &quot;new_rel&quot;))
+who2</code></pre>
+<pre><code>## # A tibble: 76,046 x 6
+##    country     iso2  iso3   year key         cases
+##    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt;       &lt;int&gt;
+##  1 Afghanistan AF    AFG    1997 new_sp_m014     0
+##  2 Afghanistan AF    AFG    1998 new_sp_m014    30
+##  3 Afghanistan AF    AFG    1999 new_sp_m014     8
+##  4 Afghanistan AF    AFG    2000 new_sp_m014    52
+##  5 Afghanistan AF    AFG    2001 new_sp_m014   129
+##  6 Afghanistan AF    AFG    2002 new_sp_m014    90
+##  7 Afghanistan AF    AFG    2003 new_sp_m014   127
+##  8 Afghanistan AF    AFG    2004 new_sp_m014   139
+##  9 Afghanistan AF    AFG    2005 new_sp_m014   151
+## 10 Afghanistan AF    AFG    2006 new_sp_m014   193
+## # ... with 76,036 more rows</code></pre>
+<p>Then, we separate the <strong>key</strong> into several columns by seperator _ :</p>
+<pre class="r"><code>who3 &lt;- who2 %&gt;%
+  separate(key, c(&quot;new&quot;, &quot;type&quot;, &quot;sexage&quot;), sep = &quot;_&quot;)
+who3</code></pre>
+<pre><code>## # A tibble: 76,046 x 8
+##    country     iso2  iso3   year new   type  sexage cases
+##    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;int&gt;
+##  1 Afghanistan AF    AFG    1997 new   sp    m014       0
+##  2 Afghanistan AF    AFG    1998 new   sp    m014      30
+##  3 Afghanistan AF    AFG    1999 new   sp    m014       8
+##  4 Afghanistan AF    AFG    2000 new   sp    m014      52
+##  5 Afghanistan AF    AFG    2001 new   sp    m014     129
+##  6 Afghanistan AF    AFG    2002 new   sp    m014      90
+##  7 Afghanistan AF    AFG    2003 new   sp    m014     127
+##  8 Afghanistan AF    AFG    2004 new   sp    m014     139
+##  9 Afghanistan AF    AFG    2005 new   sp    m014     151
+## 10 Afghanistan AF    AFG    2006 new   sp    m014     193
+## # ... with 76,036 more rows</code></pre>
+<p>It’s found at below that the <code>new</code> column is redundant because they are all the same:</p>
+<pre class="r"><code>who3 %&gt;%
+  count(new)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   new       n
+##   &lt;chr&gt; &lt;int&gt;
+## 1 new   76046</code></pre>
+<p>In addition, <code>iso2</code> and <code>iso3</code> is redundant because it is tied to country name. We can show that by counting the occurences of unique combination of <code>country</code>, <code>iso2</code>, and <code>iso3</code>; if the occurences is not more than one, then <code>iso</code> are uniwue for each country:</p>
+<pre class="r"><code>who3 %&gt;%
+  select(country, iso2, iso3) %&gt;%
+  distinct() %&gt;%
+  group_by(country) %&gt;% 
+  filter(n()&gt;1)</code></pre>
+<pre><code>## # A tibble: 0 x 3
+## # Groups:   country [0]
+## # ... with 3 variables: country &lt;chr&gt;, iso2 &lt;chr&gt;, iso3 &lt;chr&gt;</code></pre>
+<p>Let’s drop the <code>new</code> column alongside with <code>iso2</code> and <code>iso3</code> since they’re redundant:</p>
+<pre class="r"><code>who4 &lt;- who3 %&gt;%
+  select(-new, - iso2, -iso3)</code></pre>
+<p>Then, we separate <code>sex</code> and <code>age</code> from <code>sexage</code> by splitting after the first character:</p>
+<pre class="r"><code>who5 &lt;- who4%&gt;%
+  separate(sexage, into = c(&quot;sex&quot;, &quot;age&quot;), sep = 1)
+who5</code></pre>
+<pre><code>## # A tibble: 76,046 x 6
+##    country      year type  sex   age   cases
+##    &lt;chr&gt;       &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;int&gt;
+##  1 Afghanistan  1997 sp    m     014       0
+##  2 Afghanistan  1998 sp    m     014      30
+##  3 Afghanistan  1999 sp    m     014       8
+##  4 Afghanistan  2000 sp    m     014      52
+##  5 Afghanistan  2001 sp    m     014     129
+##  6 Afghanistan  2002 sp    m     014      90
+##  7 Afghanistan  2003 sp    m     014     127
+##  8 Afghanistan  2004 sp    m     014     139
+##  9 Afghanistan  2005 sp    m     014     151
+## 10 Afghanistan  2006 sp    m     014     193
+## # ... with 76,036 more rows</code></pre>
+<p>The dataset is tidy now!</p>
+<p><br></p>
+</div>
+<div id="nontidy-data" class="section level1">
+<h1>Nontidy Data</h1>
+<p>There are lots of useful and well-founded data structures that are not tidy data. There are two main reasons to use other data structures:</p>
+<ul>
+<li>Alternative representations may have substantial performance or space advantages.</li>
+<li>Specialized fields have evolved their own conventions for storing data that may be quite different to the conventions of tidy data.</li>
+</ul>
+<p>Tidy data should be your choice if your data fits into rectangular structure.</p>
+</div>
