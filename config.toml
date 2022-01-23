@@ -10,7 +10,7 @@ title = "Thean C. Lim"
 
 # Your copyright notice - appears in site footer.
 # To display a copyright symbol, type `&copy;`.
-copyright = "&copy; 2018 Thean Cheat Lim"
+copyright = "&copy; 2021 Thean Cheat Lim"
 
 theme = "hugo-academic"
 enableEmoji = true
@@ -53,12 +53,12 @@ defaultContentLanguageInSubdir = false
 
   # Your details.
   name = "Thean Lim"
-  description = "A site about statistical modellings, machine learnings and deep learnings."
-  role = "Undergraduate Statistician and Research Assistant"
+  description = "A personal blog and website"
+  role = "Aspiring Software Engineer and Machine Learning Researcher"
 
   # Organizations/Affiliations.
   #   Separate multiple entries with a comma, using the form: `[ {name="Org1", url=""}, {name="Org2", url=""} ]`.
-  organizations = [ { name = "University of Minnesota Twin Cities", url = "https://twin-cities.umn.edu/" } ]
+  organizations = [ { name = "Northeastern University", url = "https://www.northeastern.edu/" } ]
 
   gravatar = false  # Get your avatar from Gravatar.com? (true/false)
   avatar = "portrait.jpg"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
