@@ -2,7 +2,7 @@
 # About/Biography widget.
 widget = "about"
 active = true
-date = "2018-04-12T00:00:00"
+date = "2022-01-23T00:00:00"
 
 # Order that this section will appear in.
 weight = 5
@@ -10,13 +10,18 @@ weight = 5
 # List your academic interests.
 [interests]
   interests = [
-    "Artificial Intelligence",
-    "Statistical Analyses",
+    "Deep Learning",
     "Machine Learning",
-    "Text Mining"
+    "NLP",
+    "Computer Vision"
   ]
 
 # List your qualifications (such as academic degrees).
+[[education.courses]]
+  course = "Master's in Computer Science"
+  institution = "Northeastern University"
+  year = 2024
+  
 [[education.courses]]
   course = "Undergraduate in Statistical Practice"
   institution = "University of Minnesota Twin Cities"
@@ -31,5 +36,5 @@ weight = 5
 
 # Biography
 
-I am a statistician and a psychologist from the University of Minnesota. I am currently analyzing datasets from the Work and Organization lab of UMN to study the effect of leadership behaviours on the team creativity and effectiveness. I am also interested in learning and building side-projects using Statistical Modellings and Machine Learnings. 
+I am a Master's student at the Northeastern University. I am currently researching on algorithms to speed up the computation of Influence Functions used for deep learning model interpretation and debugging. I am also interested in working on projects in the domain of NLP and Computer Vision.
 
